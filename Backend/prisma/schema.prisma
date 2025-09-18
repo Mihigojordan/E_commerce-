@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Admin {
+  id        String   @id @default(uuid())
+  names     String   @unique
+  email     String   @unique
+  password  String
+  isLocked  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model Category {
+  id          Int       @id @default(autoincrement()) // Primary key
+  name        String                                     // Category name
+  subCategory String?                                    // Optional subcategory
+  status      String   @default("active")                // Status (active, inactive, etc.)
+  createdAt   DateTime @default(now())                   // Auto timestamp
+  updatedAt   DateTime @updatedAt                        // Auto update timestamp
+
+  Product Product[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  images         Json     // Store multiple image URLs as JSON array
+  brand          String
+  size           String   // Jewelry size (e.g., "Size 7", "Medium", "18 inches")
+  quantity       Int
+  price          Float
+  perUnit        String   // e.g., "piece", "gram", "set", "pair"
+  description    String   @db.Text
+  subDescription String?  @db.Text
+  review         Float?   @default(0) // Average rating (0-5)
+  availability   Boolean  @default(true)
+  tags           Json     // Store multiple tags as JSON array
+  categoryId     Int
+  category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Indexes for better query performance
+  @@index([categoryId])
+  @@index([brand])
+  @@index([availability])
+  @@index([price])
+  @@map("products")
+  ProductReview ProductReview[]
+}
+
+model ProductReview {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  fullName  String
+  email     String
+  rating    Float    // e.g., 1-5
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@map("product_reviews")
+}
+
+
+model Subscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  quote       String?
+  image       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  replies     BlogReply[] // relation
+}
+
+model BlogReply {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  message   String
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  phone     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  isLocked  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
