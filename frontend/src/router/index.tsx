@@ -36,8 +36,9 @@ import MaterialRequisitionDetail from '../pages/dashboard/MaterialRequisitionDet
 import ProductFormExample from '../pages/dashboard/AddProduct';
 import ProductManagement from '../pages/dashboard/ProductManagement';
 import ProductDetailManagement from '../pages/dashboard/ProductDetailManagement';
+import ProductViewPage from '../components/landing/ProductViewPage';
 
-const ProductPage = lazy(() => import('../pages/landing/FeaturesPage'));
+const ProductPage = lazy(() => import('../pages/landing/ProductPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
 const ContactPage = lazy(() => import('../pages/landing/ContactUs'));
 const AboutPage = lazy(() => import('../pages/landing/AboutPage'));
@@ -93,13 +94,22 @@ const routes = createBrowserRouter([
             ),
           },
           {
-            path: 'features',
+            path: 'product',
             element: (
               <SuspenseWrapper>
                 <ProductPage />
               </SuspenseWrapper>
             ),
           },
+          {
+            path: 'product/:id',
+            element: (
+              <SuspenseWrapper>
+                <ProductViewPage />
+              </SuspenseWrapper>
+            ),
+          },
+      
           {
             path: 'solutions',
             element: (
