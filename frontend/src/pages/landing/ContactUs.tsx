@@ -1,12 +1,10 @@
 import { useState, type ChangeEvent, type FormEvent, type JSX } from "react";
 import { 
-  Phone, Mail, MapPin, Clock, Send, MessageCircle, Building, HelpCircle, User, ArrowRight, Users,
-  Briefcase,
-  CheckCircle
+  Phone, Mail, MapPin, Clock, Send, MessageCircle, Building, HelpCircle, User, ArrowRight, CheckCircle, Briefcase, Users
 } from "lucide-react";
+
 import HeaderBanner from "../../components/landing/HeaderBanner";
 
-// --- Types ---
 interface FormData {
   name: string;
   email: string;
@@ -35,7 +33,7 @@ interface OfficeLocation {
   services: string[];
 }
 
-export default function HRContactPage() {
+export default function EcommerceContactPage() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -58,7 +56,6 @@ export default function HRContactPage() {
   const handleSubmit = (e?: FormEvent) => {
     e?.preventDefault();
     setFormSubmitted(true);
-    // Reset form after 3 seconds
     setTimeout(() => {
       setFormSubmitted(false);
       setFormData({
@@ -76,24 +73,24 @@ export default function HRContactPage() {
   const contactMethods: ContactMethod[] = [
     {
       icon: <Phone className="w-8 h-8" />,
-      title: "HR Helpline",
-      description: "Speak directly with our HR specialists",
+      title: "Support Helpline",
+      description: "Speak directly with our support specialists",
       info: ["+250 788 123 456", "+250 788 654 321"],
-      action: "Call HR",
+      action: "Call Support",
       availability: "24/7 Emergency Support"
     },
     {
       icon: <Mail className="w-8 h-8" />,
       title: "Email Support",
-      description: "Send us your HR queries anytime",
-      info: ["hr@company.rw", "support@hrms.rw"],
+      description: "Send us your queries anytime",
+      info: ["support@ecommerce.rw", "help@ecommerce.rw"],
       action: "Send Email",
       availability: "Response within 4 hours"
     },
     {
       icon: <MessageCircle className="w-8 h-8" />,
       title: "Live Chat",
-      description: "Get instant help from HR team",
+      description: "Get instant help from our team",
       info: ["Available on portal", "WhatsApp: +250 788 123 456"],
       action: "Start Chat",
       availability: "8 AM - 6 PM"
@@ -102,87 +99,57 @@ export default function HRContactPage() {
 
   const officeLocations: OfficeLocation[] = [
     {
-      name: "Main HR Office",
+      name: "Main Office",
       address: "KG 15 Ave, Kimihurura",
       city: "Kigali, Rwanda",
       phone: "+250 788 123 456",
       hours: "Mon - Fri: 8:00 AM - 6:00 PM",
-      services: ["Employee Relations", "Recruitment", "Payroll Support"]
+      services: ["Customer Support", "Order Processing", "Returns Management"]
     },
     {
-      name: "Training Center",
+      name: "Operations Center",
       address: "KN 3 Rd, Nyarutarama",
       city: "Kigali, Rwanda",
       phone: "+250 788 654 321",
       hours: "Mon - Fri: 9:00 AM - 5:00 PM",
-      services: ["Training Programs", "Career Development", "Skills Assessment"]
+      services: ["Logistics Support", "Vendor Management", "Technical Support"]
     }
   ];
 
   const inquiryTypes = [
-    "Payroll Inquiry",
-    "Benefits Question",
-    "Leave Request",
-    "Performance Review",
-    "Training Request",
-    "Policy Clarification",
-    "Grievance Report",
+    "Order Inquiry",
+    "Product Question",
+    "Return Request",
+    "Payment Issue",
+    "Account Support",
+    "Technical Issue",
+    "Complaint",
     "System Access Issue",
     "Document Request",
-    "General HR Support",
+    "General Support",
     "Other"
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-100">
+      <HeaderBanner
+        title="Contact Us"
+        subtitle="Home / Contact Us"
+        backgroundStyle="image"
+        icon={<Users className="w-10 h-10" />}
+      />
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-10 right-10 w-32 h-32 bg-primary-100 rounded-full opacity-20"></div>
         <div className="absolute bottom-20 left-10 w-24 h-24 bg-primary-200 rounded-full opacity-30"></div>
         <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-primary-300 rounded-full opacity-15"></div>
       </div>
-      
-      <HeaderBanner
-        title="Contact HR"
-        subtitle="Home / Contact Us"
-        backgroundStyle="image"
-        icon={<Users className="w-10 h-10" />}
-      />
-
-  <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8 relative py-5">
-        <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 via-primary-500 to-gray-800 bg-clip-text text-transparent mb-6">
-            Contact Human Resources
-          </h1>
-          <p className="text-md md:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-            Need HR assistance? Have questions about policies or benefits? Want to discuss your career development? 
-            We're here to support you every step of the way with expert HR solutions and exceptional employee service.
-          </p>
-          
-          {/* Quick contact badges */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            <div className="flex items-center bg-primary-50 text-primary-700 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300">
-              <Phone size={16} className="mr-2" />
-              <span className="font-medium">+250 788 123 456</span>
-            </div>
-            <div className="flex items-center bg-primary-50 text-primary-700 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300">
-              <Mail size={16} className="mr-2" />
-              <span className="font-medium">hr@company.rw</span>
-            </div>
-            <div className="flex items-center bg-primary-50 text-primary-700 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300">
-              <Clock size={16} className="mr-2" />
-              <span className="font-medium">Mon-Fri 8AM-6PM</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Methods */}
       <section className="py-20">
         <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h3 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Preferred Way</h3>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Multiple ways to reach HR - pick what works best for you
+              Multiple ways to reach our support team - pick what works best for you
             </p>
           </div>
 
@@ -215,20 +182,18 @@ export default function HRContactPage() {
         </div>
       </section>
 
-      {/* Contact Form & Offices Section */}
       <section className="py-20">
         <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
             <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-3xl font-bold text-gray-900 mb-2">Send HR a Message</h3>
+              <h3 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h3>
               <p className="text-gray-600 mb-8">Fill out the form and we'll get back to you within 4 hours</p>
 
               {formSubmitted ? (
                 <div className="text-center py-12">
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                   <h4 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h4>
-                  <p className="text-gray-600">Thank you for contacting HR. We'll respond soon.</p>
+                  <p className="text-gray-600">Thank you for contacting us. We'll respond soon.</p>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -250,19 +215,19 @@ export default function HRContactPage() {
                     </div>
                     <div>
                       <label className="block text-gray-700 font-semibold mb-2">
-                        <Mail className="w-4 h-4 inline mr-2" />
-                        Email Address *
+                        <User className="w-4 h-4 inline mr-2" />
+                        Last Name *
                       </label>
                       <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
+                        type="text"
+                        name="name"
+                        value={formData.name}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        placeholder="your@company.rw"
+                        placeholder="Your full name"
                       />
-                    </div>
+                    </div>    
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
@@ -280,56 +245,22 @@ export default function HRContactPage() {
                         placeholder="+250 788 123 456"
                       />
                     </div>
-                    <div>
+                     <div>
                       <label className="block text-gray-700 font-semibold mb-2">
-                        <Building className="w-4 h-4 inline mr-2" />
-                        Department
+                        <Mail className="w-4 h-4 inline mr-2" />
+                        Email Address *
                       </label>
                       <input
-                        type="text"
-                        name="department"
-                        value={formData.department}
+                        type="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleInputChange}
+                        required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        placeholder="Your department"
+                        placeholder="your@email.rw"
                       />
                     </div>
                   </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-gray-700 font-semibold mb-2">
-                        <Briefcase className="w-4 h-4 inline mr-2" />
-                        Employee ID (Optional)
-                      </label>
-                      <input
-                        type="text"
-                        name="employeeId"
-                        value={formData.employeeId}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        placeholder="EMP001234"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-semibold mb-2">
-                        <HelpCircle className="w-4 h-4 inline mr-2" />
-                        Inquiry Type
-                      </label>
-                      <select
-                        name="inquiryType"
-                        value={formData.inquiryType}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                      >
-                        <option value="">Select inquiry type</option>
-                        {inquiryTypes.map((type, index) => (
-                          <option key={index} value={type}>{type}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
                   <div>
                     <label className="block text-gray-700 font-semibold mb-2">
                       <MessageCircle className="w-4 h-4 inline mr-2" />
@@ -342,7 +273,7 @@ export default function HRContactPage() {
                       required
                       rows={5}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
-                      placeholder="Tell us about your HR inquiry or concern..."
+                      placeholder="Tell us about your inquiry or concern..."
                     ></textarea>
                   </div>
 
@@ -357,45 +288,20 @@ export default function HRContactPage() {
               )}
             </div>
 
-            {/* HR Office Locations */}
-            <div className="space-y-8">
-              <div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-8">Visit Our HR Offices</h3>
-                {officeLocations.map((office, index) => (
-                  <div key={index} className="bg-white rounded-2xl shadow-lg p-6 mb-6 hover:shadow-xl transition-shadow duration-300">
-                    <h4 className="text-xl font-bold text-primary-700 mb-3">{office.name}</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3">
-                        <MapPin className="w-5 h-5 text-primary-500 mt-1" />
-                        <div>
-                          <p className="text-gray-700 font-medium">{office.address}</p>
-                          <p className="text-gray-600">{office.city}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Phone className="w-5 h-5 text-primary-500" />
-                        <p className="text-gray-700">{office.phone}</p>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Clock className="w-5 h-5 text-primary-500" />
-                        <p className="text-gray-700">{office.hours}</p>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <p className="text-sm text-gray-600 mb-2">Services Available:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {office.services.map((service, idx) => (
-                          <span key={idx} className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
-                            {service}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            <div className="space-y-8 w-full">
+              <div className=" w-full h-full" >
+                <div className="bg-white rounded-2xl shadow-lg p-6 h-full">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15950.091986388362!2d30.058139241667106!3d-1.9440999999999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca425ae39d801%3A0x5e373f7aaeb3d63a!2sKimihurura%2C%20Kigali%2C%20Rwanda!5e0!3m2!1sen!2sus!4v1697046781234!5m2!1sen!2us"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
               </div>
-
-            
             </div>
           </div>
         </div>

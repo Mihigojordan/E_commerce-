@@ -7,6 +7,7 @@ import { ProductService } from './product.service';
 import { PrismaService } from '../../Prisma/prisma.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ProductReviewModule } from './Reviews/product-review.module';
 
 @Module({
   imports: [
@@ -33,8 +34,9 @@ import { extname } from 'path';
         files: 4, // Maximum 4 files
       },
     }),
+    ProductReviewModule
   ],
-  controllers: [ProductController],
+  controllers: [ProductController,],
   providers: [ProductService, PrismaService],
   exports: [ProductService],
 })
