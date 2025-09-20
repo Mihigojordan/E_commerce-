@@ -9,6 +9,7 @@ import {
 import { PrismaService } from '../../Prisma/prisma.service';
 import { Prisma } from 'generated/prisma';
 
+// src/product/product.service.ts
 interface CreateProductData {
   name: string;
   images?: string[];
@@ -18,11 +19,11 @@ interface CreateProductData {
   price: number;
   perUnit: string;
   description: string;
-  subDescription?: string;
+  subDescription?: string; // string | undefined
   review?: number;
   availability?: boolean;
   tags?: string[];
-  categoryId: string;
+  categoryId: number; // Changed from string to number
 }
 
 interface UpdateProductData {
@@ -60,29 +61,32 @@ export class ProductService {
   /**
    * Create a new product
    */
-// Quick fix with type conversion
 async createProduct(productData: CreateProductData) {
+  console.log('Received productData:', JSON.stringify(productData, null, 2));
   try {
     // Convert categoryId to number if it's a string
-    const categoryId = typeof productData.categoryId === 'string' 
-      ? parseInt(productData.categoryId, 10) 
-      : productData.categoryId;
+    const categoryId =
+      typeof productData.categoryId === 'string'
+        ? parseInt(productData.categoryId, 10)
+        : productData.categoryId;
 
-    // Validate category exists - convert to string for the where clause
+    console.log('Converted categoryId:', categoryId);
+
+    // Validate category exists
     const categoryExists = await this.prisma.category.findUnique({
-      where: { id: categoryId }, // string is expected here
+      where: { id: categoryId },
     });
+
+    console.log('Category exists:', categoryExists);
 
     if (!categoryExists) {
       throw new BadRequestException('Category not found');
     }
 
-    // ... rest of validations remain the same ...
-
     const product = await this.prisma.product.create({
       data: {
         name: productData.name,
-        images: productData.images || [],
+        images: productData.images || [], // Ensure images is an array of URLs
         brand: productData.brand,
         size: productData.size,
         quantity: productData.quantity,
@@ -91,9 +95,12 @@ async createProduct(productData: CreateProductData) {
         description: productData.description,
         subDescription: productData.subDescription || null,
         review: productData.review || 0,
-        availability: productData.availability !== undefined ? productData.availability : true,
+        availability:
+          productData.availability !== undefined
+            ? productData.availability
+            : true,
         tags: productData.tags || [],
-        categoryId: categoryId, // Use the converted number
+        categoryId: categoryId,
       },
       include: {
         category: {
@@ -111,14 +118,15 @@ async createProduct(productData: CreateProductData) {
       data: product,
     };
   } catch (error) {
+    console.error('Error in createProduct:', error);
     if (error instanceof BadRequestException) {
       throw error;
     }
-    throw new InternalServerErrorException(`Failed to create product: ${error.message}`);
+    throw new InternalServerErrorException(
+      `Failed to create product: ${error.message}`,
+    );
   }
 }
-
-
 
   /**
    * Get all products with pagination and filters

@@ -21,58 +21,77 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
-
+// Define the expected body structure
+// Define the expected body structure
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  /**
-   * Create new product
-   * POST /products
-   */
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FilesInterceptor('images', 4))
   async createProduct(
-    @Body() body: any,
+    @Body() body: any, // Could add minimal typing if desired
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     try {
+      // 🔍 Debug logs
+      console.log('📥 Incoming product creation request');
+      console.log('➡️ Body received:', body);
+      console.log(
+        '➡️ Files received:',
+        files?.map((f) => ({
+          originalname: f.originalname,
+          mimetype: f.mimetype,
+          size: f.size,
+          filename: f.filename,
+        })),
+      );
+
       // Process uploaded files
-      const imageUrls = files ? files.map(file => {
-        // Return the relative path to the uploaded file
-        return `/uploads/products/${file.filename}`;
-      }) : [];
+      const imageUrls = files
+        ? files.map((file) => `/uploads/products/${file.filename}`)
+        : [];
 
       // Parse and validate request body
       const productData = {
         name: body.name,
-        images: body.images ? JSON.parse(body.images) : imageUrls,
+        images: imageUrls,
         brand: body.brand,
         size: body.size,
-        quantity: parseInt(body.quantity),
+        quantity: parseInt(body.quantity, 10),
         price: parseFloat(body.price),
         perUnit: body.perUnit,
         description: body.description,
-        subDescription: body.subDescription || null,
+        subDescription: body.subDescription, // string | undefined
         review: body.review ? parseFloat(body.review) : 0,
         availability: body.availability ? body.availability === 'true' : true,
         tags: body.tags ? JSON.parse(body.tags) : [],
-        categoryId: body.categoryId,
+        categoryId: parseInt(body.categoryId, 10),
       };
 
+      // 🔍 Debug parsed product data
+      console.log('✅ Parsed productData:', productData);
+
       // Validate required fields
-      if (!productData.name || !productData.brand || !productData.size || 
-          !productData.description || !productData.categoryId) {
-        throw new BadRequestException('Missing required fields');
+      if (
+        !productData.name ||
+        !productData.brand ||
+        !productData.size ||
+        !productData.description ||
+        isNaN(productData.categoryId) || // Validate categoryId
+        isNaN(productData.quantity) || // Validate quantity
+        isNaN(productData.price) // Validate price
+      ) {
+        throw new BadRequestException('Missing or invalid required fields');
       }
 
       return await this.productService.createProduct(productData);
     } catch (error) {
+      console.error('❌ Error creating product:', error.message);
       throw new BadRequestException(error.message);
     }
   }
-
   /**
    * Get all products with filters and pagination
    * GET /products
