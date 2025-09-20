@@ -86,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-const ProductListingPage: React.FC = () => {
+const ShoppingPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [newProducts, setNewProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -124,7 +124,7 @@ const ProductListingPage: React.FC = () => {
       });
       return;
     }
-    navigate(`/product/${product.id}`);
+    navigate(`/shop/${product.id}`);
   };
 
   // Fetch categories on mount
@@ -586,4 +586,4 @@ const ProductListingPage: React.FC = () => {
   );
 };
 
-export default ProductListingPage;
+export default ShoppingPage;

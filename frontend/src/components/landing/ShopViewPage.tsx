@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -21,6 +20,7 @@ import productService, { type Product, type ProductReview } from '../../services
 import categoryService, { type Category } from '../../services/categoryService';
 import { API_URL } from '../../api/api';
 import Swal from 'sweetalert2';
+import { useCart } from '../../context/CartContext';
 
 interface ProductCardProps {
   product: Product;
@@ -91,9 +91,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-const ViewMorePage: React.FC = () => {
+const ShopViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { cart, addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -116,8 +117,13 @@ const ViewMorePage: React.FC = () => {
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [newProductsError, setNewProductsError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  // Review form states
+  const [reviewName, setReviewName] = useState('');
+  const [reviewEmail, setReviewEmail] = useState('');
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) {
@@ -139,7 +145,17 @@ const ViewMorePage: React.FC = () => {
     fetchProduct();
   }, [id]);
 
-  // Fetch reviews
+  useEffect(() => {
+    if (!product || !id) return;
+
+    const cartItem = cart.find(item => item.id === id);
+    if (cartItem) {
+      setQuantity(cartItem.cartQuantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [cart, id, product]);
+
   useEffect(() => {
     const fetchReviews = async () => {
       if (!id) return;
@@ -156,14 +172,13 @@ const ViewMorePage: React.FC = () => {
     fetchReviews();
   }, [id]);
 
-  // Fetch related products
   useEffect(() => {
     const fetchRelatedProducts = async () => {
       if (!product?.categoryId) return;
       setRelatedLoading(true);
       try {
         const response = await productService.getAllProducts({
-          categoryId: product.categoryId,
+          category: product.categoryId.toString(),
           limit: 4,
         });
         setRelatedProducts(response.data.filter((p: Product) => p.id !== id));
@@ -176,7 +191,6 @@ const ViewMorePage: React.FC = () => {
     fetchRelatedProducts();
   }, [product, id]);
 
-  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       setCategoryLoading(true);
@@ -193,7 +207,6 @@ const ViewMorePage: React.FC = () => {
     fetchCategories();
   }, []);
 
-  // Fetch new products
   useEffect(() => {
     const fetchNewProducts = async () => {
       setNewProductsLoading(true);
@@ -213,15 +226,15 @@ const ViewMorePage: React.FC = () => {
     fetchNewProducts();
   }, []);
 
-  // Validate and update price range
   useEffect(() => {
     const min = parseFloat(minPriceInput) || 0;
-    const max = parseFloat(maxPriceInput) || 10000; // Default max if empty
+    const max = parseFloat(maxPriceInput) || 10000;
     if (min < 0 || max < 0) {
       Swal.fire({
         icon: 'error',
         title: 'Invalid Price',
         text: 'Price values cannot be negative.',
+        confirmButtonColor: '#3085d6',
       });
       return;
     }
@@ -230,6 +243,7 @@ const ViewMorePage: React.FC = () => {
         icon: 'error',
         title: 'Invalid Price Range',
         text: 'Minimum price cannot be greater than maximum price.',
+        confirmButtonColor: '#3085d6',
       });
       return;
     }
@@ -251,13 +265,13 @@ const ViewMorePage: React.FC = () => {
         icon: 'error',
         title: 'Error',
         text: 'Product ID is missing.',
+        confirmButtonColor: '#3085d6',
       });
       return;
     }
-    navigate(`/product/${product.id}`);
+    navigate(`/shop/${product.id}`);
   };
 
-  // Handle filter application
   const handleApplyFilters = useCallback(() => {
     const params = new URLSearchParams();
     if (selectedCategory) params.append('categoryId', selectedCategory.toString());
@@ -268,10 +282,110 @@ const ViewMorePage: React.FC = () => {
     navigate(`/products?${params.toString()}`);
   }, [selectedCategory, priceRange, searchQuery, navigate]);
 
-  // Handle category selection
   const handleCategorySelect = useCallback((categoryId: number) => {
     setSelectedCategory(categoryId);
   }, []);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    if (!product.availability || product.quantity < quantity) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Out of Stock',
+        text: 'This product is out of stock or the selected quantity exceeds available stock.',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+    addToCart(product, quantity);
+    Swal.fire({
+      icon: 'success',
+      title: 'Added to Cart',
+      text: `${product.name} (x${quantity}) has been added to your cart!`,
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  const handleReviewSubmit = async () => {
+    if (!id || !product) return;
+
+    // Validate inputs
+    if (!reviewName.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Name',
+        text: 'Please enter your name.',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+    if (!reviewEmail.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Missing Email',
+        text: 'Please enter your email.',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(reviewEmail)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Email',
+        text: 'Please enter a valid email address.',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+    if (reviewRating < 1 || reviewRating > 5) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Rating',
+        text: 'Please select a rating between 1 and 5 stars.',
+        confirmButtonColor: '#3085d6',
+      });
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    try {
+      const newReview = await productService.createReview({
+        productId: id,
+        fullName: reviewName,
+        email: reviewEmail,
+        rating: reviewRating,
+        comment: reviewComment.trim() || 'No comment provided.',
+      });
+      setReviews(prev => [...prev, newReview]);
+      // Reset form
+      setReviewName('');
+      setReviewEmail('');
+      setReviewRating(0);
+      setReviewComment('');
+      Swal.fire({
+        icon: 'success',
+        title: 'Review Submitted',
+        text: 'Your review has been successfully submitted!',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Submission Failed',
+        text: 'Failed to submit your review. Please try again.',
+        confirmButtonColor: '#3085d6',
+      });
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleStarClick = (rating: number) => {
+    setReviewRating(rating);
+  };
 
   if (loading) {
     return (
@@ -293,9 +407,7 @@ const ViewMorePage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
           <aside className="w-full lg:w-72 space-y-6">
-            {/* Categories */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 mb-6 text-lg">Category</h3>
               {categoryLoading ? (
@@ -323,11 +435,9 @@ const ViewMorePage: React.FC = () => {
               )}
             </div>
 
-            {/* Filter Bar */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 mb-6 text-lg">Filters</h3>
               
-              {/* Search by Name */}
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-3">Search by Name</h4>
                 <div className="relative">
@@ -343,7 +453,6 @@ const ViewMorePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Price Filter */}
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-3">Price Range</h4>
                 <div className="flex gap-4">
@@ -378,7 +487,6 @@ const ViewMorePage: React.FC = () => {
               </button>
             </div>
 
-            {/* New Products */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 mb-6 text-lg">New Products</h3>
               {newProductsLoading ? (
@@ -421,11 +529,9 @@ const ViewMorePage: React.FC = () => {
             </div>
           </aside>
 
-          {/* Main Content */}
           <main className="flex-1">
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
-                {/* Product Images */}
                 <div className="space-y-4">
                   <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square">
                     <button 
@@ -461,7 +567,6 @@ const ViewMorePage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Product Details */}
                 <div className="space-y-6">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
@@ -489,7 +594,6 @@ const ViewMorePage: React.FC = () => {
                     <p className="text-gray-600 mb-6">{product.description}</p>
                   </div>
 
-                  {/* Quantity and Add to Cart */}
                   <div className="flex gap-4">
                     <div className="flex items-center border rounded-md">
                       <button
@@ -510,6 +614,7 @@ const ViewMorePage: React.FC = () => {
                     </div>
 
                     <button 
+                      onClick={handleAddToCart}
                       className="flex-1 bg-teal-600 text-white px-6 py-3 rounded-md hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"
                       aria-label="Add to cart"
                     >
@@ -535,7 +640,6 @@ const ViewMorePage: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Share and Availability */}
                   <div className="pt-4 border-t">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex gap-2">
@@ -561,7 +665,6 @@ const ViewMorePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Product Tabs */}
               <div className="border-t">
                 <div className="flex border-b">
                   {['DESCRIPTION', 'REVIEWS'].map((tab) => (
@@ -650,12 +753,16 @@ const ViewMorePage: React.FC = () => {
                                 type="text" 
                                 placeholder="Your Name" 
                                 className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                value={reviewName}
+                                onChange={(e) => setReviewName(e.target.value)}
                                 aria-label="Your name"
                               />
                               <input 
                                 type="email" 
                                 placeholder="Your Email" 
                                 className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                value={reviewEmail}
+                                onChange={(e) => setReviewEmail(e.target.value)}
                                 aria-label="Your email"
                               />
                             </div>
@@ -663,8 +770,17 @@ const ViewMorePage: React.FC = () => {
                               <label className="block text-sm font-medium mb-2">Your Rating</label>
                               <div className="flex gap-1">
                                 {[...Array(5)].map((_, i) => (
-                                  <button key={i} aria-label={`Rate ${i + 1} stars`}>
-                                    <Star className="h-6 w-6 text-gray-300 hover:text-yellow-400 transition-colors" />
+                                  <button
+                                    key={i}
+                                    onClick={() => handleStarClick(i + 1)}
+                                    className="focus:outline-none"
+                                    aria-label={`Rate ${i + 1} star${i + 1 === 1 ? '' : 's'}`}
+                                  >
+                                    <Star 
+                                      className={`h-6 w-6 ${
+                                        i < reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                      } hover:text-yellow-400 transition-colors`} 
+                                    />
                                   </button>
                                 ))}
                               </div>
@@ -673,13 +789,19 @@ const ViewMorePage: React.FC = () => {
                               placeholder="Write your review..." 
                               rows={4}
                               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              value={reviewComment}
+                              onChange={(e) => setReviewComment(e.target.value)}
                               aria-label="Write your review"
                             />
                             <button 
-                              className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors"
+                              onClick={handleReviewSubmit}
+                              disabled={isSubmittingReview}
+                              className={`w-full bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors ${
+                                isSubmittingReview ? 'opacity-50 cursor-not-allowed' : ''
+                              }`}
                               aria-label="Submit review"
                             >
-                              Submit Review
+                              {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
                             </button>
                           </div>
                         </div>
@@ -690,7 +812,6 @@ const ViewMorePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Related Products */}
             <div className="mt-12">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold">Related Products</h2>
@@ -734,4 +855,5 @@ const ViewMorePage: React.FC = () => {
   );
 };
 
-export default ViewMorePage;
+export default ShopViewPage;
+

@@ -36,9 +36,10 @@ import MaterialRequisitionDetail from '../pages/dashboard/MaterialRequisitionDet
 import ProductFormExample from '../pages/dashboard/AddProduct';
 import ProductManagement from '../pages/dashboard/ProductManagement';
 import ProductDetailManagement from '../pages/dashboard/ProductDetailManagement';
-import ProductViewPage from '../components/landing/ProductViewPage';
+import ProductViewPage from '../components/landing/ShopViewPage';
+import ShoppingCartPage from '../pages/landing/ShoppingCartPage';
 
-const ProductPage = lazy(() => import('../pages/landing/ProductPage'));
+const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
 const ContactPage = lazy(() => import('../pages/landing/ContactUs'));
 const AboutPage = lazy(() => import('../pages/landing/AboutPage'));
@@ -94,7 +95,15 @@ const routes = createBrowserRouter([
             ),
           },
           {
-            path: 'product',
+            path: 'cart',
+            element: (
+              <SuspenseWrapper>
+                <ShoppingCartPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: 'shop',
             element: (
               <SuspenseWrapper>
                 <ProductPage />
@@ -102,7 +111,7 @@ const routes = createBrowserRouter([
             ),
           },
           {
-            path: 'product/:id',
+            path: 'shop/:id',
             element: (
               <SuspenseWrapper>
                 <ProductViewPage />
