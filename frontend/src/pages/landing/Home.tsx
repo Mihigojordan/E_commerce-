@@ -1,20 +1,20 @@
-import React from 'react'
-import HeroSection from '../../components/landing/home/HeroSection';
-import Categories from '../../components/landing/home/Categories';
-import FeaturedProducts from '../../components/landing/home/Featured';
-import Testimonials from '../../components/landing/home/Testimonials';
-import Blog from '../../components/landing/home/Blog';
-import AboutSection from '../../components/landing/home/About';
+import BestSellProduct from "../../components/landing/home/BestSellProduct"
+import FeaturesBrands from "../../components/landing/home/FeaturesBrands"
+import HeroSection from "../../components/landing/home/HeroSection"
+import MainBanner from "../../components/landing/home/MainBanner"
+import NewArrivalProduct from "../../components/landing/home/NewArrivalProduct"
+import PopularCategory from "../../components/landing/home/PopularCategory"
+import SampleCards from "../../components/landing/home/SampleCards"
 
 const Home = () => {
   return (
     <main>
-        
-        <HeroSection />
-        <AboutSection />
-        <Categories />
-        <Testimonials />
-        <Blog />
+       <HeroSection />
+       <SampleCards />
+       <BestSellProduct />
+       <MainBanner />
+       <PopularCategory />
+
       </main>
   )
 }

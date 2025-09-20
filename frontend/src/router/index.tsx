@@ -36,6 +36,7 @@ import MaterialRequisitionDetail from '../pages/dashboard/MaterialRequisitionDet
 import ProductFormExample from '../pages/dashboard/AddProduct';
 import ProductManagement from '../pages/dashboard/ProductManagement';
 import ProductDetailManagement from '../pages/dashboard/ProductDetailManagement';
+import Gallery from '../pages/landing/Gallery';
 
 const ProductPage = lazy(() => import('../pages/landing/FeaturesPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -93,10 +94,10 @@ const routes = createBrowserRouter([
             ),
           },
           {
-            path: 'features',
+            path: 'Gallery',
             element: (
               <SuspenseWrapper>
-                <ProductPage />
+                <Gallery />
               </SuspenseWrapper>
             ),
           },

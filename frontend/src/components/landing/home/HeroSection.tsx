@@ -1,147 +1,218 @@
-import React from 'react';
-import { ArrowRight, Play, Sparkles, Zap, Users } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const HeroSection = () => {
+function LuxuryHeroSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const heroSlides = [
+    {
+      title: "EXCLUSIVE COLLECTION",
+      heading: "Timeless Elegance",
+      subHeading: "Handcrafted Excellence",
+      description:
+        "Discover our most coveted pieces, meticulously crafted for those who appreciate the finest things in life",
+      buttonText: "Explore Collection",
+      image:
+        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80",
+    },
+    {
+      title: "HERITAGE COLLECTION",
+      heading: "Diamond Mastery",
+      subHeading: "Unparalleled Brilliance",
+      description:
+        "Each diamond tells a story of perfection, selected for exceptional clarity and fire",
+      buttonText: "View Diamonds",
+      image:
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80",
+    },
+    {
+      title: "COUTURE JEWELRY",
+      heading: "Bespoke Artistry",
+      subHeading: "One-of-a-Kind Pieces",
+      description:
+        "Commission a masterpiece that reflects your unique vision and extraordinary taste",
+      buttonText: "Begin Journey",
+      image:
+        "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80",
+    },
+  ];
+
+  const luxuryOffers = [
+    {
+      category: "SIGNATURE RINGS",
+      title: "Exceptional Diamonds",
+      subtitle: "Starting from $15,000",
+      image:
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=80",
+    },
+    {
+      category: "HAUTE COUTURE",
+      title: "Limited Edition",
+      subtitle: "Exclusive Earrings",
+      image:
+        "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&q=80",
+    },
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
   return (
-    <section className="relative min-h-[90vh] bg-gradient-to-br from-white via-primary-50 to-white  overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-primary-100/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-20 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary-50/20 to-primary-100/20 rounded-full blur-3xl animate-spin-slow"></div>
-        
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 10}s`,
-              animationDuration: `${10 + Math.random() * 20}s`
-            }}
-          >
-            <div className="w-2 h-2 bg-primary-300/40 rounded-full"></div>
-          </div>
-        ))}
+    <div className="bg-gradient-to-br from-primary-50 to-white relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23374151' fill-opacity='1'%3E%3Cpath d='m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
       </div>
 
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <div className="relative z-10 container mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Main Hero Slider */}
+          <div className="xl:col-span-2 relative">
+            <div className="h-[600px] rounded-3xl overflow-hidden relative shadow-2xl bg-white border border-primary-100">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="h-full relative flex items-center justify-between p-12"
+                >
+                  {/* Background Image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center rounded-3xl"
+                    style={{
+                      backgroundImage: `url(${heroSlides[currentSlide].image})`,
+                    }}
+                  />
+                  {/* Overlay for better readability */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white/40 to-primary-100/50 rounded-3xl" />
 
-      <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex justify-center w-full gap-12 items-center min-h-[80vh]">
-          
-          {/* Left Content */}
-          <div className="flex justify-center text-center items-center flex-col gap-10">
-            <div className="space-y-6">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-100/50 to-primary-200/50 backdrop-blur-sm border border-primary-300/50 text-primary-600 px-6 py-3 rounded-full text-sm font-medium">
-                <Sparkles size={16} className="animate-pulse text-primary-500" />
-                Modern HR Solutions 2025
-                <Zap size={16} className="animate-pulse delay-500 text-primary-500" />
+                  {/* Content */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -60 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="max-w-lg z-10"
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.3 }}
+                      className="mb-2"
+                    >
+                      <span className="text-xs font-medium tracking-[3px] text-primary-500 border-b border-primary-300 pb-1">
+                        {heroSlides[currentSlide].title}
+                      </span>
+                    </motion.div>
+
+                    <motion.h1
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                      className="text-5xl xl:text-6xl font-light mb-3 leading-tight text-primary-900"
+                    >
+                      {heroSlides[currentSlide].heading}
+                    </motion.h1>
+
+                    <motion.h2
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.5 }}
+                      className="text-2xl xl:text-3xl font-light mb-6 text-primary-600"
+                    >
+                      {heroSlides[currentSlide].subHeading}
+                    </motion.h2>
+
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.6 }}
+                      className="text-primary-600 mb-8 leading-relaxed font-light"
+                    >
+                      {heroSlides[currentSlide].description}
+                    </motion.p>
+
+                    <motion.button
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="group relative px-8 py-4 rounded-md bg-primary-900 text-white font-light tracking-wider text-sm uppercase overflow-hidden transition-all duration-300 hover:bg-primary-800 hover:shadow-xl"
+                    >
+                      <span className="relative z-10">
+                        {heroSlides[currentSlide].buttonText}
+                      </span>
+                    </motion.button>
+                  </motion.div>
+
+                  {/* Subtle border */}
+                  <div className="absolute inset-0 border-2 border-primary-200/50 rounded-3xl" />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Slide Indicators */}
+              <div className="absolute bottom-8 left-12 flex space-x-3">
+                {heroSlides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-12 h-1 transition-all duration-300 ${
+                      index === currentSlide
+                        ? "bg-primary-800 shadow-lg shadow-primary-400/50"
+                        : "bg-primary-300 hover:bg-primary-400"
+                    }`}
+                  />
+                ))}
               </div>
-              
-              {/* Main Heading */}
-              <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
-                <span className="bg-gradient-to-r from-gray-800 via-primary-500 to-gray-800 bg-clip-text text-transparent">
-                  Streamline Your
-                </span>
-                {' '}
-                <span className="bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400 bg-clip-text text-transparent animate-pulse">
-                  HR Operations
-                </span>  <br />
-                <span className="bg-gradient-to-r from-gray-800 via-primary-500 to-gray-800 bg-clip-text text-transparent">
-                  with ABY System
-                </span>
-              </h1>
-              
-              {/* Description */}
-              <p className="text-lg text-gray-600 leading-relaxed max-w-3xl ">
-                Transform your human resource management with our comprehensive platform. From employee onboarding to payroll processing, manage your workforce efficiently and effectively.
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="group relative bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 hover:from-primary-600 hover:to-primary-700 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/25">
-                <span className="relative z-10">Get Started</span>
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
-              </button>
-              
-              <button className="group relative backdrop-blur-sm border-2 border-primary-400/50 text-primary-500 px-8 py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 hover:border-primary-500 hover:bg-primary-100/20 transition-all duration-300 transform hover:scale-105">
-                <Play size={20} className="group-hover:scale-110 transition-transform text-primary-500" />
-                <span>Watch Demo</span>
-              </button>
-            </div>
-
-            {/* Stats */}
-            <div className="flex gap-8 pt-8">
-              {[
-                { number: '10K+', label: 'Companies Trust Us' },
-                { number: '500K+', label: 'Employees Managed' },
-                { number: '99%', label: 'Client Satisfaction' }
-              ].map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
-                    {stat.number}
-                  </div>
-                  <div className="text-sm text-gray-500">{stat.label}</div>
-                </div>
-              ))}
             </div>
           </div>
-{/*
 
+          {/* Luxury Side Panels */}
+          <div className="flex flex-col justify-center gap-12">
+            {luxuryOffers.map((offer, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                className="group relative bg-white border-2 border-primary-100 rounded-2xl p-4 overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300"
+              >
+                {/* Subtle hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
+                <div className="relative z-10">
+                  <span className="text-xs font-medium tracking-[2px] text-primary-400 border-b border-primary-200 pb-1 inline-block mb-2 -mt-8">
+                    {offer.category}
+                  </span>
 
-
-
-
-*/}
+                  <div className="relative w-full h-48 mb-2 rounded-xl overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent z-10" />
+                    <img
+                      src={offer.image}
+                      alt={offer.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 border border-primary-100 rounded-xl"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        
-        .animate-spin-slow {
-          animation: spin-slow 60s linear infinite;
-        }
-        
-        .bg-grid-pattern {
-          background-image: radial-gradient(circle at 1px 1px, rgba(239, 68, 68, 0.1) 1px, transparent 0);
-          background-size: 50px 50px;
-        }
-        
-        .delay-1000 {
-          animation-delay: 1s;
-        }
-        
-        .delay-500 {
-          animation-delay: 0.5s;
-        }
-        
-        .delay-1500 {
-          animation-delay: 1.5s;
-        }
-      `}</style>
-    </section>
+    </div>
   );
-};
+}
 
-export default HeroSection;
+export default LuxuryHeroSection;

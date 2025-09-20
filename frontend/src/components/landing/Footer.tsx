@@ -22,7 +22,9 @@ import {
   Shield,
   Award,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Clock,
+  MessageCircle
 } from 'lucide-react';
 
 // Mock axios for demonstration
@@ -108,26 +110,17 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: '#', name: 'Facebook', color: 'hover:text-blue-600' },
-    { icon: Twitter, href: '#', name: 'Twitter', color: 'hover:text-blue-400' },
+    { icon: Facebook, href: '#', name: 'Facebook', color: 'hover:text-primary-600' },
+    { icon: Twitter, href: '#', name: 'Twitter', color: 'hover:text-primary-400' },
     { icon: Instagram, href: '#', name: 'Instagram', color: 'hover:text-pink-600' },
-    { icon: Linkedin, href: '#', name: 'LinkedIn', color: 'hover:text-blue-700' }
-  ];
-
-  const paymentMethods = [
-    { name: 'Visa', logo: '💳' },
-    { name: 'Mastercard', logo: '💳' },
-    { name: 'PayPal', logo: '💰' },
-    { name: 'Apple Pay', logo: '📱' },
-    { name: 'Google Pay', logo: '📱' },
-    { name: 'Stripe', logo: '💳' }
+    { icon: Linkedin, href: '#', name: 'LinkedIn', color: 'hover:text-primary-700' }
   ];
 
   return (
-    <footer className="bg-white border-t border-gray-200 w-full">
+    <footer className="bg-white border-t border-gray-200 max-w-9xl">
       {/* Newsletter Section */}
       <div className="bg-gray-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -151,7 +144,7 @@ const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full px-6 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-6 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   disabled={subscribeStatus === 'loading'}
                 />
               </div>
@@ -163,7 +156,7 @@ const Footer = () => {
                 className={`px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
                   subscribeStatus === 'loading'
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-primary-600 hover:bg-primary-700 text-white'
                 }`}
               >
                 {subscribeStatus === 'loading' ? (
@@ -186,7 +179,7 @@ const Footer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className={`mt-4 p-3 rounded-lg flex items-center gap-2 justify-center max-w-xl mx-auto ${
                   subscribeStatus === 'success'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    ? 'bg-primary-50 text-primary-700 border border-primary-200'
                     : 'bg-red-50 text-red-700 border border-red-200'
                 }`}
               >
@@ -203,7 +196,7 @@ const Footer = () => {
       </div>
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-8xl mx-auto px-8 sm:px-6 lg:px-16 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Company Info & Main Links */}
           <div className="lg:col-span-2">
@@ -213,45 +206,26 @@ const Footer = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                  <Users className="text-white" size={24} />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">ABY HR Shop</h2>
-              </div>
-              
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Your trusted partner for HR solutions and business management tools. 
-                Experience seamless workforce management with our innovative platform.
-              </p>
+            <div className="flex items-center space-x-3 mb-6">
+  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
+    <ShoppingBag className="text-white" size={24} />
+  </div>
+  <h2 className="text-2xl font-bold text-gray-900">ABY Online Store</h2>
+</div>
 
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Quick Navigation</h4>
-                <div className="flex flex-wrap gap-4">
-                  {mainLinks.map((link, index) => (
-                    <a
-                      key={index}
-                      href={link.href}
-                      className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
-                    >
-                      <link.icon size={16} />
-                      {link.name}
-                    </a>
-                  ))}
-                </div>
-              </div>
+<p className="text-gray-600 mb-6 leading-relaxed">
+  Discover a wide range of quality products at unbeatable prices.  
+  Shop smarter and enjoy a seamless online shopping experience with ABY Store.  
+  Fast delivery and secure checkout — everything you need, just a click away.
+</p>
+
+
+
               
               <div className="space-y-3">
+              
                 <div className="flex items-center gap-3">
-                  <Mail size={18} className="text-blue-600" />
-                  <span className="text-gray-700">support@abyhr.com</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone size={18} className="text-blue-600" />
-                  <span className="text-gray-700">+250 123 456 789</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MapPin size={18} className="text-blue-600" />
+                  <MapPin size={18} className="text-primary-600" />
                   <span className="text-gray-700">Kigali Business District, Rwanda</span>
                 </div>
               </div>
@@ -266,7 +240,7 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <User size={20} className="text-blue-600" />
+              <User size={20} className="text-primary-600" />
               My Account
             </h3>
             <ul className="space-y-2">
@@ -274,7 +248,7 @@ const Footer = () => {
                 <li key={index}>
                   <a
                     href="#"
-                    className="text-gray-600 hover:text-blue-600 transition-colors text-sm block py-1"
+                    className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
                   >
                     {link}
                   </a>
@@ -296,7 +270,7 @@ const Footer = () => {
                 <li key={index}>
                   <a
                     href="#"
-                    className="text-gray-600 hover:text-blue-600 transition-colors text-sm block py-1"
+                    className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
                   >
                     {link}
                   </a>
@@ -318,7 +292,7 @@ const Footer = () => {
                 <li key={index}>
                   <a
                     href="#"
-                    className="text-gray-600 hover:text-blue-600 transition-colors text-sm block py-1"
+                    className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
                   >
                     {link}
                   </a>
@@ -327,7 +301,7 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Install App */}
+          {/* Contact Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -335,54 +309,31 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <Smartphone size={20} className="text-blue-600" />
-              Install Our App
+              <MessageCircle size={20} className="text-primary-600" />
+              Contact Info
             </h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Get the best shopping experience on your mobile device
-            </p>
             
-            <div className="space-y-3">
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-3 bg-black text-white px-4 py-2 rounded-lg transition-transform"
-              >
-                <div className="text-2xl">📱</div>
-                <div>
-                  <div className="text-xs">Download on the</div>
-                  <div className="text-sm font-semibold">App Store</div>
-                </div>
-              </motion.a>
-              
-              <motion.a
-                href="#"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-3 bg-black text-white px-4 py-2 rounded-lg transition-transform"
-              >
-                <div className="text-2xl">🤖</div>
-                <div>
-                  <div className="text-xs">Get it on</div>
-                  <div className="text-sm font-semibold">Google Play</div>
-                </div>
-              </motion.a>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="font-semibold text-gray-900 mb-3">We Accept</h4>
-              <div className="grid grid-cols-3 gap-2">
-                {paymentMethods.map((payment, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-gray-50 border border-gray-200 rounded-lg p-2 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
-                  >
-                    <span className="text-xl">{payment.logo}</span>
-                  </motion.div>
-                ))}
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Phone size={16} className="text-primary-600" />
+                  Customer Service
+                </h4>
+                <p className="text-gray-600 text-sm mb-1">+250 123 456 789</p>
+                <p className="text-gray-500 text-xs">Mon-Fri: 8AM - 8PM</p>
               </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Mail size={16} className="text-primary-600" />
+                  Email Support
+                </h4>
+                <p className="text-gray-600 text-sm mb-1">support@abyhr.com</p>
+                <p className="text-gray-500 text-xs">24/7 Online Support</p>
+              </div>
+
+             
+
             </div>
           </motion.div>
         </div>
@@ -399,11 +350,11 @@ const Footer = () => {
             className="flex flex-wrap justify-center items-center gap-6 text-gray-600"
           >
             <div className="flex items-center gap-2">
-              <Shield size={20} className="text-green-600" />
+              <Shield size={20} className="text-primary-600" />
               <span className="text-sm">SSL Secured</span>
             </div>
             <div className="flex items-center gap-2">
-              <Award size={20} className="text-blue-600" />
+              <Award size={20} className="text-primary-600" />
               <span className="text-sm">Trusted by 50k+ Users</span>
             </div>
             <div className="flex items-center gap-2">
@@ -411,7 +362,7 @@ const Footer = () => {
               <span className="text-sm">Free Shipping over $50</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle size={20} className="text-green-600" />
+              <CheckCircle size={20} className="text-primary-600" />
               <span className="text-sm">30-Day Money Back</span>
             </div>
           </motion.div>
@@ -431,9 +382,9 @@ const Footer = () => {
             >
               <span>© 2025 David ECoomerce Shop. All rights reserved.</span>
               <div className="flex gap-4">
-                <a href="#" className="hover:text-blue-600 transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-blue-600 transition-colors">Terms of Service</a>
-                <a href="#" className="hover:text-blue-600 transition-colors">Cookie Policy</a>
+                <a href="#" className="hover:text-primary-600 transition-colors">Privacy Policy</a>
+                <a href="#" className="hover:text-primary-600 transition-colors">Terms of Service</a>
+                <a href="#" className="hover:text-primary-600 transition-colors">Cookie Policy</a>
               </div>
             </motion.div>
             
