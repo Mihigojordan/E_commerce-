@@ -136,7 +136,7 @@ const ShoppingCartPage: React.FC = () => {
   };
 
   const handleContinueShopping = () => {
-    navigate('/shop');
+    navigate('/products');
   };
 
   const handleCheckout = () => {

@@ -148,7 +148,7 @@ const WishlistPage: React.FC = () => {
 
   // Navigate back to shop
   const handleContinueShopping = () => {
-    navigate('/shop');
+    navigate('/products');
   };
 
   // Navigate to cart
