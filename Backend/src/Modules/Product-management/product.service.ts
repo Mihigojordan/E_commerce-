@@ -128,23 +128,29 @@ async createProduct(productData: CreateProductData) {
   }
 }
 
-  /**
-   * Get all products with pagination and filters
-   */
-  async getAllProducts(page = 1, limit = 10, filters: ProductFilters = {}) {
+/**
+ * Get all products with pagination and filters
+ */
+async getAllProducts(
+  page = 1,
+  limit = 10,
+  filters: Partial<ProductFilters> = {}
+) {
   try {
     const skip = (page - 1) * limit;
     const where: Prisma.ProductWhereInput = {};
 
+    // Category filter
     if (filters.category) {
-      where.categoryId = parseInt(filters.category, 10); // ✅ convert string -> int
+      where.categoryId = parseInt(filters.category, 10);
     }
 
-
+    // Availability filter
     if (filters.availability !== undefined) {
       where.availability = filters.availability;
     }
 
+    // Price range filter
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
       where.price = {};
       if (filters.minPrice !== undefined) {
@@ -155,13 +161,13 @@ async createProduct(productData: CreateProductData) {
       }
     }
 
-    // ❌ hasSome not available on JSON
-    // ✅ JSON filtering requires exact match
+    // Tags filter (for JSON field)
     if (filters.tags && filters.tags.length > 0) {
-      where.tags = { equals: filters.tags }; 
+      // Will match if product has AT LEAST ONE of the tags
+      where.OR = filters.tags.map(tag => ({
+        tags: { array_contains: tag },
+      }));
     }
-
-
 
     const [products, total] = await Promise.all([
       this.prisma.product.findMany({
@@ -171,7 +177,7 @@ async createProduct(productData: CreateProductData) {
         include: {
           category: { select: { id: true, name: true } },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.product.count({ where }),
     ]);
@@ -189,9 +195,12 @@ async createProduct(productData: CreateProductData) {
       },
     };
   } catch (error) {
-    throw new InternalServerErrorException(`Failed to fetch products: ${error.message}`);
+    throw new InternalServerErrorException(
+      `Failed to fetch products: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
   }
 }
+
 
   /**
    * Get single product by ID
