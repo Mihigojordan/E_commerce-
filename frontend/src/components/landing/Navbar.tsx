@@ -16,6 +16,9 @@ import {
   Instagram,
   PhoneCall
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 type NavLink = {
   name: string;
@@ -38,12 +41,15 @@ const Navbar: React.FC = () => {
   });
   const [showCountryDropdown, setShowCountryDropdown] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const navigate = useNavigate()
+  const {cart} = useCart()
+  const {wishlist} = useWishlist()
 
   const links: NavLink[] = [
     { name: 'Home', path: "/" },
     { name: 'About Us', path: "/about" },
     { name: 'Product', path: "/products" },
-     { name: 'Our Gallery', path: "/blog" },
+     { name: 'Our Gallery', path: "/gallery" },
     { name: 'News & Update', path: "/blog" },
     { name: 'Contact Us', path: "/contact" },
   ];
@@ -60,7 +66,7 @@ const Navbar: React.FC = () => {
   const handleNavigate = (path?: string) => {
     setIsOpen(false);
     if (!path) return;
-    console.log(`Navigate to: ${path}`);
+    navigate(path)
   };
 
   // Handle search
@@ -191,13 +197,19 @@ const Navbar: React.FC = () => {
 
               {/* Cart and Wishlist */}
               <div className="flex items-center space-x-4">
-                <div className="relative cursor-pointer group">
+                <div 
+                 onClick={()=> handleNavigate('/wishlist')}
+                className="relative cursor-pointer group"
+                >
                   <Heart size={24} className="text-gray-600 group-hover:text-primary-600 transition-colors" />
-                  <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">4</span>
+                  <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{wishlist.length}</span>
                 </div>
-                <div className="relative cursor-pointer group">
+                <div 
+                onClick={()=> handleNavigate('/cart')}
+                className="relative cursor-pointer group"
+                 >
                   <ShoppingCart size={24} className="text-gray-600 group-hover:text-primary-600 transition-colors" />
-                  <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">2</span>
+                <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{cart?.length}</span>
                 </div>
 
                 {/* Mobile menu button */}

@@ -62,7 +62,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const removeFromCart = (id: string) => {
-    alert(id)
     setCart(prev => prev.filter(item => item.id !== id));
   };
 

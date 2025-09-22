@@ -1,90 +1,16 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Filter, 
   Grid3X3, 
   List, 
-  Star, 
-  Heart, 
-  ShoppingCart,
-  Search
+  Star
 } from 'lucide-react';
 import productService, { type Product } from '../../services/ProductService';
 import categoryService, { type Category } from '../../services/categoryService';
 import { API_URL } from '../../api/api';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-
-interface ProductCardProps {
-  product: Product;
-  tag?: string;
-  tagColor?: string;
-  handleNavigateProduct:(product:Product)=> void
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, 
-  tag, 
-  tagColor = 'bg-blue-500' ,
-  handleNavigateProduct
-}) => {
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const ratingPercentage = product.review ? Math.floor(product.review * 20) : 50; // Convert rating to percentage (0-5 to 0-100%)
-
-  return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-      <div className="relative bg-gray-50 aspect-square overflow-hidden">
-        {tag && (
-          <span className={`absolute top-4 left-4 ${tagColor} text-white px-3 py-1 rounded-full text-xs font-semibold z-10 shadow-lg`}>
-            {tag}
-          </span>
-        )}
-        <button
-          onClick={() => setIsWishlisted(!isWishlisted)}
-          className="absolute top-4 right-4 p-2 bg-white rounded-full hover:bg-gray-50 transition-all duration-200 z-10 shadow-md opacity-0 group-hover:opacity-100"
-        >
-          <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-        </button>
-        <img 
-          src={`${API_URL}${product.images[0]}`  || 'https://via.placeholder.com/400'} 
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
-      </div>
-      
-      <div className="p-5">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{product.brand}</p>
-          <span className="text-xs text-gray-400">{ratingPercentage}%</span>
-        </div>
-        
-        <h3 className="font-semibold text-gray-900 mb-3 text-base leading-snug hover:text-teal-600 cursor-pointer transition-colors" onClick={()=> handleNavigateProduct(product)}>{product.name}</h3>
-        
-        <div className="flex items-center gap-1 mb-4">
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star 
-                key={i} 
-                className={`h-3.5 w-3.5 ${i < Math.floor(product.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-              />
-            ))}
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-teal-600">${product.price.toFixed(2)}</span>
-          </div>
-          
-          <button className="p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100">
-            <ShoppingCart className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import ProductCard from '../../components/landing/shop/ProductCard';
+import FilterBar from '../../components/landing/shop/FilterBar';
 
 const ShoppingPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -115,7 +41,8 @@ const ShoppingPage: React.FC = () => {
   }>({ total: 0, page: 1, limit: 9, totalPages: 1 });
 
   const navigate = useNavigate();
-   const handleNavigateProduct = (product: Product) => {
+
+  const handleNavigateProduct = (product: Product) => {
     if (!product.id) {
       Swal.fire({
         icon: 'error',
@@ -124,7 +51,7 @@ const ShoppingPage: React.FC = () => {
       });
       return;
     }
-    navigate(`/shop/${product.id}`);
+    navigate(`/products/${product.id}`);
   };
 
   // Fetch categories on mount
@@ -243,7 +170,7 @@ const ShoppingPage: React.FC = () => {
   const getTagColor = (tag: string) => {
     switch (tag.toLowerCase()) {
       case 'hot': return 'bg-pink-500';
-      case 'new': return 'bg-teal-500';
+      case 'new': return 'bg-primary-500';
       case 'best sell': return 'bg-orange-500';
       case 'sale': return 'bg-blue-500';
       case '50%': return 'bg-pink-600';
@@ -252,18 +179,6 @@ const ShoppingPage: React.FC = () => {
       default: return 'bg-blue-500';
     }
   };
-
-  const colors = [
-    { name: 'Red', count: 56, color: 'bg-red-500' },
-    { name: 'Green', count: 78, color: 'bg-green-500' },
-    { name: 'Blue', count: 54, color: 'bg-blue-500' }
-  ];
-
-  const conditions = [
-    { name: 'New', count: 1506 },
-    { name: 'Refurbished', count: 27 },
-    { name: 'Used', count: 45 }
-  ];
 
   // Generate pagination buttons dynamically
   const getPaginationButtons = () => {
@@ -282,10 +197,11 @@ const ShoppingPage: React.FC = () => {
         <button
           key={i}
           className={`px-4 py-2 rounded-lg font-medium shadow-md transition-colors ${
-            currentPage === i ? 'bg-teal-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+            currentPage === i ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100'
           }`}
           onClick={() => setCurrentPage(i)}
           disabled={currentPage === i}
+          aria-label={`Go to page ${i}`}
         >
           {i.toString().padStart(2, '0')}
         </button>
@@ -319,9 +235,10 @@ const ShoppingPage: React.FC = () => {
                           setSelectedCategory(category.id);
                           setCurrentPage(1); // Reset to first page on category change
                         }}
-                        className={`text-gray-600 hover:text-teal-600 hover:font-medium transition-all duration-200 flex items-center justify-between w-full ${
-                          selectedCategory === category.id ? 'border-l-3 border-teal-500 pl-4 font-medium text-teal-600' : ''
+                        className={`text-gray-600 hover:text-primary-600 hover:font-medium transition-all duration-200 flex items-center justify-between w-full ${
+                          selectedCategory === category.id ? 'border-l-3 border-primary-500 pl-4 font-medium text-primary-600' : ''
                         }`}
+                        aria-label={`Select category ${category.name}`}
                       >
                         <span>{category.name}</span>
                       </button>
@@ -332,104 +249,19 @@ const ShoppingPage: React.FC = () => {
             </div>
 
             {/* Filter Bar */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-gray-900 mb-6 text-lg">Filters</h3>
-              
-              {/* Search by Name */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Search by Name</h4>
-                <div className="relative">
-                  <Search className="h-5 w-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input 
-                    type="text" 
-                    placeholder="Search products..." 
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setCurrentPage(1); // Reset to first page on search
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Price Filter */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Price Range</h4>
-                <div className="flex gap-4">
-                  <input
-                    type="number"
-                    placeholder="Min Price"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    value={minPriceInput}
-                    onChange={(e) => setMinPriceInput(e.target.value)}
-                    min="0"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Max Price"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    value={maxPriceInput}
-                    onChange={(e) => setMaxPriceInput(e.target.value)}
-                    min="0"
-                  />
-                </div>
-              </div>
-              
-              {/* Color Filter */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Color</h4>
-                <div className="space-y-3">
-                  {colors.map((color) => (
-                    <label key={color.name} className="flex items-center group cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        className="mr-3 rounded text-teal-500 focus:ring-teal-500" 
-                        onChange={() => {
-                          setSelectedColors(prev => 
-                            prev.includes(color.name) 
-                              ? prev.filter(c => c !== color.name)
-                              : [...prev, color.name]
-                          );
-                          setCurrentPage(1); // Reset to first page on filter change
-                        }}
-                      />
-                      <div className={`w-4 h-4 rounded-full ${color.color} mr-3 shadow-sm`}></div>
-                      <span className="text-gray-700 group-hover:text-gray-900 transition-colors">{color.name} ({color.count})</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Item Condition */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Item Condition</h4>
-                <div className="space-y-3">
-                  {conditions.map((condition) => (
-                    <label key={condition.name} className="flex items-center group cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        className="mr-3 rounded text-teal-500 focus:ring-teal-500"
-                        onChange={() => {
-                          setSelectedConditions(prev => 
-                            prev.includes(condition.name)
-                              ? prev.filter(c => c !== condition.name)
-                              : [...prev, condition.name]
-                          );
-                          setCurrentPage(1); // Reset to first page on filter change
-                        }}
-                      />
-                      <span className="text-gray-700 group-hover:text-gray-900 transition-colors">{condition.name} ({condition.count})</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <button className="w-full bg-teal-600 text-white py-3 px-4 rounded-lg hover:bg-teal-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
-                <Filter className="h-4 w-4 inline mr-2" />
-                Apply Filters
-              </button>
-            </div>
+            <FilterBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              minPriceInput={minPriceInput}
+              setMinPriceInput={setMinPriceInput}
+              maxPriceInput={maxPriceInput}
+              setMaxPriceInput={setMaxPriceInput}
+              selectedColors={selectedColors}
+              setSelectedColors={setSelectedColors}
+              selectedConditions={selectedConditions}
+              setSelectedConditions={setSelectedConditions}
+              setCurrentPage={setCurrentPage}
+            />
 
             {/* New Products */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -443,15 +275,15 @@ const ShoppingPage: React.FC = () => {
               ) : (
                 <div className="space-y-5">
                   {newProducts.map((product) => (
-                    <div key={product.id} className="flex gap-4 group cursor-pointer">
+                    <div key={product.id} className="flex gap-4 group cursor-pointer" onClick={() => handleNavigateProduct(product)}>
                       <img 
-                        src={`${API_URL}${product.images[0]}`  || 'https://via.placeholder.com/60'} 
+                        src={`${API_URL}${product.images[0]}` || 'https://via.placeholder.com/60'} 
                         alt={product.name} 
                         className="w-14 h-14 rounded-lg object-cover group-hover:scale-105 transition-transform" 
                       />
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 group-hover:text-teal-600 transition-colors">{product.name}</h4>
-                        <p className="text-sm text-teal-600 font-semibold">${product.price.toFixed(2)}</p>
+                        <h4 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">{product.name}</h4>
+                        <p className="text-sm text-primary-600 font-semibold">${product.price.toFixed(2)}</p>
                         <div className="flex mt-1">
                           {[...Array(5)].map((_, i) => (
                             <Star 
@@ -468,12 +300,12 @@ const ShoppingPage: React.FC = () => {
             </div>
 
             {/* Promotion Banner */}
-            <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-purple-700 p-8 rounded-xl text-white overflow-hidden">
+            <div className="relative bg-gradient-to-br from-primary-600 via-purple-600 to-purple-700 p-8 rounded-xl text-white overflow-hidden">
               <div className="absolute inset-0 bg-black bg-opacity-20"></div>
               <div className="relative text-center">
                 <p className="text-sm opacity-90 mb-2 font-medium">Women's Sale</p>
                 <h3 className="text-xl font-bold mb-4 leading-tight">Save 17% on<br />Office Dress</h3>
-                <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <button className="bg-white text-primary-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
                   Shop Now →
                 </button>
               </div>
@@ -483,11 +315,11 @@ const ShoppingPage: React.FC = () => {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1  ">
+          <main className="flex-1">
             {/* Results Header */}
-            <div className="flex flex-col  sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <p className="text-gray-700 text-lg">
-                We found <span className="font-bold text-teal-600 text-xl">{pagination.total} items</span> for you!
+                We found <span className="font-bold text-primary-600 text-xl">{pagination.total} items</span> for you!
               </p>
               
               <div className="flex items-center gap-4">
@@ -501,6 +333,7 @@ const ShoppingPage: React.FC = () => {
                       setItemsPerPage(Number(e.target.value));
                       setCurrentPage(1); // Reset to first page when items per page changes
                     }}
+                    aria-label="Select items per page"
                   >
                     <option value="9">9</option>
                     <option value="18">18</option>
@@ -520,6 +353,7 @@ const ShoppingPage: React.FC = () => {
                       setCurrentPage(1); // Reset to first page on sort change
                     }}
                     className="bg-transparent text-sm font-semibold text-gray-900 focus:outline-none"
+                    aria-label="Sort products"
                   >
                     <option>Featured</option>
                     <option>Price: Low to High</option>
@@ -546,14 +380,13 @@ const ShoppingPage: React.FC = () => {
                 <p className="text-sm">Try adjusting your filters or search query.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-3 gap-8 mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-3 gap-8 mb-12">
                 {products.map((product) => (
                   <ProductCard 
                     key={product.id} 
                     product={product}
                     tag={product.tags[0]}
                     tagColor={getTagColor(product.tags[0] || '')}
-                    handleNavigateProduct={handleNavigateProduct}
                   />
                 ))}
               </div>
@@ -566,6 +399,7 @@ const ShoppingPage: React.FC = () => {
                   className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50"
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
+                  aria-label="Previous page"
                 >
                   «
                 </button>
@@ -574,6 +408,7 @@ const ShoppingPage: React.FC = () => {
                   className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50"
                   onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
                   disabled={currentPage === pagination.totalPages}
+                  aria-label="Next page"
                 >
                   »
                 </button>
