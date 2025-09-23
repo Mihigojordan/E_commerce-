@@ -4,13 +4,15 @@ import './index.css'
 import App from './App.tsx'
 import { AuthContextProvider } from './context/AuthContext.tsx'
 import { CartProvider } from './context/CartContext.tsx'
+import { WishlistProvider } from './context/WishlistContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthContextProvider>
       <CartProvider>
-
-    <App />
+        <WishlistProvider>
+          <App />
+        </WishlistProvider>
       </CartProvider>
     </AuthContextProvider>
   </StrictMode>,
