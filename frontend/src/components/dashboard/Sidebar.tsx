@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
-import Logo from '../../assets/hello.jpg';
+import Logo from '../../assets/take.jpg';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -165,14 +165,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
       <div className={`fixed left-0 top-0 min-h-screen bg-white flex flex-col border-r border-primary-200 shadow-lg transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"} w-64 lg:w-70`}>
         <div className="flex items-center justify-between p-4 border-b border-primary-200">
           <div className="flex items-center space-x-2">
-            <div className="flex items-center justify-center w-16 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg">
+            <div className="flex items-center justify-center w-[180px] h-14 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg">
               <div className="flex items-center space-x-0.5">
-                <img src={Logo} alt="" />
+                <img src={Logo} alt="" className="h-[200px] w-[200px]" />
               </div>
             </div>
             <div>
-              <h2 className="font-bold text-lg text-primary-800">CIDMS</h2>
-              <p className="text-xs text-primary-500">Admin Portal</p>
             </div>
           </div>
           <button onClick={onToggle} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
