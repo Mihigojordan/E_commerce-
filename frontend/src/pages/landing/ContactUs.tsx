@@ -144,11 +144,11 @@ export default function EcommerceContactPage() {
         <div className="absolute bottom-20 left-10 w-24 h-24 bg-primary-200 rounded-full opacity-30"></div>
         <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-primary-300 rounded-full opacity-15"></div>
       </div>
-      <section className="py-20">
-        <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10">
+        <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Preferred Way</h3>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Preferred Way</h3>
+            <p className=" text-gray-600 max-w-x3l mx-auto text-xl">
               Multiple ways to reach our support team - pick what works best for you
             </p>
           </div>
@@ -182,8 +182,8 @@ export default function EcommerceContactPage() {
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-5">
+        <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <h3 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h3>

@@ -26,6 +26,8 @@ import {
   Clock,
   MessageCircle
 } from 'lucide-react';
+import Logo from '../../assets/logo.png'
+
 
 // Mock axios for demonstration
 const axios = {
@@ -207,13 +209,10 @@ const Footer = () => {
               viewport={{ once: true }}
             >
             <div className="flex items-center space-x-3 mb-6">
-  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
-    <ShoppingBag className="text-white" size={24} />
-  </div>
-  <h2 className="text-2xl font-bold text-gray-900">ABY Online Store</h2>
+     <img src={Logo} alt="" className='h-16 w-48 object-cover' />
 </div>
 
-<p className="text-gray-600 mb-6 leading-relaxed">
+<p className="text-gray-600 mb-6 ml-2 leading-relaxed">
   Discover a wide range of quality products at unbeatable prices.  
   Shop smarter and enjoy a seamless online shopping experience with ABY Store.  
   Fast delivery and secure checkout — everything you need, just a click away.

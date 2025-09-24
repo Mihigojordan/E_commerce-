@@ -5,13 +5,18 @@ import {
   ZoomIn,
   Heart,
   Download,
-
+  Share2,
+  MessageCircle,
   GalleryVertical
 } from "lucide-react";
-import HeaderBanner from "../../components/landing/HeaderBanner";
 
-export default function GalleryPage() {
+// Simulate environment variable - replace with your actual website URL
+const WEBSITE_URL = import.meta.VITE_WEBSITE_URL || "https://yourjewelrystore.com";
+
+export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [likedImages, setLikedImages] = useState(new Set());
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   // Animation variants
   const containerVariants = {
@@ -161,21 +166,94 @@ export default function GalleryPage() {
 
   const openModal = (image) => {
     setSelectedImage(image);
+    setShowShareOptions(false);
   };
 
   const closeModal = () => {
     setSelectedImage(null);
+    setShowShareOptions(false);
+  };
+
+  const toggleLike = (imageId, e) => {
+    e.stopPropagation();
+    const newLikedImages = new Set(likedImages);
+    if (newLikedImages.has(imageId)) {
+      newLikedImages.delete(imageId);
+    } else {
+      newLikedImages.add(imageId);
+    }
+    setLikedImages(newLikedImages);
+  };
+
+  const downloadImage = async (imageUrl, imageName) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${imageName.replace(/\s+/g, '_')}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback: open image in new tab
+      window.open(imageUrl, '_blank');
+    }
+  };
+
+const shareToWhatsApp = (image: { title: string }) => {
+  const message = `Check out this beautiful ${image.title}! 💎✨\n\nSee more amazing jewelry at: ${WEBSITE_URL}/gallery\n\nHow can I get more information about this piece?`;
+  const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+};
+
+  const copyShareLink = (image: never) => {
+    const shareUrl = `${WEBSITE_URL}/gallery?item=${image.id}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert('Link copied to clipboard!');
+    }).catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Link copied to clipboard!');
+    });
+  };
+
+  const shareViaWebAPI = async (image) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: image.title,
+          text: `Check out this beautiful ${image.title}!`,
+          url: `${WEBSITE_URL}/gallery?item=${image.id}`
+        });
+      } catch (error) {
+        console.log('Share cancelled or failed');
+      }
+    } else {
+      // Fallback to copy link
+      copyShareLink(image);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
- 
-   <HeaderBanner
-  title="Our Gallery"
-  subtitle="Home / Our Gallery"
-  backgroundStyle="image"
-  icon={<GalleryVertical className="w-10 h-10" />}
-/>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <GalleryVertical className="w-16 h-16 mx-auto mb-4" />
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Gallery</h1>
+          <p className="text-xl opacity-90">Home / Our Gallery</p>
+        </div>
+      </div>
+
       {/* Masonry Grid */}
       <section className="py-16">
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-16">
@@ -201,7 +279,7 @@ export default function GalleryPage() {
                     loading="lazy"
                   />
                   
-                  {/* Subtle overlay on hover */}
+                  {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -212,7 +290,35 @@ export default function GalleryPage() {
                     </motion.div>
                   </div>
 
-                  {/* Subtle shimmer effect */}
+                  {/* Action buttons on hover */}
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col gap-2">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => toggleLike(image.id, e)}
+                      className={`p-2 backdrop-blur-sm rounded-full transition-all duration-300 ${
+                        likedImages.has(image.id) 
+                          ? 'bg-red-500 text-white' 
+                          : 'bg-white/20 text-white hover:bg-white/30'
+                      }`}
+                    >
+                      <Heart className="w-4 h-4" fill={likedImages.has(image.id) ? 'currentColor' : 'none'} />
+                    </motion.button>
+                    
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        shareToWhatsApp(image);
+                      }}
+                      className="p-2 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+
+                  {/* Shimmer effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 </div>
               </motion.div>
@@ -265,17 +371,74 @@ export default function GalleryPage() {
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-300"
+                  onClick={() => toggleLike(selectedImage.id, { stopPropagation: () => {} })}
+                  className={`p-3 backdrop-blur-sm rounded-full transition-all duration-300 ${
+                    likedImages.has(selectedImage.id)
+                      ? 'bg-red-500 text-white'
+                      : 'bg-white/20 text-white hover:bg-white/30'
+                  }`}
                 >
-                  <Heart className="w-5 h-5" />
+                  <Heart className="w-5 h-5" fill={likedImages.has(selectedImage.id) ? 'currentColor' : 'none'} />
                 </motion.button>
                 
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
+                  onClick={() => downloadImage(selectedImage.src, selectedImage.title)}
                   className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-300"
                 >
                   <Download className="w-5 h-5" />
+                </motion.button>
+
+                <div className="relative">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setShowShareOptions(!showShareOptions)}
+                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-300"
+                  >
+                    <Share2 className="w-5 h-5" />
+                  </motion.button>
+
+                  {/* Share options dropdown */}
+                  {showShareOptions && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg p-2 min-w-[160px] z-10"
+                    >
+                      <button
+                        onClick={() => shareToWhatsApp(selectedImage)}
+                        className="w-full flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
+                      >
+                        <MessageCircle className="w-4 h-4 text-green-600" />
+                        WhatsApp
+                      </button>
+                      <button
+                        onClick={() => shareViaWebAPI(selectedImage)}
+                        className="w-full flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
+                      >
+                        <Share2 className="w-4 h-4 text-blue-600" />
+                        Share Link
+                      </button>
+                      <button
+                        onClick={() => copyShareLink(selectedImage)}
+                        className="w-full flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
+                      >
+                        <X className="w-4 h-4 text-gray-600" />
+                        Copy Link
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => shareToWhatsApp(selectedImage)}
+                  className="p-3 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300"
+                >
+                  <MessageCircle className="w-5 h-5" />
                 </motion.button>
               </div>
             </div>

@@ -4,8 +4,6 @@ import {
   X, 
   User,
   Phone,
-  Mail,
-  Users,
   Search,
   ShoppingCart,
   Heart,
@@ -19,6 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import Logo from '../../assets/logo.png'
 
 type NavLink = {
   name: string;
@@ -163,13 +162,9 @@ const Navbar: React.FC = () => {
               {/* Logo */}
               <div className="flex-shrink-0 cursor-pointer" onClick={() => handleNavigate('/')}>
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-xl">E</span>
-                  </div>
+             
                   <div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-                      E-Commerce
-                    </h1>
+                  <img src={Logo} alt="" className='h-14 w-48 object-cover' />
                   </div>
                 </div>
               </div>
