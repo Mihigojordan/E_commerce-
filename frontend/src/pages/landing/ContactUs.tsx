@@ -1,17 +1,15 @@
 import { useState, type ChangeEvent, type FormEvent, type JSX } from "react";
 import { 
-  Phone, Mail, MapPin, Clock, Send, MessageCircle, Building, HelpCircle, User, ArrowRight, CheckCircle, Briefcase, Users
+  Phone, Mail, MapPin, Clock, Send, MessageCircle, User, ArrowRight, CheckCircle, Users
 } from "lucide-react";
-
+import contactService, { type CreateContactMessageInput } from "../../services/contactService"; // Adjust path as needed
 import HeaderBanner from "../../components/landing/HeaderBanner";
 
 interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
-  department: string;
-  inquiryType: string;
-  employeeId: string;
   message: string;
 }
 
@@ -35,39 +33,55 @@ interface OfficeLocation {
 
 export default function EcommerceContactPage() {
   const [formData, setFormData] = useState<FormData>({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
-    department: '',
-    inquiryType: '',
-    employeeId: '',
     message: ''
   });
-
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError(null); // Clear error on input change
   };
 
-  const handleSubmit = (e?: FormEvent) => {
-    e?.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        department: '',
-        inquiryType: '',
-        employeeId: '',
-        message: ''
-      });
-    }, 3000);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const messageData: CreateContactMessageInput = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone || undefined, // Optional phone field
+        message: formData.message
+      };
+
+      const response = await contactService.createContactMessage(messageData);
+      if (response.success) {
+        setFormSubmitted(true);
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          message: ''
+        });
+        setTimeout(() => setFormSubmitted(false), 3000);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactMethods: ContactMethod[] = [
@@ -116,22 +130,7 @@ export default function EcommerceContactPage() {
     }
   ];
 
-  const inquiryTypes = [
-    "Order Inquiry",
-    "Product Question",
-    "Return Request",
-    "Payment Issue",
-    "Account Support",
-    "Technical Issue",
-    "Complaint",
-    "System Access Issue",
-    "Document Request",
-    "General Support",
-    "Other"
-  ];
-
   return (
-    
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-100">
       <HeaderBanner
         title="Contact Us"
@@ -148,7 +147,7 @@ export default function EcommerceContactPage() {
         <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="text-center mb-16">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Preferred Way</h3>
-            <p className=" text-gray-600 max-w-x3l mx-auto text-xl">
+            <p className="text-gray-600 max-w-x3l mx-auto text-xl">
               Multiple ways to reach our support team - pick what works best for you
             </p>
           </div>
@@ -196,21 +195,26 @@ export default function EcommerceContactPage() {
                   <p className="text-gray-600">Thank you for contacting us. We'll respond soon.</p>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <div className="bg-red-100 text-red-700 p-4 rounded-lg">
+                      {error}
+                    </div>
+                  )}
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-gray-700 font-semibold mb-2">
                         <User className="w-4 h-4 inline mr-2" />
-                        Full Name *
+                        First Name *
                       </label>
                       <input
                         type="text"
-                        name="name"
-                        value={formData.name}
+                        name="firstName"
+                        value={formData.firstName}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        placeholder="Your full name"
+                        placeholder="Your first name"
                       />
                     </div>
                     <div>
@@ -220,14 +224,14 @@ export default function EcommerceContactPage() {
                       </label>
                       <input
                         type="text"
-                        name="name"
-                        value={formData.name}
+                        name="lastName"
+                        value={formData.lastName}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        placeholder="Your full name"
+                        placeholder="Your last name"
                       />
-                    </div>    
+                    </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
@@ -245,7 +249,7 @@ export default function EcommerceContactPage() {
                         placeholder="+250 788 123 456"
                       />
                     </div>
-                     <div>
+                    <div>
                       <label className="block text-gray-700 font-semibold mb-2">
                         <Mail className="w-4 h-4 inline mr-2" />
                         Email Address *
@@ -277,19 +281,22 @@ export default function EcommerceContactPage() {
                     ></textarea>
                   </div>
 
-                  <div
-                    onClick={handleSubmit}
-                    className="w-full bg-primary-600 text-white py-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 text-lg shadow-lg hover:shadow-xl cursor-pointer"
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full bg-primary-600 text-white py-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 text-lg shadow-lg hover:shadow-xl ${
+                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
                     <Send className="w-5 h-5" />
-                    <span>Send Message</span>
-                  </div>
-                </div>
+                    <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+                  </button>
+                </form>
               )}
             </div>
 
             <div className="space-y-8 w-full">
-              <div className=" w-full h-full" >
+              <div className="w-full h-full">
                 <div className="bg-white rounded-2xl shadow-lg p-6 h-full">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15950.091986388362!2d30.058139241667106!3d-1.9440999999999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca425ae39d801%3A0x5e373f7aaeb3d63a!2sKimihurura%2C%20Kigali%2C%20Rwanda!5e0!3m2!1sen!2sus!4v1697046781234!5m2!1sen!2us"

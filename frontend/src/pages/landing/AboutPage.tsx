@@ -1,52 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Star, Users, Trophy, Globe, ShoppingBag, Heart, CheckCircle, Facebook, Twitter, Instagram, ArrowUp, Award, Target, Zap, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Users, Trophy, Globe, ShoppingBag, ArrowUp, Award, Target, Zap, Shield } from 'lucide-react';
 import HeaderBanner from '../../components/landing/HeaderBanner';
+import Testimonials from '../../components/landing/Testmonial'; // Adjust import path as needed
 
 const AboutPage = () => {
   const [currentClientsSlide, setCurrentClientsSlide] = useState(0);
-  const [currentTestimonialSlide, setCurrentTestimonialSlide] = useState(0);
 
-  // Testimonials data - updated for ecommerce theme
-  const testimonials = [
-    {
-      name: "J. Bezos",
-      company: "Amazon Inc",
-      text: "This platform revolutionized our online sales with seamless integration and user-friendly features. Highly recommended for any ecommerce business.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      name: "B. Gates",
-      company: "Microsoft Stores",
-      text: "The best ecommerce solution we've used. Excellent customer support and vast product management tools.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face", 
-    },
-    {
-      name: "B. Meyers",
-      company: "Shopify Experts",
-      text: "Transformed our online store with powerful analytics and easy customization. A game-changer for ecommerce.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      name: "S. Jobs",
-      company: "Apple Retail",
-      text: "Outstanding platform that delivers exceptional user experience and seamless shopping functionality.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      name: "M. Cuban",
-      company: "Shark Tank Ventures",
-      text: "Innovative ecommerce solution with powerful features that drive real business growth and customer satisfaction.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      name: "R. Branson",
-      company: "Virgin Group",
-      text: "A revolutionary platform that transforms how businesses approach online retail. Absolutely game-changing technology.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-    },
-  ];
-
-  // Updated Client logos with image URLs instead of text
+  // Client logos
   const clientLogos = [
     { name: "Mockup", logo: "https://placehold.co/150x50?text=Mockup&bg=ffffff&fg=000000" },
     { name: "The Backward", logo: "https://placehold.co/150x50?text=The+Backward&bg=ffffff&fg=000000" },
@@ -100,21 +60,6 @@ const AboutPage = () => {
     setCurrentClientsSlide((prev) => (prev - 1 + Math.ceil(clientLogos.length / 6)) % Math.ceil(clientLogos.length / 6));
   };
 
-  // Testimonials slideshow functions
-  const nextTestimonialSlide = () => {
-    setCurrentTestimonialSlide((prev) => (prev + 1) % Math.ceil(testimonials.length / 3));
-  };
-
-  const prevTestimonialSlide = () => {
-    setCurrentTestimonialSlide((prev) => (prev - 1 + Math.ceil(testimonials.length / 3)) % Math.ceil(testimonials.length / 3));
-  };
-
-  // Auto-slide functionality for testimonials
-  useEffect(() => {
-    const timer = setInterval(nextTestimonialSlide, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -165,8 +110,6 @@ const AboutPage = () => {
               </div>
             </div>
           </div>
-
-       
         </div>
       </div>
 
@@ -188,7 +131,7 @@ const AboutPage = () => {
                 <Target className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-              <p className="text-gray-600  text-md leading-loose">
+              <p className="text-gray-600 text-md leading-loose">
                 To democratize ecommerce by providing businesses of all sizes with powerful, affordable, and easy-to-use tools that enable them to succeed in the digital marketplace. We believe every entrepreneur deserves access to world-class ecommerce technology.
               </p>
             </div>
@@ -254,93 +197,7 @@ const AboutPage = () => {
       </div>
 
       {/* Testimonials Section */}
-      <div className="py-24 bg-white">
-        <div className="max-w-8xl mx-auto px-14 lg:px-14">
-          <div className="text-center mb-16">
-            <div className="text-teal-600 text-sm font-semibold tracking-wide uppercase mb-4">
-              TESTIMONIALS
-            </div>
-            <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto">
-              Take a look what our <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
-            </h2>
-            <p className="text-md text-gray-600 max-w-3xl mx-auto text-md">
-              Hear from our satisfied partners on how our ecommerce platform has boosted their online presence and transformed their business growth.
-            </p>
-          </div>
-          
-          <div className="relative">
-            {/* Testimonials Slideshow */}
-            <div className="overflow-hidden">
-              <div 
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${currentTestimonialSlide * 100}%)` }}
-              >
-                {Array.from({ length: Math.ceil(testimonials.length / 3) }).map((_, slideIndex) => (
-                  <div key={slideIndex} className="w-full flex-shrink-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {testimonials.slice(slideIndex * 3, slideIndex * 3 + 3).map((testimonial, index) => (
-                        <div 
-                          key={index}
-                          className="bg-gradient-to-br from-gray-50 to-teal-50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                        >
-                          <div className="flex items-center mb-6">
-                            <img 
-                              src={testimonial.image} 
-                              alt={testimonial.name}
-                              className="w-16 h-16 rounded-full object-cover mr-4 ring-4 ring-teal-100"
-                            />
-                            <div>
-                              <h4 className="font-bold text-gray-900 text-md">{testimonial.name}</h4>
-                              <p className="text-teal-600 font-medium text-sm">{testimonial.company}</p>
-                            </div>
-                          </div>
-                          <p className="text-gray-600 leading-relaxed text-sm">
-                            "{testimonial.text}"
-                          </p>
-                          <div className="flex mt-4">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Testimonials Navigation */}
-            <button 
-              onClick={prevTestimonialSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-teal-50 transition-colors border-2 border-teal-100"
-            >
-              <ChevronLeft className="w-6 h-6 text-teal-600" />
-            </button>
-            <button 
-              onClick={nextTestimonialSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-teal-50 transition-colors border-2 border-teal-100"
-            >
-              <ChevronRight className="w-6 h-6 text-teal-600" />
-            </button>
-
-            {/* Testimonials Dots Indicator */}
-            <div className="flex justify-center mt-12 space-x-3">
-              {Array.from({ length: Math.ceil(testimonials.length / 3) }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonialSlide(index)}
-                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                    currentTestimonialSlide === index 
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 scale-125' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      <Testimonials />
 
       {/* Featured Clients Section */}
       <div className="py-20 bg-gradient-to-br from-teal-50 to-cyan-50 border-t border-teal-100">
