@@ -5,6 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './Modules/admin/admin.module';
 import { CategoryModule } from './Modules/Category-management/category.module';
 import { ProductModule } from './Modules/Product-management/product.module';
+import { PartnerModule } from './Modules/partner-management/partner.module';
+import { TestimonialModule } from './Modules/testmonial-management/testmonial.module';
+import { BlogModule } from './Modules/Blog-management/blog.module';
+import { ContactModule } from './Modules/Contact-us/contact.module';
 @Module({
   imports: [
 
@@ -14,7 +18,12 @@ import { ProductModule } from './Modules/Product-management/product.module';
     CommonModule,
     AdminModule,
     CategoryModule,
-    ProductModule
+    ProductModule,
+    PartnerModule,
+    TestimonialModule,
+    BlogModule,
+    ContactModule
+    
   ],
   controllers: [],
 })

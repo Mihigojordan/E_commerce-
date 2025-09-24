@@ -3,12 +3,12 @@ import { PrismaService } from 'src/Prisma/prisma.service';
 
 
 @Injectable()
-export class PatnerService {
+export class PartnerService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: any) {
     try {
-      return await this.prisma.patner.create({ data });
+      return await this.prisma.partner.create({ data });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -16,7 +16,7 @@ export class PatnerService {
 
   async findAll() {
     try {
-      return await this.prisma.patner.findMany({
+      return await this.prisma.partner.findMany({
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
@@ -26,9 +26,9 @@ export class PatnerService {
 
   async findOne(id: string) {
     try {
-      const patner = await this.prisma.patner.findUnique({ where: { id } });
-      if (!patner) throw new NotFoundException('Patner not found');
-      return patner;
+      const partner = await this.prisma.partner.findUnique({ where: { id } });
+      if (!partner) throw new NotFoundException('Partner not found');
+      return partner;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -36,7 +36,7 @@ export class PatnerService {
 
   async update(id: string, data: any) {
     try {
-      return await this.prisma.patner.update({
+      return await this.prisma.partner.update({
         where: { id },
         data,
       });
@@ -47,7 +47,7 @@ export class PatnerService {
 
   async remove(id: string) {
     try {
-      return await this.prisma.patner.delete({ where: { id } });
+      return await this.prisma.partner.delete({ where: { id } });
     } catch (error) {
       throw new BadRequestException(error.message);
     }

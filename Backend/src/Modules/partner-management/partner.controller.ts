@@ -1,46 +1,46 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
-import { PatnerService } from './partner.service';
-import { PatnerFileFields, patnerUploadConfig } from 'src/common/Utils/file-upload.util';
+import { PartnerService } from './partner.service';
+import { PartnerFileFields, partnerUploadConfig } from 'src/common/Utils/file-upload.util';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
-@Controller('patners')
-export class PatnerController {
-  constructor(private readonly patnerService: PatnerService) {}
+@Controller('partners')
+export class PartnerController {
+  constructor(private readonly partnerService: PartnerService) {}
 
   @Post()
   @UseInterceptors(
-    FileFieldsInterceptor(PatnerFileFields,patnerUploadConfig)
+    FileFieldsInterceptor(PartnerFileFields,partnerUploadConfig)
   )
   create(@Body() data: any, @UploadedFiles() files: { logo?: Express.Multer.File[] }) {
     if(files?.logo){
         data.logo = `/uploads/partner-photos/${files.logo[0].filename}`;
     }
-    return this.patnerService.create(data);
+    return this.partnerService.create(data);
   }
 
   @Get()
   findAll() {
-    return this.patnerService.findAll();
+    return this.partnerService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.patnerService.findOne(id);
+    return this.partnerService.findOne(id);
   }
 
   @Put(':id')
    @UseInterceptors(
-    FileFieldsInterceptor(PatnerFileFields,patnerUploadConfig)
+    FileFieldsInterceptor(PartnerFileFields,partnerUploadConfig)
   )
   update(@Param('id') id: string, @Body() data: any,@UploadedFiles() files: { logo?: Express.Multer.File[] }) {
     if(files?.logo){
         data.logo = `/uploads/partner-photos/${files.logo[0].filename}`;
     }
-    return this.patnerService.update(id, data);
+    return this.partnerService.update(id, data);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.patnerService.remove(id);
+    return this.partnerService.remove(id);
   }
 }

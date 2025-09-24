@@ -138,7 +138,7 @@ model Testmonial{
   createdAt DateTime @default(now())
 }
 
-model patner{
+model partner{
   id        String   @id @default(uuid())
   name      String?
   logo     String

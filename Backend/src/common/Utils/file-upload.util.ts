@@ -69,7 +69,7 @@ export const TestimonialFileFields = [
   { name: 'profileImage', maxCount: 1 },
 ];
 
-export const PatnerFileFields = [
+export const PartnerFileFields = [
   { name: 'logo', maxCount: 1 },
 ]
 export const BlogFileFields = [
@@ -77,5 +77,5 @@ export const BlogFileFields = [
 ]
 
 export const testimonialUploadConfig = createUnifiedUploadConfig()
-export const patnerUploadConfig = createUnifiedUploadConfig()
+export const partnerUploadConfig = createUnifiedUploadConfig()
 export const blogUploadConfig = createUnifiedUploadConfig()
