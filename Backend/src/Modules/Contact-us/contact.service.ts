@@ -7,14 +7,14 @@ export class ContactService {
   constructor(private prisma: PrismaService) {}
 
   async processContact(data: any) {
-    const { fullName, email, phone, subject, message } = data;
+    const { firstName,lastName, email, phone, message } = data;
 
-    if (!fullName || !email || !phone || !subject || !message) {
+    if (!firstName || !lastName || !email || !phone  || !message) {
       throw new BadRequestException('All fields are required');
     }
 
     await this.prisma.contactMessage.create({
-      data: { fullName, email, phone, subject, message },
+      data: { firstName, lastName , email, phone, message },
     });
 
     return { success: true, message: 'Thank you for contacting us!' };

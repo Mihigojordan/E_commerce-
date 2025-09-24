@@ -1,12 +1,18 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { BlogService } from './blog.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { BlogFileFields, blogUploadConfig } from 'src/common/Utils/file-upload.util';
 
 @Controller('blogs')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @Post()
-  create(@Body() data: { title: string; description: string; quote?: string; image?: string }) {
+  @UseInterceptors(FileFieldsInterceptor(BlogFileFields,blogUploadConfig))
+  create(@Body() data: { title: string; description: string; quote?: string; blog_image?: string }, @UploadedFiles()  files:{ blog_image: Express.Multer.File[]} ) {
+    if(files.blog_image){
+      data.blog_image = `/uploads/blog-photos/${files.blog_image?.[0].filename}`
+    }
     return this.blogService.create(data);
   }
 
@@ -21,7 +27,11 @@ export class BlogController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: { title?: string; description?: string; quote?: string; image?: string }) {
+   @UseInterceptors(FileFieldsInterceptor(BlogFileFields,blogUploadConfig))
+  update(@Param('id') id: string, @Body() data: { title?: string; description?: string; quote?: string; blog_image?: string }, @UploadedFiles()  files:{ blog_image: Express.Multer.File[]}) {
+    if(files.blog_image){
+      data.blog_image = `/uploads/blog-photos/${files.blog_image?.[0].filename}`
+    }
     return this.blogService.update(id, data);
   }
 
