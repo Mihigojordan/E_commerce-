@@ -9,9 +9,9 @@ export class BlogController {
 
   @Post()
   @UseInterceptors(FileFieldsInterceptor(BlogFileFields,blogUploadConfig))
-  create(@Body() data: { title: string; description: string; quote?: string; blog_image?: string }, @UploadedFiles()  files:{ blog_image: Express.Multer.File[]} ) {
+  create(@Body() data: { title: string; description: string; quote?: string; image?: string }, @UploadedFiles()  files:{ blog_image: Express.Multer.File[]} ) {
     if(files.blog_image){
-      data.blog_image = `/uploads/blog-photos/${files.blog_image?.[0].filename}`
+      data.image = `/uploads/blog-photos/${files.blog_image?.[0].filename}`
     }
     return this.blogService.create(data);
   }
@@ -28,9 +28,9 @@ export class BlogController {
 
   @Patch(':id')
    @UseInterceptors(FileFieldsInterceptor(BlogFileFields,blogUploadConfig))
-  update(@Param('id') id: string, @Body() data: { title?: string; description?: string; quote?: string; blog_image?: string }, @UploadedFiles()  files:{ blog_image: Express.Multer.File[]}) {
+  update(@Param('id') id: string, @Body() data: { title?: string; description?: string; quote?: string; image?: string }, @UploadedFiles()  files:{ blog_image: Express.Multer.File[]}) {
     if(files.blog_image){
-      data.blog_image = `/uploads/blog-photos/${files.blog_image?.[0].filename}`
+      data.image = `/uploads/blog-photos/${files.blog_image?.[0].filename}`
     }
     return this.blogService.update(id, data);
   }

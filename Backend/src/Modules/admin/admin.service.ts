@@ -45,13 +45,13 @@ export class AdminService {
   }
 
   async getAdminProfile(adminId: string) {
-    return this.prisma.admin.findUnique({ where: { id: adminId } });
+    return await this.prisma.admin.findUnique({ where: { id: adminId } });
   }
 
   async editAdminProfile(adminId: string, data: any) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
-    return this.prisma.admin.update({ where: { id: adminId }, data });
+    return await this.prisma.admin.update({ where: { id: adminId }, data });
   }
 }

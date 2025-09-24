@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../Prisma/prisma.service';
 import { Prisma } from 'generated/prisma';
+import { deleteFile } from 'src/common/Utils/file-upload.util';
 
 // src/product/product.service.ts
 interface CreateProductData {
@@ -216,6 +217,7 @@ async getAllProducts(
               name: true,
             },
           },
+          ProductReview:true
         },
       });
 
@@ -235,34 +237,37 @@ async getAllProducts(
     }
   }
 
-  /**
-   * Update product
-   */
-  async updateProduct(id: string, updateData: UpdateProductData) {
+/**
+ * Update product
+ */
+async updateProduct(id: string, updateData: UpdateProductData & { keepImages?: string[]; newImages?: string[] }) {
   try {
     // Check if product exists
     const existingProduct = await this.prisma.product.findUnique({
       where: { id },
     });
 
-    if (!existingProduct) {
-      throw new NotFoundException('Product not found');
-    }
+    if (!existingProduct) throw new NotFoundException('Product not found');
 
-    // Validate category if provided
-    if (updateData.categoryId) {
-      const categoryExists = await this.prisma.category.findUnique({
-        where: { id: updateData.categoryId }, // ✅ now number
-      });
+    // ✅ Handle images update
+    let updatedImages: string[] = existingProduct.images as string[];
 
-      if (!categoryExists) {
-        throw new BadRequestException('Category not found');
+    if (updateData.keepImages || updateData.newImages) {
+      const keepImages = updateData.keepImages || [];
+      const newImages = updateData.newImages || [];
+
+      // Delete images that are not kept
+      const removedImages = updatedImages.filter((img) => !keepImages.includes(img));
+      for (const url of removedImages) {
+        deleteFile(String(url));
       }
-    }
 
-    // Validate images array (max 4 images)
-    if (updateData.images && updateData.images.length > 4) {
-      throw new BadRequestException('Maximum 4 images allowed');
+      updatedImages = [...keepImages, ...newImages];
+
+      // Validate max 4 images
+      if (updatedImages.length > 4) {
+        throw new BadRequestException('Maximum 4 images allowed (existing + new)');
+      }
     }
 
     // Validate price
@@ -280,22 +285,30 @@ async getAllProducts(
       throw new BadRequestException('Review rating must be between 0 and 5');
     }
 
- const updatedProduct = await this.prisma.product.update({
-  where: { id },
-  data: {
-    ...updateData,
-    images: updateData.images !== undefined 
-      ? (updateData.images as unknown as Prisma.InputJsonValue) 
-      : undefined,
-    tags: updateData.tags !== undefined 
-      ? (updateData.tags as unknown as Prisma.InputJsonValue) 
-      : undefined,
-  },
-  include: {
-    category: { select: { id: true, name: true } },
-  },
-});
-
+    // Update product manually mapping each field
+    const updatedProduct = await this.prisma.product.update({
+      where: { id },
+      data: {
+        name: updateData.name,
+        brand: updateData.brand,
+        size: updateData.size,
+        quantity: updateData.quantity,
+        price: updateData.price,
+        perUnit: updateData.perUnit,
+        description: updateData.description,
+        subDescription: updateData.subDescription,
+        review: updateData.review,
+        availability: updateData.availability,
+        categoryId: updateData.categoryId,
+        images: updatedImages as unknown as Prisma.InputJsonValue,
+        tags: updateData.tags !== undefined
+          ? (updateData.tags as unknown as Prisma.InputJsonValue)
+          : undefined,
+      },
+      include: {
+        category: { select: { id: true, name: true } },
+      },
+    });
 
     return {
       success: true,
@@ -303,12 +316,11 @@ async getAllProducts(
       data: updatedProduct,
     };
   } catch (error) {
-    if (error instanceof NotFoundException || error instanceof BadRequestException) {
-      throw error;
-    }
+    if (error instanceof NotFoundException || error instanceof BadRequestException) throw error;
     throw new InternalServerErrorException(`Failed to update product: ${error.message}`);
   }
 }
+
 
   /**
    * Delete product

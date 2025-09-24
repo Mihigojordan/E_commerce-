@@ -18,6 +18,7 @@ import {
   ChevronUp,
   Boxes,
   MapMinusIcon,
+  Newspaper,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
@@ -75,6 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     { id: "dashboard", label: "Dashboard", icon: TrendingUp, path: "/admin/dashboard" },
     { id: "Category", label: "Category Management", icon: Layers, path: "/admin/dashboard/category-management" },
     { id: "Product Management", label: "Product Management", icon: Store, path: "/admin/dashboard/product-management" },
+    { id: "Product Management", label: "Blog Management", icon: Newspaper, path: "/admin/dashboard/blog-management" },
  
   ];
 

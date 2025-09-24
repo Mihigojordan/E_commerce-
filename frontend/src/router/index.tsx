@@ -33,13 +33,17 @@ import MaterialRequisition from '../pages/dashboard/MaterialRequisition';
 
 import SiteAssignmentDashboard from '../pages/dashboard/SiteAssignmentDashboard';
 import MaterialRequisitionDetail from '../pages/dashboard/MaterialRequisitionDetail';
-import ProductFormExample from '../pages/dashboard/AddProduct';
-import ProductManagement from '../pages/dashboard/ProductManagement';
-import ProductDetailManagement from '../pages/dashboard/ProductDetailManagement';
+import ProductFormExample from '../pages/dashboard/product/AddProduct';
+import ProductManagement from '../pages/dashboard/product/ProductManagement';
+
 import ProductViewPage from '../components/landing/shop/ShopViewPage';
 import ShoppingCartPage from '../pages/landing/ShoppingCartPage';
 import Gallery from '../pages/landing/Gallery';
 import WishlistPage from '../pages/landing/ShoppingWishlist';
+import BlogDashboard from '../pages/dashboard/blog/BlogManagement';
+import BlogFormPage from '../pages/dashboard/blog/BlogFormPage';
+import ProductViewMorePage from '../pages/dashboard/product/ProductViewPage';
+import BlogViewMorePage from '../pages/dashboard/blog/BlogViewMorePage';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -246,14 +250,6 @@ const routes = createBrowserRouter([
                 ),
               },
               {
-                path: 'Add-product-management',
-                element: (
-                  <SuspenseWrapper>
-                    <ProductFormExample />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
                 path: 'product-management',
                 element: (
                   <SuspenseWrapper>
@@ -261,11 +257,59 @@ const routes = createBrowserRouter([
                   </SuspenseWrapper>
                 ),
               },
-   {
+              {
+                path: 'product-management/add',
+                element: (
+                  <SuspenseWrapper>
+                    <ProductFormExample />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'product-management/edit/:id',
+                element: (
+                  <SuspenseWrapper>
+                    <ProductFormExample />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
                 path: 'product-management/:id',
                 element: (
                   <SuspenseWrapper>
-                  <ProductDetailManagement />
+                  <ProductViewMorePage />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'blog-management',
+                element: (
+                  <SuspenseWrapper>
+                  <BlogDashboard />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'blog-management/add',
+                element: (
+                  <SuspenseWrapper>
+                    <BlogFormPage />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'blog-management/edit/:id',
+                element: (
+                  <SuspenseWrapper>
+                    <BlogFormPage />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'blog-management/:id',
+                element: (
+                  <SuspenseWrapper>
+                  <BlogViewMorePage />
                   </SuspenseWrapper>
                 ),
               },

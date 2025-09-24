@@ -23,7 +23,7 @@ async register(@Body() body: { email: string; password: string; names: string; r
     role = body.role as AdminRole;
   }
 
-  return this.adminService.registerAdmin(body.email, body.password, body.names, role);
+  return await this.adminService.registerAdmin(body.email, body.password, body.names, role);
 }
 
   @Post('login')
@@ -59,14 +59,19 @@ async register(@Body() body: { email: string; password: string; names: string; r
  @Get('profile')
 @UseGuards(AdminAuthGuard)
 async profile(@Req() req: RequestWithAdmin) {
-  return this.adminService.getAdminProfile(req.admin!.id);
+  console.log(req.admin?.id);
+  
+  const profile = await this.adminService.getAdminProfile(req.admin!.id);
+  console.log(profile);
+  return profile
+  
 }
 
 @Put('edit-profile')
 @UseGuards(AdminAuthGuard, RolesGuard)
 @Roles('SUPER_ADMIN', 'ADMIN')
 async editProfile(@Req() req: RequestWithAdmin, @Body() body: any) {
-  return this.adminService.editAdminProfile(req.admin!.id, body);
+  return await this.adminService.editAdminProfile(req.admin!.id, body);
 }
 
 }

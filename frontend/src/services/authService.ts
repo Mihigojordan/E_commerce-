@@ -66,6 +66,8 @@ async getProfile(isAdmin = false): Promise<User | null> {
       isAdmin ? "/auth/profile" : "/auth/profile",
       { withCredentials: true }
     );
+    console.log(response.data);
+    
     return response.data; // backend returns user directly
   } catch (error: any) {
     if (error.response?.status === 401 || error.response?.status === 404) return null;

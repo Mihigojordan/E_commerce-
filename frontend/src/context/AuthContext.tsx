@@ -98,6 +98,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     }
   };
 
+  
   const checkAuthStatus = async () => {
     setIsLoading(true);
     try {

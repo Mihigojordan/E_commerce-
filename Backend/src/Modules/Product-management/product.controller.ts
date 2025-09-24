@@ -148,47 +148,52 @@ export class ProductController {
    * Update product
    * PUT /products/:id
    */
-  @Put(':id')
-  @UseInterceptors(FilesInterceptor('images', 4))
-  async updateProduct(
-    @Param('id') id: string,
-    @Body() body: any,
-    @UploadedFiles() files: Express.Multer.File[],
-  ) {
-    try {
-      if (!id) {
-        throw new BadRequestException('Product ID is required');
+@Put(':id')
+@UseInterceptors(FilesInterceptor('images', 4))
+async updateProduct(
+  @Param('id') id: string,
+  @Body() body: any,
+  @UploadedFiles() files: Express.Multer.File[],
+) {
+  try {
+    if (!id) throw new BadRequestException('Product ID is required');
+
+    const updateData: any = {};
+
+    // ✅ Handle new uploaded files
+    const newImages = files?.map(file => `/uploads/products/${file.filename}`) || [];
+    updateData.newImages = newImages;
+
+    // ✅ Parse keepImages from body
+    if (body.keepImages) {
+      try {
+        const keepImages = JSON.parse(body.keepImages);
+        if (!Array.isArray(keepImages)) throw new Error();
+        updateData.keepImages = keepImages;
+      } catch {
+        throw new BadRequestException('Invalid keepImages format - must be a JSON array');
       }
-
-      const updateData: any = {};
-
-      // Handle new file uploads
-      if (files && files.length > 0) {
-        const newImageUrls = files.map(file => `/uploads/products/${file.filename}`);
-        updateData.images = newImageUrls;
-      } else if (body.images) {
-        updateData.images = JSON.parse(body.images);
-      }
-
-      // Parse and map other fields (only include fields that are provided)
-      if (body.name !== undefined) updateData.name = body.name;
-      if (body.brand !== undefined) updateData.brand = body.brand;
-      if (body.size !== undefined) updateData.size = body.size;
-      if (body.quantity !== undefined) updateData.quantity = parseInt(body.quantity);
-      if (body.price !== undefined) updateData.price = parseFloat(body.price);
-      if (body.perUnit !== undefined) updateData.perUnit = body.perUnit;
-      if (body.description !== undefined) updateData.description = body.description;
-      if (body.subDescription !== undefined) updateData.subDescription = body.subDescription;
-      if (body.review !== undefined) updateData.review = parseFloat(body.review);
-      if (body.availability !== undefined) updateData.availability = body.availability === 'true';
-      if (body.tags !== undefined) updateData.tags = JSON.parse(body.tags);
-      if (body.categoryId !== undefined) updateData.categoryId = body.categoryId;
-
-      return await this.productService.updateProduct(id, updateData);
-    } catch (error) {
-      throw new BadRequestException(error.message);
     }
+
+    // ✅ Map other fields if provided
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.brand !== undefined) updateData.brand = body.brand;
+    if (body.size !== undefined) updateData.size = body.size;
+    if (body.quantity !== undefined) updateData.quantity = parseInt(body.quantity);
+    if (body.price !== undefined) updateData.price = parseFloat(body.price);
+    if (body.perUnit !== undefined) updateData.perUnit = body.perUnit;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.subDescription !== undefined) updateData.subDescription = body.subDescription;
+    if (body.review !== undefined) updateData.review = parseFloat(body.review);
+    if (body.availability !== undefined) updateData.availability = body.availability === 'true';
+    if (body.tags !== undefined) updateData.tags = JSON.parse(body.tags);
+    if (body.categoryId !== undefined) updateData.categoryId = Number(body.categoryId);
+
+    return await this.productService.updateProduct(id, updateData);
+  } catch (error) {
+    throw new BadRequestException(error.message);
   }
+}
 
   /**
    * Delete product

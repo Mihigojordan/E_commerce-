@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useRef } from 'react';
-import { Upload, X, Eye, Plus, Check, Package, Tag, DollarSign, Layers } from 'lucide-react';
-import MaterialService, { type Category } from '../../services/materialsService';
-import type { AxiosResponse } from 'axios';
-import productService from '../../services/ProductService';
+import { Check, Package, DollarSign, AlertTriangle, ShoppingBag, X, Plus } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import MaterialService from '../../../services/materialsService';
+import productService, { type Product } from '../../../services/ProductService';
+import { useNavigate, useParams } from 'react-router-dom';
+import SizeSection from '../../../components/dashboard/product/SizeSection';
+import FileUpload from '../../../components/dashboard/product/FileUpload';
+import TagsSection from '../../../components/dashboard/product/TagsSection';
+import CategorySection from '../../../components/dashboard/product/CategorySection';
 
 interface ProductFormData {
   name: string;
@@ -38,6 +44,11 @@ interface Errors {
   [key: string]: string | null;
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 const ProductForm: React.FC<{
   productId?: string;
   onSuccess?: (response: any) => void;
@@ -68,16 +79,8 @@ const ProductForm: React.FC<{
   const [removedFiles, setRemovedFiles] = useState<RemovedFileState>({ images: [] });
   const [newTag, setNewTag] = useState<string>('');
   const tagInputRef = useRef<HTMLInputElement>(null);
-
-  const sizeOptions = [
-    { value: 'XS', label: 'Extra Small', fullName: 'Extra Small' },
-    { value: 'S', label: 'Small', fullName: 'Small' },
-    { value: 'M', label: 'Medium', fullName: 'Medium' },
-    { value: 'L', label: 'Large', fullName: 'Large' },
-    { value: 'XL', label: 'Extra Large', fullName: 'Extra Large' },
-    { value: 'XXL', label: '2X Large', fullName: '2X Large' },
-    { value: 'XXXL', label: '3X Large', fullName: '3X Large' },
-  ];
+  const navigate = useNavigate();
+  const API_BASE_URL = "http://localhost:8000"; // Adjust to your backend domain
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -89,8 +92,41 @@ const ProductForm: React.FC<{
         setErrors(prev => ({ ...prev, general: 'Failed to load categories' }));
       }
     };
+
+    const fetchProduct = async () => {
+      if (productId) {
+        setIsLoading(true);
+        try {
+          const product = await productService.getProductById(productId);
+          setFormData({
+            name: product.name || '',
+            brand: product.brand || '',
+            size: product.size || '',
+            quantity: product.quantity || '',
+            price: product.price || 0,
+            unitPrice: product.price / (product.quantity || 1) || '',
+            perUnit: product.perUnit || '',
+            description: product.description || '',
+            subDescription: product.subDescription || '',
+            availability: product.availability ?? true,
+            tags: product.tags || [],
+            categoryId: product.categoryId || 0,
+            images: [],
+          });
+          setExistingFiles({
+            images: product.images?.map(img => img.startsWith('http') ? img : `${API_BASE_URL}${img}`) || [],
+          });
+        } catch (error: any) {
+          setErrors(prev => ({ ...prev, general: error.message || 'Failed to load product data' }));
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
     fetchCategories();
-  }, []);
+    fetchProduct();
+  }, [productId]);
 
   const handleInputChange = (field: keyof ProductFormData, value: string | number | boolean | '') => {
     setFormData(prev => {
@@ -113,13 +149,28 @@ const ProductForm: React.FC<{
   };
 
   const handleSizeChange = (sizeValue: string) => {
-    const sizeOption = sizeOptions.find(opt => opt.value === sizeValue);
+    const sizeOption = [
+      { value: 'XS', fullName: 'Extra Small' },
+      { value: 'S', fullName: 'Small' },
+      { value: 'M', fullName: 'Medium' },
+      { value: 'L', fullName: 'Large' },
+      { value: 'XL', fullName: 'Extra Large' },
+      { value: 'XXL', fullName: '2X Large' },
+      { value: 'XXXL', fullName: '3X Large' },
+    ].find(opt => opt.value === sizeValue);
     const fullSizeName = sizeOption ? sizeOption.fullName : sizeValue;
     handleInputChange('size', fullSizeName);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []).filter(file => file.type.startsWith('image/'));
+    const totalImages = existingFiles.images.length + files.images.length + newFiles.length;
+    
+    if (totalImages > 4) {
+      setErrors(prev => ({ ...prev, images: 'Maximum 4 images allowed' }));
+      return;
+    }
+
     setFiles(prev => ({ images: [...prev.images, ...newFiles] }));
     
     const newPreviews = newFiles.map(file => {
@@ -139,29 +190,34 @@ const ProductForm: React.FC<{
     }
   };
 
-  const removeFile = (index: number) => {
-    setFiles(prev => ({
-      images: prev.images.filter((_, i) => i !== index),
-    }));
-    setPreviewFiles(prev => ({
-      images: prev.images.filter((_, i) => i !== index),
-    }));
+  const removeFile = (index: number, isExisting: boolean) => {
+    if (isExisting) {
+      setExistingFiles(prev => {
+        const removedImage = prev.images[index];
+        setRemovedFiles(prev => ({ images: [...prev.images, removedImage] }));
+        return { images: prev.images.filter((_, i) => i !== index) };
+      });
+    } else {
+      setFiles(prev => ({
+        images: prev.images.filter((_, i) => i !== index),
+      }));
+      setPreviewFiles(prev => ({
+        images: prev.images.filter((_, i) => i !== index),
+      }));
+    }
   };
 
   const addTag = () => {
     let trimmedTag = newTag.trim();
-    // Prepend # if not present
     if (!trimmedTag.startsWith('#')) {
       trimmedTag = `#${trimmedTag}`;
     }
-    // Validate tag: must start with #, no spaces, non-empty
     if (trimmedTag && !trimmedTag.includes(' ') && !formData.tags.includes(trimmedTag)) {
       setFormData(prev => ({
         ...prev,
         tags: [...prev.tags, trimmedTag],
       }));
       setNewTag('');
-      // Delay focus to ensure input is ready after render
       setTimeout(() => {
         tagInputRef.current?.focus();
       }, 0);
@@ -191,10 +247,14 @@ const ProductForm: React.FC<{
       newErrors.unitPrice = 'Unit price must be greater than 0';
     }
     if (!formData.perUnit.trim()) newErrors.perUnit = 'Unit is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.description.trim()) newErrors.description = 'Short description is required';
+    if (!formData.subDescription.trim()) newErrors.subDescription = 'Detailed description is required';
     if (!formData.categoryId) newErrors.categoryId = 'Category is required';
     if (!files.images.length && !existingFiles.images.length) {
       newErrors.images = 'At least one product image is required';
+    }
+    if (files.images.length + existingFiles.images.length > 4) {
+      newErrors.images = 'Maximum 4 images allowed';
     }
 
     setErrors(newErrors);
@@ -214,21 +274,26 @@ const ProductForm: React.FC<{
       formDataToSend.append('price', String(formData.unitPrice ?? 0));
       formDataToSend.append('perUnit', formData.perUnit);
       formDataToSend.append('description', formData.description);
-      if (formData.subDescription) formDataToSend.append('subDescription', formData.subDescription);
+      formDataToSend.append('subDescription', formData.subDescription);
       formDataToSend.append('categoryId', String(formData.categoryId));
       formDataToSend.append('tags', JSON.stringify(formData.tags));
       formDataToSend.append('availability', String(formData.availability ?? true));
+      
+      if (productId) {
+        const keepImages = existingFiles.images.map(img => 
+          img.startsWith(API_BASE_URL) ? img.replace(API_BASE_URL, '') : img
+        );
+        formDataToSend.append('keepImages', JSON.stringify(keepImages));
+      }
 
       files.images?.forEach((file: File) => formDataToSend.append('images', file));
 
-      // Log FormData contents for debugging
-      for (const [key, value] of formDataToSend.entries()) {
-        console.log(`${key}: ${value}`);
+      let response;
+      if (productId) {
+        response = await productService.updateProduct(productId, formDataToSend);
+      } else {
+        response = await productService.createProduct(formDataToSend);
       }
-
-      const response = await productService.createProduct(formDataToSend);
-
-      console.log('API Response:', response);
 
       if (onSuccess) {
         onSuccess(response);
@@ -241,221 +306,116 @@ const ProductForm: React.FC<{
     }
   };
 
-  const SizeSection: React.FC = () => (
-    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="p-2 bg-blue-50 rounded-lg">
-          <Layers className="h-5 w-5 text-blue-600" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">Size</h3>
-          <p className="text-xs text-gray-500">Choose product size</p>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-4 gap-3">
-        {sizeOptions.map((option) => (
-          <div key={option.value} className="relative">
-            <input
-              type="radio"
-              id={`size-${option.value}`}
-              name="size"
-              value={option.value}
-              checked={formData.size === option.fullName}
-              onChange={() => handleSizeChange(option.value)}
-              className="sr-only"
-            />
-            <label
-              htmlFor={`size-${option.value}`}
-              className={`block w-full py-2.5 text-center text-xs font-medium rounded-lg border-2 cursor-pointer transition-all ${
-                formData.size === option.fullName
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {option.value}
-            </label>
-          </div>
-        ))}
-      </div>
-      {errors.size && (
-        <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
-          <X className="h-4 w-4" />
-          {errors.size}
-        </p>
-      )}
-    </div>
-  );
-
-  const FileUpload: React.FC = () => (
-    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="p-2 bg-primary-50 rounded-lg">
-          <Upload className="h-5 w-5 text-primary-600" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">Product Images</h3>
-          <p className="text-xs text-gray-500">Upload high-quality images</p>
-        </div>
-      </div>
-      
-      <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-primary-300 hover:bg-primary-50/20 transition-all cursor-pointer group">
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleFileChange}
-          className="hidden"
-          id="images"
-        />
-        <label htmlFor="images" className="cursor-pointer">
-          <div className="p-3 bg-gray-100 rounded-full w-fit mx-auto group-hover:bg-primary-100 transition-colors">
-            <Upload className="h-8 w-8 text-gray-400 group-hover:text-primary-500" />
-          </div>
-          <p className="mt-3 font-medium text-gray-900">Drop images here or click to browse</p>
-          <p className="text-xs text-gray-500 mt-1">PNG, JPG, JPEG up to 10MB each</p>
-        </label>
-      </div>
-
-      {previewFiles.images.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 mt-4">
-          {previewFiles.images.map((preview, index) => (
-            <div key={index} className="relative group rounded-lg overflow-hidden border border-gray-200">
-              <img src={preview} alt={`Preview ${index}`} className="h-24 w-full object-cover" />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => window.open(preview)}
-                  className="p-1.5 bg-white/90 rounded-full hover:bg-white transition-colors"
-                >
-                  <Eye className="h-4 w-4 text-gray-700" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeFile(index)}
-                  className="p-1.5 bg-white/90 rounded-full hover:bg-white transition-colors"
-                >
-                  <X className="h-4 w-4 text-red-600" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {errors.images && (
-        <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
-          <X className="h-4 w-4" />
-          {errors.images}
-        </p>
-      )}
-    </div>
-  );
-
-  const TagsSection: React.FC = () => (
-    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="p-2 bg-primary-50 rounded-lg">
-          <Tag className="h-5 w-5 text-primary-600" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">Product Tags</h3>
-          <p className="text-xs text-gray-500">Add searchable hashtags (e.g., #ProductTag, no spaces)</p>
-        </div>
-      </div>
-      
-      <div className="flex gap-2 mb-3">
-        <input
-          type="text"
-          value={newTag}
-          onChange={(e) => setNewTag(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              addTag();
-            }
-          }}
-          ref={tagInputRef}
-          className="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          placeholder="Enter hashtag (e.g., #ProductTag)"
-        />
-        <button
-          type="button"
-          onClick={addTag}
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-1"
-        >
-          <Plus className="h-4 w-4" />
-        </button>
-      </div>
-      
-      {errors.tags && (
-        <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
-          <X className="h-4 w-4" />
-          {errors.tags}
-        </p>
-      )}
-      
-      {formData.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {formData.tags.map((tag, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-1 px-3 py-1 bg-primary-100 text-primary-800 text-xs rounded-full border border-primary-200"
-            >
-              <span>{tag}</span>
-              <button
-                type="button"
-                onClick={() => removeTag(index)}
-                className="p-0.5 hover:bg-primary-200 rounded-full transition-colors"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  const CategorySection: React.FC = () => (
-    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="p-2 bg-green-50 rounded-lg">
-          <Layers className="h-5 w-5 text-green-600" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">Category</h3>
-          <p className="text-xs text-gray-500">Choose product category</p>
-        </div>
-      </div>
-      
-      <select
-        value={formData.categoryId}
-        onChange={(e) => handleInputChange('categoryId', parseInt(e.target.value))}
-        className="w-full px-3 py-3 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
-      >
-        <option value="0">Select a category</option>
-        {categories.map((category) => (
-          <option key={category.id} value={category.id}>
-            {category.name}
-          </option>
-        ))}
-      </select>
-      {errors.categoryId && (
-        <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
-          <X className="h-4 w-4" />
-          {errors.categoryId}
-        </p>
-      )}
-    </div>
-  );
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white rounded-xl p-8 shadow-lg text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600">Saving product...</p>
+          <p className="text-gray-600">{productId ? 'Loading product...' : 'Saving product...'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (categories?.length === 0 || !categories) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl p-8 shadow-lg text-center max-w-lg w-full">
+          <div className="flex justify-center mb-4">
+            <div className="bg-yellow-100 rounded-full p-3">
+              <AlertTriangle className="h-8 w-8 text-yellow-600" />
+            </div>
+          </div>
+          
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Prerequisites Required
+          </h2>
+          
+          <div className="text-gray-600 mb-6 space-y-3">
+            <p className="font-medium">
+              {!categories
+                ? "Categories could not be loaded. Please try refreshing the page."
+                : "No categories found in the system."
+              }
+            </p>
+            
+            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 text-left">
+              <h3 className="font-semibold text-primary-800 mb-2">To add products, you need:</h3>
+              <ul className="space-y-2 text-sm text-primary-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary-500 mt-1">1.</span>
+                  <span><strong>Product Categories:</strong> Create at least one category to organize your products</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary-500 mt-1">2.</span>
+                  <span><strong>Product Management Page:</strong> Navigate to the products section to add individual items</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary-500 mt-1">3.</span>
+                  <span><strong>Product Details:</strong> Each product requires a category, name, price, and description</span>
+                </li>
+              </ul>
+            </div>
+
+            <p className="text-sm text-gray-500">
+              Products must be assigned to categories for proper organization and filtering.
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            {!categories ? (
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <Package className="h-4 w-4" />
+                Reload Page
+              </button>
+            ) : null}
+            
+            <button
+              onClick={() => navigate('/admin/dashboard/category-management')}
+              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Create Categories First
+            </button>
+            
+            <button
+              onClick={() => navigate('/admin/dashboard/product-management')}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!categories || categories.length === 0}
+              title={!categories || categories.length === 0 ? "Create categories first" : "Go to product management"}
+            >
+              <ShoppingBag className="h-4 w-4" />
+              Manage Products
+            </button>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <div className="w-6 h-6 rounded-full bg-yellow-200 flex items-center justify-center">
+                  <span className="text-yellow-700 font-semibold">1</span>
+                </div>
+                <span>Categories</span>
+              </div>
+              <div className="w-8 h-px bg-gray-300"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500 font-semibold">2</span>
+                </div>
+                <span>Products</span>
+              </div>
+              <div className="w-8 h-px bg-gray-300"></div>
+              <div className="flex items-center gap-1">
+                <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500 font-semibold">3</span>
+                </div>
+                <span>Ready</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -463,7 +423,7 @@ const ProductForm: React.FC<{
 
   return (
     <div className="min-h-screen bg-gray-50 py-6">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="mx-auto px-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
           <div className="bg-gradient-to-r from-primary-600 to-primary-600 px-6 py-4">
             <h1 className="text-2xl font-bold text-white">
@@ -477,10 +437,32 @@ const ProductForm: React.FC<{
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-1 space-y-6">
-            <FileUpload />
-            <TagsSection />
-            <CategorySection />
-            <SizeSection />
+            <FileUpload
+              previewFiles={previewFiles}
+              existingFiles={existingFiles}
+              errors={errors}
+              handleFileChange={handleFileChange}
+              removeFile={removeFile}
+            />
+            <TagsSection
+              tags={formData.tags}
+              errors={errors}
+              newTag={newTag}
+              setNewTag={setNewTag}
+              addTag={addTag}
+              removeTag={removeTag}
+            />
+            <CategorySection
+              categoryId={formData.categoryId}
+              categories={categories}
+              errors={errors}
+              handleInputChange={handleInputChange}
+            />
+            <SizeSection
+              size={formData.size}
+              errors={errors}
+              handleSizeChange={handleSizeChange}
+            />
           </div>
 
           <div className="lg:col-span-2">
@@ -610,18 +592,33 @@ const ProductForm: React.FC<{
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                    Detailed Description
+                    Detailed Description <span className="text-red-500">*</span>
                   </label>
-                  <textarea
+                  <ReactQuill
                     value={formData.subDescription}
-                    onChange={(e) => handleInputChange('subDescription', e.target.value)}
-                    rows={8}
-                    className="w-full px-3 py-2.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                    placeholder="Provide comprehensive details about the product including features, specifications, materials, care instructions, etc. This will help customers make informed decisions."
+                    onChange={(value) => handleInputChange('subDescription', value)}
+                    theme="snow"
+                    className="w-full text-sm border border-gray-200 rounded-lg"
+                    modules={{
+                      toolbar: [
+                        [{ header: [1, 2, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['link'],
+                        ['clean'],
+                      ],
+                    }}
                   />
                   <div className="flex justify-between items-center mt-1">
-                    <p className="text-xs text-gray-500">Detailed product information for customers</p>
-                    <span className="text-xs text-gray-400">{formData.subDescription.length} characters</span>
+                    {errors.subDescription ? (
+                      <p className="text-xs text-red-600 flex items-center gap-1">
+                        <X className="h-3 w-3" />
+                        {errors.subDescription}
+                      </p>
+                    ) : (
+                      <span></span>
+                    )}
+                    <span className="text-xs text-gray-400">{formData.subDescription.replace(/<[^>]+>/g, '').length} characters</span>
                   </div>
                 </div>
 
@@ -679,14 +676,17 @@ const ProductForm: React.FC<{
 
 const ProductFormExample: React.FC = () => {
   const [showForm, setShowForm] = useState<boolean>(true);
-  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const { id: editingProductId } = useParams();
+  const navigate = useNavigate();
 
   const handleSuccess = (response: any) => {
+    navigate('/admin/dashboard/product-management');
     console.log("Product saved successfully:", response);
     setShowForm(false);
   };
 
   const handleCancel = () => {
+    navigate('/admin/dashboard/product-management');
     console.log("Form cancelled");
   };
 

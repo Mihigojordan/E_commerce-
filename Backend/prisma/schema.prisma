@@ -99,9 +99,9 @@ model Subscriber {
 model Blog {
   id          String      @id @default(cuid())
   title       String
-  description String
+  description String    @db.Text
   quote       String?
-  blog_image       String?
+  image       String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   replies     BlogReply[] // relation

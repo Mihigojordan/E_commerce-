@@ -614,8 +614,14 @@ const ShopViewPage: React.FC = () => {
 
                 <div className="p-8">
                   {activeTab === 'DESCRIPTION' && (
-                    <div className="prose max-w-none">
-                      <p className="text-gray-600 mb-4">{product.subDescription || product.description}</p>
+                    <div className="prose bg-white p-3 rounded border text-sm  text-gray-700 leading-relaxed  max-w-none">
+                                      <div className="">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: product.subDescription!
+                    }}
+                  />
+                </div>
                     </div>
                   )}
 

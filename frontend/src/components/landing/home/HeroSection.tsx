@@ -73,7 +73,7 @@ function LuxuryHeroSection() {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-8">
+      <div className="relative   w-[95%]  z-10  mx-auto   px-6 py-8">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Main Hero Slider */}
           <div className="xl:col-span-2 relative">
@@ -91,7 +91,7 @@ function LuxuryHeroSection() {
                   <div
                     className="absolute inset-0 bg-cover bg-center rounded-3xl"
                     style={{
-                      backgroundImage: `url(${heroSlides[currentSlide].image})`,
+                      backgroundImage: `linear-gradient(to right,rgba(255,255,255,0.3),rgba(0,0,0,0)),url(${heroSlides[currentSlide].image})`,
                     }}
                   />
                   {/* Overlay for better readability */}

@@ -18,7 +18,7 @@ export interface Blog {
   title: string;
   description: string;
   quote?: string;
-  blog_image?: string;
+  image?: string;
   createdAt?: Date;
   updatedAt?: Date;
   replies?: BlogReply[];

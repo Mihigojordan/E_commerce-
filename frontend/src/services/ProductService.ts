@@ -73,16 +73,49 @@ const productService = {
     }
   },
 
-  async updateProduct(id: string, productData: FormData | CreateProductData): Promise<Product> {
-    try {
-      console.log('➡️ Data being sent to updateProduct:', productData);
-      const response = await api.put(`/products/${id}`, productData);
-      return response.data.data;
-    } catch (error: any) {
-      console.error('Error updating product:', error.response?.data || error.message);
-      throw error;
+async updateProduct(
+  id: string,
+  productData: FormData | CreateProductData & { keepImages?: string[]; newImages?: File[] }
+): Promise<Product> {
+  try {
+    let payload: FormData | CreateProductData;
+
+    // If productData contains File objects or FormData, convert to FormData
+    if (productData instanceof FormData) {
+      payload = productData;
+    } else {
+      // Convert to FormData if any newImages are present
+      const formData = new FormData();
+
+      // Append all normal fields
+      for (const key in productData) {
+        if (productData[key] === undefined || productData[key] === null) continue;
+
+        if (key === 'tags' || key === 'keepImages') {
+          formData.append(key, JSON.stringify(productData[key]));
+        } else if (key === 'newImages' && Array.isArray(productData.newImages)) {
+          productData.newImages.forEach((file: File) => formData.append('images', file));
+        } else {
+          formData.append(key, productData[key]);
+        }
+      }
+
+      payload = formData;
     }
-  },
+
+    console.log('➡️ Data being sent to updateProduct:', payload);
+
+    const response = await api.put(`/products/${id}`, payload, {
+      headers: payload instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
+    });
+
+    return response.data.data;
+  } catch (error: any) {
+    console.error('Error updating product:', error.response?.data || error.message);
+    throw error;
+  }
+}
+,
 
   async deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
     try {
