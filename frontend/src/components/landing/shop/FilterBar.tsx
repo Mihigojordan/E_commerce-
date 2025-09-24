@@ -3,7 +3,7 @@ import { Filter, Search, X } from 'lucide-react';
 
 interface FilterBarProps {
   searchQuery: string;
-  setSearchQuery: (value: string) => void;
+  setSearchQuery: (query: string) => void;
   minPriceInput: string;
   setMinPriceInput: (value: string) => void;
   maxPriceInput: string;
@@ -29,6 +29,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
   selectedConditions,
   setSelectedConditions,
   setCurrentPage,
+  selectedCategory,
+  setSelectedCategory,
 }) => {
   const clearAllFilters = () => {
     setSearchQuery('');

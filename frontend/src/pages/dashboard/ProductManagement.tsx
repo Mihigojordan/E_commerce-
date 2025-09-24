@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 
 // Import your actual service
-import productService from "../../services/productService";
+import productService from "../../services/ProductService";
 import { useNavigate } from "react-router-dom";
 const API_BASE_URL = "http://localhost:8000"; // change to your backend domain
 
