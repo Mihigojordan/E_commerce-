@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -9,21 +10,19 @@ import {
   Instagram, 
   Linkedin,
   ArrowRight,
-  Users,
+
   Home,
   Info,
   ShoppingBag,
   User,
-  Heart,
+
   Package,
-  CreditCard,
-  Smartphone,
-  Monitor,
+
   Shield,
   Award,
   CheckCircle,
   AlertCircle,
-  Clock,
+
   MessageCircle
 } from 'lucide-react';
 import Logo from '../../assets/logo.png'
@@ -31,7 +30,8 @@ import Logo from '../../assets/logo.png'
 
 // Mock axios for demonstration
 const axios = {
-  post: async (url, data) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  post: async (url: any, data: { email: string | string[]; }) => {
     // Simulate API call
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -61,6 +61,7 @@ const Footer = () => {
     setMessage('');
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const response = await axios.post('/api/subscribe', {
         email: email,
         source: 'footer_newsletter'

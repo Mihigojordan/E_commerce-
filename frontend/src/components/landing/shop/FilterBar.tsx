@@ -29,8 +29,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   selectedConditions,
   setSelectedConditions,
   setCurrentPage,
-  selectedCategory,
-  setSelectedCategory,
+
 }) => {
   const clearAllFilters = () => {
     setSearchQuery('');

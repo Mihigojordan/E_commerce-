@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { getAllTestimonials } from '../../services/testmonialService'; // Adjust import path as needed
-import { console } from 'inspector';
+import testimonialService from '../../services/testmonialService'; // Adjust import path as needed
 
 const Testimonials = () => {
   const [currentTestimonialSlide, setCurrentTestimonialSlide] = useState(0);
@@ -10,24 +9,23 @@ const Testimonials = () => {
   const [error, setError] = useState(null);
 
   // Fetch testimonials from the database
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllTestimonials();
-        setTestimonials(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message || 'Failed to load testimonials');
-        setTestimonials([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+ useEffect(() => {
+  const fetchTestimonials = async () => {
+    try {
+      setLoading(true);
+      const data = await testimonialService.getAllTestimonials();
+      setTestimonials(data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load testimonials');
+      setTestimonials([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchTestimonials();
-    console.log(testimonials);
-  }, []);
+  fetchTestimonials();
+}, []);
 
   // Testimonials slideshow functions
   const nextTestimonialSlide = () => {

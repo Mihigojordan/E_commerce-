@@ -34,16 +34,24 @@ class TestimonialService {
    * @param testimonialData - Testimonial data
    * @returns Created testimonial
    */
-  async createTestimonial(testimonialData: FormData | CreateTestimonialInput): Promise<Testimonial> {
+  async createTestimonial(
+    testimonialData: FormData | CreateTestimonialInput
+  ): Promise<Testimonial> {
     try {
-      const response: AxiosResponse<Testimonial> = await this.api.post('/testimonials', testimonialData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response: AxiosResponse<Testimonial> = await this.api.post(
+        '/testimonials',
+        testimonialData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error creating testimonial:', error);
       const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to create testimonial';
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to create testimonial';
       throw new Error(errorMessage);
     }
   }
@@ -54,12 +62,15 @@ class TestimonialService {
    */
   async getAllTestimonials(): Promise<Testimonial[]> {
     try {
-      const response: AxiosResponse<Testimonial[]> = await this.api.get('/testimonials');
+      const response: AxiosResponse<Testimonial[]> =
+        await this.api.get('/testimonials');
       return response.data;
     } catch (error: any) {
       console.error('Error fetching testimonials:', error);
       const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to fetch testimonials';
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to fetch testimonials';
       throw new Error(errorMessage);
     }
   }
@@ -71,7 +82,9 @@ class TestimonialService {
    */
   async getTestimonialById(id: string): Promise<Testimonial | null> {
     try {
-      const response: AxiosResponse<Testimonial> = await this.api.get(`/testimonials/${id}`);
+      const response: AxiosResponse<Testimonial> = await this.api.get(
+        `/testimonials/${id}`
+      );
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 404) {
@@ -79,7 +92,9 @@ class TestimonialService {
       }
       console.error('Error fetching testimonial by ID:', error);
       const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to fetch testimonial';
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to fetch testimonial';
       throw new Error(errorMessage);
     }
   }
@@ -90,16 +105,25 @@ class TestimonialService {
    * @param updateData - Data to update
    * @returns Updated testimonial
    */
-  async updateTestimonial(id: string, updateData: FormData | UpdateTestimonialInput): Promise<Testimonial> {
+  async updateTestimonial(
+    id: string,
+    updateData: FormData | UpdateTestimonialInput
+  ): Promise<Testimonial> {
     try {
-      const response: AxiosResponse<Testimonial> = await this.api.put(`/testimonials/${id}`, updateData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response: AxiosResponse<Testimonial> = await this.api.put(
+        `/testimonials/${id}`,
+        updateData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error updating testimonial:', error);
       const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to update testimonial';
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to update testimonial';
       throw new Error(errorMessage);
     }
   }
@@ -111,12 +135,16 @@ class TestimonialService {
    */
   async deleteTestimonial(id: string): Promise<DeleteResponse> {
     try {
-      const response: AxiosResponse<DeleteResponse> = await this.api.delete(`/testimonials/${id}`);
+      const response: AxiosResponse<DeleteResponse> = await this.api.delete(
+        `/testimonials/${id}`
+      );
       return response.data;
     } catch (error: any) {
       console.error('Error deleting testimonial:', error);
       const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to delete testimonial';
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to delete testimonial';
       throw new Error(errorMessage);
     }
   }
@@ -125,12 +153,3 @@ class TestimonialService {
 // Singleton instance
 const testimonialService = new TestimonialService();
 export default testimonialService;
-
-// Named exports
-export const {
-  createTestimonial,
-  getAllTestimonials,
-  getTestimonialById,
-  updateTestimonial,
-  deleteTestimonial,
-} = testimonialService;

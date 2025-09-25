@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from "react";
 import {
-  MapPin,
-  Plane,
-  Users,
+
   TrendingUp,
   User,
   X,
-  Building,
-  Briefcase,
-  User2,
+
   Store,
-  Hotel,
-  Package,
+
   Layers,
-  Ruler,
+
   ChevronDown,
   ChevronUp,
-  Boxes,
-  MapMinusIcon,
+
   Newspaper,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
-import Logo from '../../assets/take.jpg';
+import Logo from '../../assets/logo.png';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -167,9 +161,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
       <div className={`fixed left-0 top-0 min-h-screen bg-white flex flex-col border-r border-primary-200 shadow-lg transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"} w-64 lg:w-70`}>
         <div className="flex items-center justify-between p-4 border-b border-primary-200">
           <div className="flex items-center space-x-2">
-            <div className="flex items-center justify-center w-[180px] h-14 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg">
+            <div className="flex items-center justify-center w-[180px] h-8  rounded-lg">
               <div className="flex items-center space-x-0.5">
-                <img src={Logo} alt="" className="h-[200px] w-[200px]" />
+                <img src={Logo} alt="" className="h-[160px] w-[220px]" />
               </div>
             </div>
             <div>

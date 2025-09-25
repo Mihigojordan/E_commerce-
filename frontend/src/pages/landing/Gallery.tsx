@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { motion } from "framer-motion";
 import { 
   X,
@@ -12,6 +12,7 @@ import {
 
 // Simulate environment variable - replace with your actual website URL
 const WEBSITE_URL = import.meta.VITE_WEBSITE_URL || "https://yourjewelrystore.com";
+import HeaderBanner from '../../components/landing/HeaderBanner';
 
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -174,7 +175,7 @@ export default function Gallery() {
     setShowShareOptions(false);
   };
 
-  const toggleLike = (imageId, e) => {
+  const toggleLike = (imageId: unknown, e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     const newLikedImages = new Set(likedImages);
     if (newLikedImages.has(imageId)) {
@@ -185,7 +186,7 @@ export default function Gallery() {
     setLikedImages(newLikedImages);
   };
 
-  const downloadImage = async (imageUrl, imageName) => {
+  const downloadImage = async (imageUrl: string | URL | Request | undefined, imageName: string) => {
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
@@ -245,14 +246,12 @@ const shareToWhatsApp = (image: { title: string }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <GalleryVertical className="w-16 h-16 mx-auto mb-4" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Gallery</h1>
-          <p className="text-xl opacity-90">Home / Our Gallery</p>
-        </div>
-      </div>
+  <HeaderBanner
+        title="HR Blogs"
+        subtitle="Home / Blogs"
+        backgroundStyle="image"
+        icon={<GalleryVertical className="w-10 h-10" />}
+      />
 
       {/* Masonry Grid */}
       <section className="py-16">

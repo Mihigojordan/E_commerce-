@@ -20,6 +20,7 @@ const AboutPage = () => {
   ];
 
   // Statistics data
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const stats = [
     { number: "10M+", label: "Happy Customers", icon: Users },
     { number: "500K+", label: "Products Sold", icon: ShoppingBag },

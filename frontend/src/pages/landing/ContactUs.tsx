@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent, type JSX } from "react";
 import { 
-  Phone, Mail, MapPin, Clock, Send, MessageCircle, User, ArrowRight, CheckCircle, Users
+  Phone, Mail, Clock, Send, MessageCircle, User, ArrowRight, CheckCircle, Users
 } from "lucide-react";
 import contactService, { type CreateContactMessageInput } from "../../services/contactService"; // Adjust path as needed
 import HeaderBanner from "../../components/landing/HeaderBanner";
@@ -22,14 +22,6 @@ interface ContactMethod {
   availability: string;
 }
 
-interface OfficeLocation {
-  name: string;
-  address: string;
-  city: string;
-  phone: string;
-  hours: string;
-  services: string[];
-}
 
 export default function EcommerceContactPage() {
   const [formData, setFormData] = useState<FormData>({
@@ -77,6 +69,7 @@ export default function EcommerceContactPage() {
         });
         setTimeout(() => setFormSubmitted(false), 3000);
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || 'Failed to submit message. Please try again.');
     } finally {
@@ -108,25 +101,6 @@ export default function EcommerceContactPage() {
       info: ["Available on portal", "WhatsApp: +250 788 123 456"],
       action: "Start Chat",
       availability: "8 AM - 6 PM"
-    }
-  ];
-
-  const officeLocations: OfficeLocation[] = [
-    {
-      name: "Main Office",
-      address: "KG 15 Ave, Kimihurura",
-      city: "Kigali, Rwanda",
-      phone: "+250 788 123 456",
-      hours: "Mon - Fri: 8:00 AM - 6:00 PM",
-      services: ["Customer Support", "Order Processing", "Returns Management"]
-    },
-    {
-      name: "Operations Center",
-      address: "KN 3 Rd, Nyarutarama",
-      city: "Kigali, Rwanda",
-      phone: "+250 788 654 321",
-      hours: "Mon - Fri: 9:00 AM - 5:00 PM",
-      services: ["Logistics Support", "Vendor Management", "Technical Support"]
     }
   ];
 
