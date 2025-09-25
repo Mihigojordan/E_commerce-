@@ -13,6 +13,9 @@ export class TestimonialController {
     if(files?.profileImage){
         data.profileImage = `/uploads/testmonial-photos/${files?.profileImage?.[0].filename}`
     }
+    if(data.rate){
+      data.rate = Number(data.rate)
+    }
     return this.testimonialService.create(data);
   }
 
@@ -31,6 +34,9 @@ export class TestimonialController {
   update(@Param('id') id: string, @Body() data: any,  @UploadedFiles() files?: { profileImage?: Express.Multer.File[] }) {
     if(files?.profileImage){
         data.profileImage = `/uploads/testmonial-photos/${files?.profileImage?.[0].filename}`
+    }
+     if(data.rate){
+      data.rate = Number(data.rate)
     }
     return this.testimonialService.update(id, data);
   }

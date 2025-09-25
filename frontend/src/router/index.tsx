@@ -44,6 +44,9 @@ import BlogDashboard from '../pages/dashboard/blog/BlogManagement';
 import BlogFormPage from '../pages/dashboard/blog/BlogFormPage';
 import ProductViewMorePage from '../pages/dashboard/product/ProductViewPage';
 import BlogViewMorePage from '../pages/dashboard/blog/BlogViewMorePage';
+import TestimonialDashboard from '../pages/dashboard/testimonial/TestimonialManagement';
+import TestimonialFormExample from '../pages/dashboard/testimonial/TestimonialFormPage';
+import TestimonialViewMorePage from '../pages/dashboard/testimonial/TestimonialViewMorePage';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -310,6 +313,38 @@ const routes = createBrowserRouter([
                 element: (
                   <SuspenseWrapper>
                   <BlogViewMorePage />
+                  </SuspenseWrapper>
+                ),
+              },
+                            {
+                path: 'testimonial-management',
+                element: (
+                  <SuspenseWrapper>
+                  <TestimonialDashboard />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'testimonial-management/add',
+                element: (
+                  <SuspenseWrapper>
+                    <TestimonialFormExample />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'testimonial-management/edit/:id',
+                element: (
+                  <SuspenseWrapper>
+                    <TestimonialFormExample />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'testimonial-management/:id',
+                element: (
+                  <SuspenseWrapper>
+                  <TestimonialViewMorePage />
                   </SuspenseWrapper>
                 ),
               },

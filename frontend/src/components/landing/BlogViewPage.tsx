@@ -2,48 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Calendar,
-  User,
-  Clock,
-  Tag,
-  Eye,
-  Heart,
-  Share2,
-  ArrowLeft,
-  ThumbsUp,
   MessageSquare,
-  Bookmark,
+  ArrowLeft,
+  Share2,
   Facebook,
   Twitter,
   Linkedin,
   Link2,
   ChevronRight,
-  Star
+  ChevronLeft,
+  Send,
+  User,
+  Mail,
+  Clock
 } from 'lucide-react';
-
-import { blogs } from '../../store/Blogs';
 import HeaderBanner from './HeaderBanner';
+import blogService from '../../services/blogService';
+import { API_URL } from '../../api/api';
 
-
-// Define interfaces
 interface Blog {
-  id: number;
+  id: string;
   title: string;
-  image: string;
-  category: string;
-  author: string;
-  authorRole: string;
-  publishDate: string; // ISO date string or similar
-  readTime: string;
-  views: number;
-  likes: number;
-  excerpt: string;
-  tags: string[];
+  description: string;
+  quote?: string;
+  image?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  replies?: {
+    id: string;
+    blogId: string;
+    fullName: string;
+    email: string;
+    message: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }[];
+}
+
+interface BlogReply {
+  id: string;
+  blogId: string;
+  fullName: string;
+  email: string;
+  message: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface HeaderBannerProps {
   title: string;
   subtitle: string;
-  backgroundStyle: 'image' | string; // Adjust based on actual HeaderBanner props
+  backgroundStyle: 'image' | string;
   icon: React.ReactNode;
 }
 
@@ -51,41 +60,87 @@ const BlogViewPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const [blog, setBlog] = useState<Blog | null>(null);
   const [latestBlogs, setLatestBlogs] = useState<Blog[]>([]);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const [likes, setLikes] = useState<number>(0);
+  const [replies, setReplies] = useState<BlogReply[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showReplyForm, setShowReplyForm] = useState<boolean>(false);
+  const [replyForm, setReplyForm] = useState<{ fullName: string; email: string; message: string }>({
+    fullName: '',
+    email: '',
+    message: ''
+  });
+  const [submittingReply, setSubmittingReply] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const repliesPerPage = 5;
 
   useEffect(() => {
-    // Find the current blog
-    const currentBlog = blogs.find((b:Blog) => b.id === parseInt(id || '0'));
-    setBlog(currentBlog ?? null);
-    
-    if (currentBlog) {
-      setLikes(currentBlog.likes);
-      
-      // Get latest blogs excluding the current one
-      const filteredBlogs = blogs
-        .filter((b:Blog) => b.id !== parseInt(id || '0'))
-        .sort((a:Blog, b:Blog) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime())
-        .slice(0, 5);
-      
-      setLatestBlogs(filteredBlogs);
-    }
+    const fetchBlogData = async () => {
+      if (!id) {
+        setError('Invalid blog ID');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        // Fetch the current blog
+        const currentBlog = await blogService.getBlogById(id);
+        setBlog(currentBlog);
+
+        // Fetch replies for the blog
+        const blogReplies = await blogService.getReplies(id);
+        setReplies(blogReplies);
+
+        // Fetch all blogs for the latest articles
+        const allBlogs = await blogService.getAllBlogs();
+        const filteredBlogs = allBlogs
+          .filter((b: Blog) => b.id !== id)
+          .sort((a: Blog, b: Blog) =>
+            (b.createdAt ? new Date(b.createdAt).getTime() : 0) -
+            (a.createdAt ? new Date(a.createdAt).getTime() : 0)
+          )
+          .slice(0, 5);
+        setLatestBlogs(filteredBlogs);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch blog or replies');
+        setBlog(null);
+        setReplies([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogData();
   }, [id]);
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikes(prev => isLiked ? prev - 1 : prev + 1);
-  };
+  const handleReplySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !replyForm.fullName || !replyForm.email || !replyForm.message) return;
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+    try {
+      setSubmittingReply(true);
+      await blogService.addReply(id, {
+        fullName: replyForm.fullName,
+        email: replyForm.email,
+        message: replyForm.message
+      });
+      const updatedReplies = await blogService.getReplies(id);
+      setReplies(updatedReplies);
+      setReplyForm({ fullName: '', email: '', message: '' });
+      setShowReplyForm(false);
+      setCurrentPage(1); // Reset to first page to show new reply
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit reply');
+    } finally {
+      setSubmittingReply(false);
+    }
   };
 
   const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin' | 'copy') => {
     const url = window.location.href;
     const title = blog?.title || '';
-    
+
     const shareUrls: Record<string, string> = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
       twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
@@ -102,13 +157,56 @@ const BlogViewPage: React.FC = () => {
     }
   };
 
-  if (!blog) {
+  const formatDate = (date?: Date): string => {
+    if (!date) return 'Unknown Date';
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (date?: Date): string => {
+    if (!date) return 'Unknown Time';
+    return new Date(date).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Pagination for replies
+  const totalPages = Math.ceil(replies.length / repliesPerPage);
+  const startIndex = (currentPage - 1) * repliesPerPage;
+  const currentReplies = replies.slice(startIndex, startIndex + repliesPerPage);
+
+  const handlePrevPage = () => {
+    setCurrentPage(prev => Math.max(1, prev - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(totalPages, prev + 1));
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Blog not found</h2>
-          <Link 
-            to="/blogs" 
+          <div className="inline-flex items-center space-x-2">
+            <div className="w-5 h-5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-lg text-gray-700">Loading blog...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!blog || error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Blog not found'}</h2>
+          <Link
+            to="/blogs"
             className="text-primary-600 hover:text-primary-700 font-semibold flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -135,12 +233,12 @@ const BlogViewPage: React.FC = () => {
       />
 
       <div className="py-12 relative">
-        <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8">
+        <div className="w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-4 gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               {/* Back Button */}
-              <Link 
+              <Link
                 to="/blogs"
                 className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold mb-6 transition-colors"
               >
@@ -153,15 +251,10 @@ const BlogViewPage: React.FC = () => {
                 {/* Hero Image */}
                 <div className="relative">
                   <img
-                    src={blog.image}
+                    src={blog.image ? `${API_URL}${blog.image}` : 'https://via.placeholder.com/800x400'}
                     alt={blog.title}
-                    className="w-full h-80 object-cover"
+                    className="w-full h-[30vh] sm:h-[50vh] object-cover"
                   />
-                  <div className="absolute top-6 left-6">
-                    <span className="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-                      {blog.category}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Article Header */}
@@ -170,122 +263,184 @@ const BlogViewPage: React.FC = () => {
                     {blog.title}
                   </h1>
 
-                  {/* Author Info */}
+                  {/* Meta Info */}
                   <div className="flex flex-wrap items-center justify-between mb-8 pb-6 border-b border-gray-200">
-                    <div className="flex items-center space-x-4 mb-4 lg:mb-0">
-                      <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-primary-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{blog.author}</p>
-                        <p className="text-sm text-gray-600">{blog.authorRole}</p>
-                      </div>
-                    </div>
-
                     <div className="flex items-center space-x-6 text-sm text-gray-600">
                       <span className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
-                        {new Date(blog.publishDate).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
+                        {formatDate(blog.createdAt)}
                       </span>
                       <span className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        {blog.readTime}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        <Eye className="w-4 h-4" />
-                        {blog.views.toLocaleString()} views
+                        <MessageSquare className="w-4 h-4" />
+                        {(replies.length || 0).toLocaleString()} Replies
                       </span>
                     </div>
                   </div>
 
                   {/* Article Content */}
                   <div className="prose prose-lg max-w-none mb-8">
-                    <div className="text-xl text-gray-700 font-medium mb-6 leading-relaxed">
-                      {blog.excerpt}
-                    </div>
-                    
-                    <div className="space-y-6 text-gray-700 leading-relaxed">
-                      <p>
-                        In today's rapidly evolving workplace, organizations are constantly seeking innovative approaches to enhance productivity, employee satisfaction, and overall business performance. This comprehensive guide explores cutting-edge strategies and proven methodologies that can transform your HR practices.
-                      </p>
-                      
-                      <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Key Implementation Strategies</h2>
-                      
-                      <p>
-                        The foundation of successful HR transformation lies in understanding both the current landscape and future trends. By implementing data-driven approaches and focusing on employee-centric solutions, organizations can create sustainable competitive advantages.
-                      </p>
-                      
-                      <ul className="list-disc pl-6 space-y-2">
-                        <li>Develop comprehensive onboarding programs that engage employees from day one</li>
-                        <li>Implement performance management systems that focus on growth and development</li>
-                        <li>Create flexible work arrangements that accommodate diverse employee needs</li>
-                        <li>Establish clear communication channels that promote transparency and collaboration</li>
-                      </ul>
-                      
-                      <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Measuring Success</h2>
-                      
-                      <p>
-                        Effective measurement is crucial for understanding the impact of your HR initiatives. Key performance indicators should align with both organizational goals and employee satisfaction metrics.
-                      </p>
-                      
-                      <blockquote className="border-l-4 border-primary-600 pl-6 italic text-lg text-gray-800 my-8">
-                        "The best HR strategies are those that create value for both the organization and its employees, fostering an environment where everyone can thrive and contribute to shared success."
-                      </blockquote>
-                      
-                      <p>
-                        As we move forward, the integration of technology and human-centered approaches will continue to shape the future of HR. Organizations that embrace these changes while maintaining focus on their core values will be best positioned for long-term success.
-                      </p>
-                    </div>
+                    <div
+                      className="space-y-6 text-gray-700 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: blog.description || 'No content available' }}
+                    />
                   </div>
 
-                  {/* Tags */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {blog.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm cursor-pointer hover:bg-primary-200 transition-colors"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
+                  {/* Replies Section */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between mb-8">
+                      <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        <MessageSquare className="w-6 h-6 text-primary-600" />
+                        Replies ({replies.length})
+                      </h2>
+                      <button
+                        onClick={() => setShowReplyForm(!showReplyForm)}
+                        className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                      >
+                        <Send className="w-4 h-4" />
+                        Add Reply
+                      </button>
                     </div>
+
+                    {/* Reply Form */}
+                    {showReplyForm && (
+                      <form onSubmit={handleReplySubmit} className="bg-gray-50 rounded-xl p-6 mb-8 border border-gray-100">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Share your thoughts</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                              Full Name <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={replyForm.fullName}
+                              onChange={(e) => setReplyForm(prev => ({ ...prev, fullName: e.target.value }))}
+                              className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="Enter your full name"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                              Email <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="email"
+                              value={replyForm.email}
+                              onChange={(e) => setReplyForm(prev => ({ ...prev, email: e.target.value }))}
+                              className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              placeholder="Enter your email"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                            Message <span className="text-red-500">*</span>
+                          </label>
+                          <textarea
+                            value={replyForm.message}
+                            onChange={(e) => setReplyForm(prev => ({ ...prev, message: e.target.value }))}
+                            rows={4}
+                            className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                            placeholder="Share your thoughts about this blog post..."
+                            required
+                          />
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            type="submit"
+                            disabled={submittingReply}
+                            className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-primary-600 hover:bg-primary-700 disabled:bg-primary-300 text-white rounded-lg transition-colors shadow-lg hover:shadow-xl"
+                          >
+                            {submittingReply ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : (
+                              <Send className="w-4 h-4" />
+                            )}
+                            {submittingReply ? 'Submitting...' : 'Submit Reply'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowReplyForm(false)}
+                            className="px-6 py-2.5 text-sm font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    )}
+
+                    {/* Replies List */}
+                    {replies.length === 0 ? (
+                      <div className="text-center py-12">
+                        <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No replies yet</h3>
+                        <p className="text-gray-500">Be the first to share your thoughts on this blog post!</p>
+                      </div>
+                    ) : (
+                      <>
+                        {currentReplies.map((reply) => (
+                          <div key={reply.id} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                            <div className="flex items-start gap-4">
+                              <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <User className="w-5 h-5 text-primary-600" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h4 className="font-semibold text-gray-900">{reply.fullName}</h4>
+                                  <div className="flex items-center gap-1 text-gray-500 text-sm">
+                                    <Mail className="w-3 h-3" />
+                                    <span>{reply.email}</span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 mb-3 text-sm text-gray-500">
+                                  <Calendar className="w-3 h-3" />
+                                  <span>{formatDate(reply.createdAt)}</span>
+                                  <Clock className="w-3 h-3" />
+                                  <span>{formatTime(reply.createdAt)}</span>
+                                </div>
+                                <p className="text-gray-700 leading-relaxed">{reply.message}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {replies.length > repliesPerPage && (
+                          <div className="flex items-center justify-between mt-6">
+                            <button
+                              onClick={handlePrevPage}
+                              disabled={currentPage === 1}
+                              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                                currentPage === 1
+                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                  : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
+                              }`}
+                            >
+                              <ChevronLeft className="w-4 h-4" />
+                              Previous
+                            </button>
+                            <span className="text-sm text-gray-600">
+                              Page {currentPage} of {totalPages}
+                            </span>
+                            <button
+                              onClick={handleNextPage}
+                              disabled={currentPage === totalPages}
+                              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                                currentPage === totalPages
+                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                  : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
+                              }`}
+                            >
+                              Next
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
 
-                  {/* Engagement Actions */}
+                  {/* Share Buttons */}
                   <div className="flex flex-wrap items-center justify-between pt-6 border-t border-gray-200">
-                    <div className="flex items-center space-x-4 mb-4 lg:mb-0">
-                      <button
-                        onClick={handleLike}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                          isLiked 
-                            ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                        {likes}
-                      </button>
-
-                      <button
-                        onClick={handleBookmark}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                          isBookmarked 
-                            ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200' 
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                        {isBookmarked ? 'Saved' : 'Save'}
-                      </button>
-                    </div>
-
-                    {/* Share Buttons */}
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-semibold text-gray-700 mr-2">Share:</span>
                       <button
@@ -333,7 +488,7 @@ const BlogViewPage: React.FC = () => {
                       >
                         <div className="flex space-x-4">
                           <img
-                            src={latestBlog.image}
+                            src={latestBlog.image ? `${API_URL}${latestBlog.image}` : 'https://via.placeholder.com/80x64'}
                             alt={latestBlog.title}
                             className="w-20 h-16 object-cover rounded-lg flex-shrink-0"
                           />
@@ -344,11 +499,7 @@ const BlogViewPage: React.FC = () => {
                             <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500">
                               <span className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
-                                {new Date(latestBlog.publishDate).toLocaleDateString()}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {latestBlog.readTime}
+                                {formatDate(latestBlog.createdAt)}
                               </span>
                             </div>
                           </div>
@@ -356,7 +507,6 @@ const BlogViewPage: React.FC = () => {
                       </Link>
                     ))}
                   </div>
-                  
                   <Link
                     to="/blogs"
                     className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold mt-4 text-sm"
@@ -364,21 +514,6 @@ const BlogViewPage: React.FC = () => {
                     View All Articles
                     <ChevronRight className="w-4 h-4" />
                   </Link>
-                </div>
-
-                {/* Popular Tags */}
-                <div className="bg-gradient-to-br from-primary-50 to-white rounded-2xl shadow-lg p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Popular Tags</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["HR Best Practices", "Employee Engagement", "Remote Work", "Leadership", "Payroll", "Compliance"].map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm cursor-pointer hover:bg-primary-200 transition-colors"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Newsletter Signup */}

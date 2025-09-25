@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Upload, Eye, X } from 'lucide-react';
 
-interface FileUploadBlogProps {
+interface FileUploadTestimonialProps {
   previewFile: string | null;
   existingFile: string | null;
-  errors: { image?: string | null };
+  errors: { profileImage?: string | null };
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   removeFile: () => void;
 }
 
-const FileUploadBlog: React.FC<FileUploadBlogProps> = ({
+const FileUploadTestimonial: React.FC<FileUploadTestimonialProps> = ({
   previewFile,
   existingFile,
   errors,
@@ -50,8 +50,6 @@ const FileUploadBlog: React.FC<FileUploadBlogProps> = ({
         } as any;
         handleFileChange(syntheticEvent);
       } else {
-        // Assuming the parent component handles errors similarly
-        // If not, you might need to pass an error handler prop
         console.error('Please drop a valid image file');
       }
     }
@@ -64,7 +62,7 @@ const FileUploadBlog: React.FC<FileUploadBlogProps> = ({
           <Upload className="h-5 w-5 text-primary-600" />
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">Blog Image</h3>
+          <h3 className="font-semibold text-gray-900">Profile Image</h3>
           <p className="text-xs text-gray-500">Upload one high-quality image</p>
         </div>
       </div>
@@ -85,9 +83,9 @@ const FileUploadBlog: React.FC<FileUploadBlogProps> = ({
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id="image"
+          id="profileImage"
         />
-        <label htmlFor="image" className="cursor-pointer">
+        <label htmlFor="profileImage" className="cursor-pointer">
           <div
             className={`p-3 rounded-full w-fit mx-auto transition-colors ${
               isDragging ? 'bg-primary-100' : 'bg-gray-100 group-hover:bg-primary-100'
@@ -111,7 +109,7 @@ const FileUploadBlog: React.FC<FileUploadBlogProps> = ({
           <div className="relative group rounded-lg overflow-hidden border border-gray-200">
             <img
               src={previewFile || existingFile || ''}
-              alt="Blog image"
+              alt="Profile image"
               className="h-24 w-full object-cover"
             />
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
@@ -134,14 +132,14 @@ const FileUploadBlog: React.FC<FileUploadBlogProps> = ({
         </div>
       )}
 
-      {errors.image && (
+      {errors.profileImage && (
         <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
           <X className="h-4 w-4" />
-          {errors.image}
+          {errors.profileImage}
         </p>
       )}
     </div>
   );
 };
 
-export default FileUploadBlog;
+export default FileUploadTestimonial;
