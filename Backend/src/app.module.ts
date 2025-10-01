@@ -9,12 +9,16 @@ import { PartnerModule } from './Modules/partner-management/partner.module';
 import { TestimonialModule } from './Modules/testmonial-management/testmonial.module';
 import { BlogModule } from './Modules/Blog-management/blog.module';
 import { ContactModule } from './Modules/Contact-us/contact.module';
+import { OrderModule } from './Modules/order-management/order.module';
+import { PaymentModule } from './Modules/payment-management/payment.module';
+import { EmailModule } from './Global/email/email.module';
 @Module({
   imports: [
 
     ConfigModule.forRoot({
       isGlobal: true, // so you don't have to import ConfigModule in every module
     }),
+    EmailModule,
     CommonModule,
     AdminModule,
     CategoryModule,
@@ -22,7 +26,9 @@ import { ContactModule } from './Modules/Contact-us/contact.module';
     PartnerModule,
     TestimonialModule,
     BlogModule,
-    ContactModule
+    ContactModule,
+    OrderModule,
+    PaymentModule,
     
   ],
   controllers: [],

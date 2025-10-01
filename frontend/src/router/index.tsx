@@ -47,6 +47,7 @@ import BlogViewMorePage from '../pages/dashboard/blog/BlogViewMorePage';
 import TestimonialDashboard from '../pages/dashboard/testimonial/TestimonialManagement';
 import TestimonialFormExample from '../pages/dashboard/testimonial/TestimonialFormPage';
 import TestimonialViewMorePage from '../pages/dashboard/testimonial/TestimonialViewMorePage';
+import PaymentStatusPage from '../pages/landing/PaymentStatusPage';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -108,6 +109,14 @@ const routes = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <ShoppingCartPage />
+              </SuspenseWrapper>
+            ),
+          },
+            {
+            path: 'payment-status',
+            element: (
+              <SuspenseWrapper>
+                <PaymentStatusPage />
               </SuspenseWrapper>
             ),
           },

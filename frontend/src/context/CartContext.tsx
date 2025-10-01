@@ -1,9 +1,9 @@
-// src/context/CartContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import type { Product } from "../services/ProductService"; // adjust import path if needed
+import type { Product } from "../services/ProductService";
+import productService from "../services/ProductService";
 
 export interface CartItem extends Product {
-  cartQuantity: number; // separate from product.stock/quantity
+  cartQuantity: number;
 }
 
 interface CartContextType {
@@ -19,27 +19,41 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize state with localStorage data immediately to prevent cart loss on refresh
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    // Check if we're in a browser environment (not SSR)
-    if (typeof window === 'undefined') return [];
-    
-    try {
-      const storedCart = localStorage.getItem("cart");
-      return storedCart ? JSON.parse(storedCart) : [];
-    } catch (error) {
-      console.error("Failed to load cart from localStorage:", error);
-      return [];
-    }
-  });
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Save cart to localStorage whenever it changes
+  // On mount, load cart from localStorage and filter items from database
   useEffect(() => {
-    // Check if we're in a browser environment
-  
-    if (typeof window === 'undefined') return;
+    const loadCart = async () => {
+      if (typeof window === "undefined") return;
+      try {
+        const storedCart = localStorage.getItem("cart");
+        if (!storedCart) return;
 
-    
+        const parsedCart: CartItem[] = JSON.parse(storedCart);
+        const validCart: CartItem[] = [];
+
+        for (const item of parsedCart) {
+          try {
+            const product = await productService.getProductById(item.id);
+            validCart.push({ ...product, cartQuantity: item.cartQuantity });
+          } catch (error) {
+            // Product no longer exists, skip it
+            console.warn(`Product ${item.id} not found in DB, removing from cart`);
+          }
+        }
+
+        setCart(validCart);
+        localStorage.setItem("cart", JSON.stringify(validCart));
+      } catch (error) {
+        console.error("Failed to load cart from localStorage or database:", error);
+      }
+    };
+
+    loadCart();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     try {
       localStorage.setItem("cart", JSON.stringify(cart));
     } catch (error) {

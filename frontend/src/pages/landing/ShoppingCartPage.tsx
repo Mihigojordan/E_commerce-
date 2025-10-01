@@ -13,11 +13,13 @@ import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../api/api';
 import Swal from 'sweetalert2';
+import CheckoutModal from '../../components/landing/shop/CheckOutModal'; // Import the checkout modal
 
 const ShoppingCartPage: React.FC = () => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const [localCart, setLocalCart] = useState(cart);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false); // Add state for modal
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -141,7 +143,20 @@ const ShoppingCartPage: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    navigate('/checkout');
+    // Check if cart has unsaved changes
+    if (hasCartChanged()) {
+      Swal.fire({
+        title: 'Unsaved Changes',
+        text: 'You have unsaved changes in your cart. Please update your cart before proceeding to checkout.',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Update Cart First'
+      });
+      return;
+    }
+    
+    // Open the checkout modal
+    setIsCheckoutOpen(true);
   };
 
   const totalItems = localCart.reduce((sum, item) => sum + item.cartQuantity, 0);
@@ -369,6 +384,12 @@ const ShoppingCartPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      <CheckoutModal 
+        isOpen={isCheckoutOpen} 
+        onClose={() => setIsCheckoutOpen(false)} 
+      />
     </div>
   );
 };
