@@ -9,7 +9,7 @@ export const createUnifiedUploadConfig = (): MulterOptions => ({
     destination: (req, file, cb) => {
       let subFolder: string | undefined;
 
-      if (file.fieldname === 'profileImage ') {
+      if (file.fieldname === 'profileImage') {
         subFolder = 'testmonial-photos';
       }else if (file.fieldname === 'logo') {
         subFolder = 'partner-photos'; 

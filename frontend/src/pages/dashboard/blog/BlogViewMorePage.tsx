@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Calendar, 
-  User, 
-  MessageCircle, 
-  Share2, 
-  Heart, 
-  Send, 
-  Quote, 
-  ArrowLeft, 
-  Clock, 
-  Mail, 
-  ChevronLeft, 
-  ChevronRight, 
-  Edit 
+import {
+  Calendar,
+  User,
+  MessageCircle,
+  Share2,
+  Heart,
+  Send,
+  Quote,
+  ArrowLeft,
+  Clock,
+  Mail,
+  ChevronLeft,
+  ChevronRight,
+  Edit
 } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -164,9 +164,8 @@ const BlogViewMorePage: React.FC = () => {
               <div className="absolute top-4 right-4 flex gap-2">
                 <button
                   onClick={() => setIsLiked(!isLiked)}
-                  className={`bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all ${
-                    isLiked ? 'text-red-500' : 'text-gray-600'
-                  }`}
+                  className={`bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all ${isLiked ? 'text-red-500' : 'text-gray-600'
+                    }`}
                 >
                   <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
                 </button>
@@ -216,11 +215,10 @@ const BlogViewMorePage: React.FC = () => {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`py-4 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${
-                        activeTab === tab
-                          ? 'border-primary-500 text-primary-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
+                      className={`py-4 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${activeTab === tab
+                        ? 'border-primary-500 text-primary-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
                     >
                       {tab} {tab === 'replies' && `(${replies.length})`}
                     </button>
@@ -240,11 +238,11 @@ const BlogViewMorePage: React.FC = () => {
                       </div>
                     )}
                     <div className="bg-white p-3 rounded border text-xs text-gray-700 leading-relaxed">
-                     <div
-                    dangerouslySetInnerHTML={{
-                      __html: blog.description
-                    }}
-                  />
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: blog.description
+                        }}
+                      />
                     </div>
                     {blog.updatedAt && new Date(blog.updatedAt).getTime() !== new Date(blog.createdAt!).getTime() && (
                       <div className="text-sm text-gray-500 mt-6">
@@ -378,11 +376,10 @@ const BlogViewMorePage: React.FC = () => {
                             <button
                               onClick={handlePrevPage}
                               disabled={currentPage === 1}
-                              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                                currentPage === 1
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
-                              }`}
+                              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${currentPage === 1
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
+                                }`}
                             >
                               <ChevronLeft className="w-4 h-4" />
                               Previous
@@ -393,11 +390,10 @@ const BlogViewMorePage: React.FC = () => {
                             <button
                               onClick={handleNextPage}
                               disabled={currentPage === totalPages}
-                              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                                currentPage === totalPages
-                                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                  : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
-                              }`}
+                              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${currentPage === totalPages
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
+                                }`}
                             >
                               Next
                               <ChevronRight className="w-4 h-4" />

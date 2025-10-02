@@ -70,7 +70,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       return response;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new Error( error?.response?.data.message || error.message);
     }
   };
 

@@ -13,6 +13,7 @@ import {
   ChevronUp,
 
   Newspaper,
+  TestTube,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
@@ -70,10 +71,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     { id: "dashboard", label: "Dashboard", icon: TrendingUp, path: "/admin/dashboard" },
     { id: "Category", label: "Category Management", icon: Layers, path: "/admin/dashboard/category-management" },
     { id: "Product Management", label: "Product Management", icon: Store, path: "/admin/dashboard/product-management" },
-    { id: "Product Management", label: "Blog Management", icon: Newspaper, path: "/admin/dashboard/blog-management" },
-    { id: "Contact Message", label: "Contact Message", icon: Newspaper, path: "/admin/dashboard/contact-message" },
- 
-          { id: "Subscribers", label: "Subscribers Message", icon: Newspaper, path: "/admin/dashboard/subscribe-message" },
+    { id: "Blog Management", label: "Blog Management", icon: Newspaper, path: "/admin/dashboard/blog-management" },
+    { id: "Testimonial Management", label: "Testimonial Management", icon: TestTube, path: "/admin/dashboard/testimonial-management" },
  
   ];
 

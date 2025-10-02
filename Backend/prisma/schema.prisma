@@ -133,7 +133,7 @@ model Testmonial{
   fullName  String
   profileImage     String?
   position  String
-  message   String
+  message   String  @db.Text
   rate     Int @default(0)
   createdAt DateTime @default(now())
 }

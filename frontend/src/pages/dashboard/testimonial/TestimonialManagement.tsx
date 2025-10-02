@@ -13,57 +13,38 @@ import {
   XCircle,
   X,
   AlertCircle,
-  FileText,
+  User,
   RefreshCw,
   Filter,
   Grid3X3,
   List,
   Settings,
   Minimize2,
-  MessageSquare,
-  Calendar,
   ImageIcon,
+  Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import blogService from "../../../services/blogService";
-const API_BASE_URL = "http://localhost:8000"; // change to your backend domain
+import testimonialService, { type Testimonial } from "../../../services/testmonialService";
+const API_BASE_URL = "http://localhost:8000"; // Adjust to your backend domain
 
 type ViewMode = "table" | "grid" | "list";
-
-interface Blog {
-  id: string;
-  title: string;
-  quote?: string;
-  image?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  replies?: {
-    id: string;
-    blogId: string;
-    fullName: string;
-    email: string;
-    message: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }[];
-}
 
 interface OperationStatus {
   type: "success" | "error" | "info";
   message: string;
 }
 
-const BlogDashboard: React.FC = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
+const TestimonialDashboard: React.FC = () => {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [allTestimonials, setAllTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [sortBy, setSortBy] = useState<keyof Blog>("title");
+  const [sortBy, setSortBy] = useState<keyof Testimonial>("fullName");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
-  const [deleteConfirm, setDeleteConfirm] = useState<Blog | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<Testimonial | null>(null);
   const [operationStatus, setOperationStatus] = useState<OperationStatus | null>(null);
   const [operationLoading, setOperationLoading] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
@@ -78,17 +59,17 @@ const BlogDashboard: React.FC = () => {
 
   useEffect(() => {
     handleFilterAndSort();
-  }, [searchTerm, sortBy, sortOrder, allBlogs]);
+  }, [searchTerm, sortBy, sortOrder, allTestimonials]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const response = await blogService.getAllBlogs();
-      setAllBlogs(Array.isArray(response) ? response : []);
+      const response = await testimonialService.getAllTestimonials();
+      setAllTestimonials(Array.isArray(response) ? response : []);
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load blogs");
-      setAllBlogs([]);
+      setError(err.message || "Failed to load testimonials");
+      setAllTestimonials([]);
     } finally {
       setLoading(false);
     }
@@ -100,13 +81,13 @@ const BlogDashboard: React.FC = () => {
   };
 
   const handleFilterAndSort = () => {
-    let filtered = [...allBlogs];
+    let filtered = [...allTestimonials];
 
     if (searchTerm.trim()) {
       filtered = filtered.filter(
-        (blog) =>
-          blog?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          blog?.quote?.toLowerCase().includes(searchTerm.toLowerCase())
+        (testimonial) =>
+          testimonial?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          testimonial?.position?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -114,10 +95,16 @@ const BlogDashboard: React.FC = () => {
       const aValue = a[sortBy];
       const bValue = b[sortBy];
 
-      if (sortBy === "createdAt" || sortBy === "updatedAt") {
+      if (sortBy === "createdAt") {
         const aDate = typeof aValue === "string" || aValue instanceof Date ? new Date(aValue) : new Date(0);
         const bDate = typeof bValue === "string" || bValue instanceof Date ? new Date(bValue) : new Date(0);
         return sortOrder === "asc" ? aDate.getTime() - bDate.getTime() : bDate.getTime() - aDate.getTime();
+      }
+
+      if (sortBy === "rate") {
+        const aRate = typeof aValue === "number" ? aValue : 0;
+        const bRate = typeof bValue === "number" ? bValue : 0;
+        return sortOrder === "asc" ? aRate - bRate : bRate - aRate;
       }
 
       const aStr = aValue ? aValue.toString().toLowerCase() : "";
@@ -125,40 +112,39 @@ const BlogDashboard: React.FC = () => {
       return sortOrder === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(bStr);
     });
 
-    setBlogs(filtered);
+    setTestimonials(filtered);
     setCurrentPage(1);
   };
 
-  const totalBlogs = allBlogs.length;
-  const blogsWithReplies = allBlogs.filter(blog => blog.replies && blog.replies.length > 0).length;
+  const totalTestimonials = allTestimonials.length;
 
-  const handleAddBlog = () => {
-    navigate('/admin/dashboard/blog-management/add');
+  const handleAddTestimonial = () => {
+    navigate('/admin/dashboard/testimonial-management/add');
   };
 
-  const handleEditBlog = (blog: Blog) => {
-    if (!blog?.id) return;
-    navigate(`/admin/dashboard/blog-management/edit/${blog.id}`);
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    if (!testimonial?.id) return;
+    navigate(`/admin/dashboard/testimonial-management/edit/${testimonial.id}`);
   };
 
-  const handleViewBlog = (blog: Blog) => {
-    if (!blog?.id) return;
-    navigate(`/admin/dashboard/blog-management/${blog.id}`);
+  const handleViewTestimonial = (testimonial: Testimonial) => {
+    if (!testimonial?.id) return;
+    navigate(`/admin/dashboard/testimonial-management/${testimonial.id}`);
   };
 
-  const handleDeleteBlog = async (blog: Blog) => {
-    if (!blog?.id) {
-      showOperationStatus("error", "Invalid blog ID");
+  const handleDeleteTestimonial = async (testimonial: Testimonial) => {
+    if (!testimonial?.id) {
+      showOperationStatus("error", "Invalid testimonial ID");
       return;
     }
     try {
       setOperationLoading(true);
-      await blogService.deleteBlog(blog.id);
+      await testimonialService.deleteTestimonial(testimonial.id);
       setDeleteConfirm(null);
       await loadData();
-      showOperationStatus("success", `${blog.title} deleted successfully!`);
+      showOperationStatus("success", `${testimonial.fullName} deleted successfully!`);
     } catch (err: any) {
-      showOperationStatus("error", err.message || "Failed to delete blog");
+      showOperationStatus("error", err.message || "Failed to delete testimonial");
     } finally {
       setOperationLoading(false);
     }
@@ -176,7 +162,7 @@ const BlogDashboard: React.FC = () => {
         });
   };
 
-  const getBlogImage = (image?: string): string => {
+  const getTestimonialImage = (image?: string): string => {
     if (image) {
       if (image.startsWith("http")) return image;
       return `${API_BASE_URL}${image}`;
@@ -184,10 +170,23 @@ const BlogDashboard: React.FC = () => {
     return "";
   };
 
-  const totalPages = Math.ceil(blogs.length / itemsPerPage);
+  const renderStars = (rate: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          className={`w-3 h-3 ${i <= rate ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+        />
+      );
+    }
+    return <div className="flex gap-1">{stars}</div>;
+  };
+
+  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentBlogs = blogs.slice(startIndex, endIndex);
+  const currentTestimonials = testimonials.slice(startIndex, endIndex);
 
   const renderTableView = () => (
     <div className="bg-white rounded border border-gray-200">
@@ -200,13 +199,37 @@ const BlogDashboard: React.FC = () => {
               <th
                 className="text-left py-2 px-2 text-gray-600 font-medium cursor-pointer hover:bg-gray-100"
                 onClick={() => {
-                  setSortBy("title");
-                  setSortOrder(sortBy === "title" ? (sortOrder === "asc" ? "desc" : "asc") : "asc");
+                  setSortBy("fullName");
+                  setSortOrder(sortBy === "fullName" ? (sortOrder === "asc" ? "desc" : "asc") : "asc");
                 }}
               >
                 <div className="flex items-center space-x-1">
-                  <span>Blog Title</span>
-                  <ChevronDown className={`w-3 h-3 ${sortBy === "title" ? "text-primary-600" : "text-gray-400"}`} />
+                  <span>Name</span>
+                  <ChevronDown className={`w-3 h-3 ${sortBy === "fullName" ? "text-primary-600" : "text-gray-400"}`} />
+                </div>
+              </th>
+              <th
+                className="text-left py-2 px-2 text-gray-600 font-medium cursor-pointer hover:bg-gray-100 hidden lg:table-cell"
+                onClick={() => {
+                  setSortBy("position");
+                  setSortOrder(sortBy === "position" ? (sortOrder === "asc" ? "desc" : "asc") : "asc");
+                }}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Position</span>
+                  <ChevronDown className={`w-3 h-3 ${sortBy === "position" ? "text-primary-600" : "text-gray-400"}`} />
+                </div>
+              </th>
+              <th
+                className="text-left py-2 px-2 text-gray-600 font-medium cursor-pointer hover:bg-gray-100 hidden lg:table-cell"
+                onClick={() => {
+                  setSortBy("rate");
+                  setSortOrder(sortBy === "rate" ? (sortOrder === "asc" ? "desc" : "asc") : "asc");
+                }}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Rating</span>
+                  <ChevronDown className={`w-3 h-3 ${sortBy === "rate" ? "text-primary-600" : "text-gray-400"}`} />
                 </div>
               </th>
               <th
@@ -225,15 +248,15 @@ const BlogDashboard: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {currentBlogs.map((blog, index) => (
-              <tr key={blog.id || index} className="hover:bg-gray-25">
+            {currentTestimonials.map((testimonial, index) => (
+              <tr key={testimonial.id || index} className="hover:bg-gray-25">
                 <td className="py-2 px-2 text-gray-700">{startIndex + index + 1}</td>
                 <td className="py-2 px-2">
                   <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                    {getBlogImage(blog.image) ? (
+                    {getTestimonialImage(testimonial.profileImage) ? (
                       <img
-                        src={getBlogImage(blog.image)}
-                        alt={blog.title}
+                        src={getTestimonialImage(testimonial.profileImage)}
+                        alt={testimonial.fullName}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
@@ -241,36 +264,39 @@ const BlogDashboard: React.FC = () => {
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-full flex items-center justify-center ${getBlogImage(blog.image) ? 'hidden' : 'flex'}`}>
+                    <div className={`w-full h-full flex items-center justify-center ${getTestimonialImage(testimonial.profileImage) ? 'hidden' : 'flex'}`}>
                       <ImageIcon className="w-4 h-4 text-gray-400" />
                     </div>
                   </div>
                 </td>
                 <td className="py-2 px-2">
-                  <div>
-                    <div className="font-medium text-gray-900 text-xs truncate max-w-32">{blog.title || "N/A"}</div>
-                    <div className="text-gray-500 text-xs truncate max-w-32">{blog.quote || "No quote"}</div>
-                  </div>
+                  <div className="font-medium text-gray-900 text-xs truncate max-w-32">{testimonial.fullName || "N/A"}</div>
                 </td>
-                <td className="py-2 px-2 text-gray-700 hidden sm:table-cell">{formatDate(blog.createdAt)}</td>
+                <td className="py-2 px-2 text-gray-700 hidden lg:table-cell max-w-48">
+                  <div className="text-xs truncate">{testimonial.position || "N/A"}</div>
+                </td>
+                <td className="py-2 px-2 text-gray-700 hidden lg:table-cell">
+                  {renderStars(testimonial.rate)}
+                </td>
+                <td className="py-2 px-2 text-gray-700 hidden sm:table-cell">{formatDate(testimonial.createdAt)}</td>
                 <td className="py-2 px-2">
                   <div className="flex items-center justify-end space-x-1">
                     <button
-                      onClick={() => handleViewBlog(blog)}
+                      onClick={() => handleViewTestimonial(testimonial)}
                       className="text-gray-400 hover:text-primary-600 p-1"
                       title="View"
                     >
                       <Eye className="w-3 h-3" />
                     </button>
                     <button
-                      onClick={() => handleEditBlog(blog)}
+                      onClick={() => handleEditTestimonial(testimonial)}
                       className="text-gray-400 hover:text-primary-600 p-1"
                       title="Edit"
                     >
                       <Edit className="w-3 h-3" />
                     </button>
                     <button
-                      onClick={() => setDeleteConfirm(blog)}
+                      onClick={() => setDeleteConfirm(testimonial)}
                       className="text-gray-400 hover:text-red-600 p-1"
                       title="Delete"
                     >
@@ -288,16 +314,16 @@ const BlogDashboard: React.FC = () => {
 
   const renderGridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-      {currentBlogs.map((blog) => (
+      {currentTestimonials.map((testimonial) => (
         <div
-          key={blog.id}
+          key={testimonial.id}
           className="bg-white rounded border border-gray-200 p-3 hover:shadow-sm transition-shadow"
         >
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 relative">
-            {getBlogImage(blog.image) ? (
+            {getTestimonialImage(testimonial.profileImage) ? (
               <img
-                src={getBlogImage(blog.image)}
-                alt={blog.title}
+                src={getTestimonialImage(testimonial.profileImage)}
+                alt={testimonial.fullName}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
@@ -305,32 +331,32 @@ const BlogDashboard: React.FC = () => {
                 }}
               />
             ) : null}
-            <div className={`absolute inset-0 flex items-center justify-center ${getBlogImage(blog.image) ? 'hidden' : 'flex'}`}>
-              <FileText className="w-8 h-8 text-gray-400" />
+            <div className={`absolute inset-0 flex items-center justify-center ${getTestimonialImage(testimonial.profileImage) ? 'hidden' : 'flex'}`}>
+              <User className="w-8 h-8 text-gray-400" />
             </div>
             <div className="absolute top-2 right-2">
-              <span className={`inline-flex px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800`}>
-                {blog.replies?.length || 0} Replies
+              <span className="inline-flex px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {testimonial.rate} Stars
               </span>
             </div>
           </div>
           <div className="space-y-2">
             <div>
-              <div className="font-medium text-gray-900 text-xs truncate">{blog.title || "N/A"}</div>
-              <div className="text-gray-500 text-xs truncate">{blog.quote || "No quote"}</div>
+              <div className="font-medium text-gray-900 text-xs truncate">{testimonial.fullName || "N/A"}</div>
+              <div className="text-gray-500 text-xs truncate">{testimonial.position || "N/A"}</div>
             </div>
-            <div className="text-gray-500 text-xs truncate">{formatDate(blog.createdAt)}</div>
+            <div className="text-gray-500 text-xs truncate">{formatDate(testimonial.createdAt)}</div>
             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
               <div className="flex space-x-1">
                 <button
-                  onClick={() => handleViewBlog(blog)}
+                  onClick={() => handleViewTestimonial(testimonial)}
                   className="text-gray-400 hover:text-primary-600 p-1"
                   title="View"
                 >
                   <Eye className="w-3 h-3" />
                 </button>
                 <button
-                  onClick={() => handleEditBlog(blog)}
+                  onClick={() => handleEditTestimonial(testimonial)}
                   className="text-gray-400 hover:text-primary-600 p-1"
                   title="Edit"
                 >
@@ -338,7 +364,7 @@ const BlogDashboard: React.FC = () => {
                 </button>
               </div>
               <button
-                onClick={() => setDeleteConfirm(blog)}
+                onClick={() => setDeleteConfirm(testimonial)}
                 className="text-gray-400 hover:text-red-600 p-1"
                 title="Delete"
               >
@@ -353,15 +379,15 @@ const BlogDashboard: React.FC = () => {
 
   const renderListView = () => (
     <div className="bg-white rounded border border-gray-200 divide-y divide-gray-100">
-      {currentBlogs.map((blog) => (
-        <div key={blog.id} className="px-4 py-3 hover:bg-gray-25">
+      {currentTestimonials.map((testimonial) => (
+        <div key={testimonial.id} className="px-4 py-3 hover:bg-gray-25">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 flex-1 min-w-0">
               <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
-                {getBlogImage(blog.image) ? (
+                {getTestimonialImage(testimonial.profileImage) ? (
                   <img
-                    src={getBlogImage(blog.image)}
-                    alt={blog.title}
+                    src={getTestimonialImage(testimonial.profileImage)}
+                    alt={testimonial.fullName}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
@@ -369,46 +395,45 @@ const BlogDashboard: React.FC = () => {
                     }}
                   />
                 ) : null}
-                <div className={`w-full h-full flex items-center justify-center ${getBlogImage(blog.image) ? 'hidden' : 'flex'}`}>
-                  <FileText className="w-5 h-5 text-gray-400" />
+                <div className={`w-full h-full flex items-center justify-center ${getTestimonialImage(testimonial.profileImage) ? 'hidden' : 'flex'}`}>
+                  <User className="w-5 h-5 text-gray-400" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 text-sm truncate">{blog.title || "N/A"}</div>
-                <div className="text-gray-500 text-xs truncate">{blog.quote || "No quote"}</div>
+                <div className="font-medium text-gray-900 text-sm truncate">{testimonial.fullName || "N/A"}</div>
+                <div className="text-gray-500 text-xs truncate">{testimonial.position || "N/A"}</div>
                 <div className="flex items-center space-x-2 mt-1">
-                  <span className="text-gray-500 text-xs">{formatDate(blog.createdAt)}</span>
-                  {blog.replies && blog.replies.length > 0 && (
-                    <div className="flex items-center space-x-1">
-                      <MessageSquare className="w-3 h-3 text-gray-400" />
-                      <span className="text-gray-400 text-xs">{blog.replies.length} replies</span>
-                    </div>
-                  )}
+                  <span className="text-gray-500 text-xs">{formatDate(testimonial.createdAt)}</span>
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-3 h-3 text-yellow-400" />
+                    <span className="text-gray-400 text-xs">{testimonial.rate} stars</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="hidden md:grid grid-cols-1 gap-4 text-xs text-gray-600 flex-1 max-w-xl px-4">
-              <span>{formatDate(blog.createdAt)}</span>
+            <div className="hidden md:grid grid-cols-2 gap-4 text-xs text-gray-600 flex-1 max-w-xl px-4">
+              <div className="truncate">{testimonial.position || "N/A"}</div>
+              <span>{formatDate(testimonial.createdAt)}</span>
             </div>
             <div className="flex items-center space-x-1 flex-shrink-0">
               <button
-                onClick={() => handleViewBlog(blog)}
+                onClick={() => handleViewTestimonial(testimonial)}
                 className="text-gray-400 hover:text-primary-600 p-1.5 rounded-full hover:bg-primary-50 transition-colors"
-                title="View Blog"
+                title="View Testimonial"
               >
                 <Eye className="w-4 h-4" />
               </button>
               <button
-                onClick={() => handleEditBlog(blog)}
+                onClick={() => handleEditTestimonial(testimonial)}
                 className="text-gray-400 hover:text-primary-600 p-1.5 rounded-full hover:bg-primary-50 transition-colors"
-                title="Edit Blog"
+                title="Edit Testimonial"
               >
                 <Edit className="w-4 h-4" />
               </button>
               <button
-                onClick={() => setDeleteConfirm(blog)}
+                onClick={() => setDeleteConfirm(testimonial)}
                 className="text-gray-400 hover:text-red-600 p-1.5 rounded-full hover:bg-red-50 transition-colors"
-                title="Delete Blog"
+                title="Delete Testimonial"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -436,7 +461,7 @@ const BlogDashboard: React.FC = () => {
     return (
       <div className="flex items-center justify-between bg-white px-3 py-2 border-t border-gray-200">
         <div className="text-xs text-gray-600">
-          Showing {startIndex + 1}-{Math.min(endIndex, blogs.length)} of {blogs.length}
+          Showing {startIndex + 1}-{Math.min(endIndex, testimonials.length)} of {testimonials.length}
         </div>
         <div className="flex items-center space-x-1">
           <button
@@ -485,8 +510,8 @@ const BlogDashboard: React.FC = () => {
                 <Minimize2 className="w-4 h-4" />
               </button>
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Blog Management</h1>
-                <p className="text-xs text-gray-500 mt-0.5">Manage your blog content</p>
+                <h1 className="text-lg font-semibold text-gray-900">Testimonial Management</h1>
+                <p className="text-xs text-gray-500 mt-0.5">Manage your testimonial content</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -500,12 +525,12 @@ const BlogDashboard: React.FC = () => {
                 <span>Refresh</span>
               </button>
               <button
-                onClick={handleAddBlog}
+                onClick={handleAddTestimonial}
                 disabled={operationLoading}
                 className="flex items-center space-x-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded font-medium transition-colors disabled:opacity-50"
               >
                 <Plus className="w-3 h-3" />
-                <span>Add Blog</span>
+                <span>Add Testimonial</span>
               </button>
             </div>
           </div>
@@ -517,22 +542,11 @@ const BlogDashboard: React.FC = () => {
           <div className="bg-white rounded shadow p-4">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-primary-100 rounded-full flex items-center justify-center">
-                <FileText className="w-5 h-5 text-primary-600" />
+                <User className="w-5 h-5 text-primary-600" />
               </div>
               <div>
-                <p className="text-xs text-gray-600">Total Blogs</p>
-                <p className="text-lg font-semibold text-gray-900">{totalBlogs}</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded shadow p-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-blue-100 rounded-full flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-600">Blogs with Replies</p>
-                <p className="text-lg font-semibold text-gray-900">{blogsWithReplies}</p>
+                <p className="text-xs text-gray-600">Total Testimonials</p>
+                <p className="text-lg font-semibold text-gray-900">{totalTestimonials}</p>
               </div>
             </div>
           </div>
@@ -545,7 +559,7 @@ const BlogDashboard: React.FC = () => {
                 <Search className="w-3 h-3 text-gray-400 absolute left-2 top-1/2 transform -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search blogs..."
+                  placeholder="Search testimonials..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-48 pl-7 pr-3 py-1.5 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent"
@@ -565,14 +579,18 @@ const BlogDashboard: React.FC = () => {
               <select
                 value={`${sortBy}-${sortOrder}`}
                 onChange={(e) => {
-                  const [field, order] = e.target.value.split("-") as [keyof Blog, "asc" | "desc"];
+                  const [field, order] = e.target.value.split("-") as [keyof Testimonial, "asc" | "desc"];
                   setSortBy(field);
                   setSortOrder(order);
                 }}
                 className="text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary-500"
               >
-                <option value="title-asc">Title (A-Z)</option>
-                <option value="title-desc">Title (Z-A)</option>
+                <option value="fullName-asc">Name (A-Z)</option>
+                <option value="fullName-desc">Name (Z-A)</option>
+                <option value="position-asc">Position (A-Z)</option>
+                <option value="position-desc">Position (Z-A)</option>
+                <option value="rate-desc">Rating (High-Low)</option>
+                <option value="rate-asc">Rating (Low-High)</option>
                 <option value="createdAt-desc">Newest</option>
                 <option value="createdAt-asc">Oldest</option>
               </select>
@@ -617,13 +635,13 @@ const BlogDashboard: React.FC = () => {
           <div className="bg-white rounded border border-gray-200 p-8 text-center text-gray-500">
             <div className="inline-flex items-center space-x-2">
               <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-xs">Loading blogs...</span>
+              <span className="text-xs">Loading testimonials...</span>
             </div>
           </div>
-        ) : currentBlogs.length === 0 ? (
+        ) : currentTestimonials.length === 0 ? (
           <div className="bg-white rounded border border-gray-200 p-8 text-center text-gray-500">
             <div className="text-xs">
-              {searchTerm ? "No blogs found matching your criteria" : "No blogs found"}
+              {searchTerm ? "No testimonials found matching your criteria" : "No testimonials found"}
             </div>
           </div>
         ) : (
@@ -677,13 +695,13 @@ const BlogDashboard: React.FC = () => {
                 <AlertTriangle className="w-4 h-4 text-red-600" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Delete Blog</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Delete Testimonial</h3>
                 <p className="text-xs text-gray-500">This action cannot be undone</p>
               </div>
             </div>
             <div className="mb-4">
               <p className="text-xs text-gray-700">
-                Are you sure you want to delete <span className="font-semibold">{deleteConfirm.title || "N/A"}</span>?
+                Are you sure you want to delete <span className="font-semibold">{deleteConfirm.fullName || "N/A"}</span>?
               </p>
             </div>
             <div className="flex items-center justify-end space-x-2">
@@ -694,7 +712,7 @@ const BlogDashboard: React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={() => handleDeleteBlog(deleteConfirm)}
+                onClick={() => handleDeleteTestimonial(deleteConfirm)}
                 className="px-3 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Delete
@@ -707,4 +725,4 @@ const BlogDashboard: React.FC = () => {
   );
 };
 
-export default BlogDashboard;
+export default TestimonialDashboard;
