@@ -258,19 +258,19 @@ const ShopViewPage: React.FC = () => {
   const handleCartAction = useCallback(() => {
     if (!product || !id) return;
     
-    // Stock validation
-    if (!product.availability || product.quantity < quantity) {
-      Swal.fire({
-        title: 'Out of Stock',
-        text: product.availability 
-          ? `Only ${product.quantity} units of ${product.name} available.`
-          : `${product.name} is currently out of stock.`,
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        timer: 2000,
-      });
-      return;
-    }
+    // // Stock validation
+    // if (!product.availability || product.quantity < quantity) {
+    //   Swal.fire({
+    //     title: 'Out of Stock',
+    //     text: product.availability 
+    //       ? `Only ${product.quantity} units of ${product.name} available.`
+    //       : `${product.name} is currently out of stock.`,
+    //     icon: 'warning',
+    //     confirmButtonColor: '#3085d6',
+    //     timer: 2000,
+    //   });
+    //   return;
+    // }
 
     const currentInCart = isInCart();
     if (currentInCart) {
@@ -280,13 +280,7 @@ const ShopViewPage: React.FC = () => {
     }
 
     // Unified "Update Cart" message
-    Swal.fire({
-      title: 'Update Cart',
-      text: `Your cart has been updated with ${quantity} ${quantity === 1 ? 'item' : 'items'} of ${product.name}.`,
-      icon: 'success',
-      timer: 1500,
-      showConfirmButton: false,
-    });
+   
   }, [product, id, quantity, isInCart, updateQuantity, addToCart]);
 
   const handleReviewSubmit = async () => {

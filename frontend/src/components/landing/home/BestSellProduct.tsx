@@ -96,7 +96,7 @@ const ProductGrid: React.FC = () => {
   }
 
   return (
-    <div className="w-full py-12 px-4 bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 relative overflow-hidden">
+    <div className="w-full py-12 px-4 bg-gradient-to-br min-h-[50vh] from-slate-50 via-primary-50/30 to-slate-100 relative overflow-hidden">
       {/* Enhanced Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div

@@ -48,6 +48,8 @@ import TestimonialDashboard from '../pages/dashboard/testimonial/TestimonialMana
 import TestimonialFormExample from '../pages/dashboard/testimonial/TestimonialFormPage';
 import TestimonialViewMorePage from '../pages/dashboard/testimonial/TestimonialViewMorePage';
 import PaymentStatusPage from '../pages/landing/PaymentStatusPage';
+import ContactMessagesDashboard from '../pages/dashboard/ContactMessage';
+import SubscriberDashboard from '../pages/dashboard/Subscribers';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -393,14 +395,14 @@ const routes = createBrowserRouter([
                 path: 'contact-message',
                 element: (
                   <SuspenseWrapper>
-                    <ContactMessage />
+                    <ContactMessagesDashboard />
                   </SuspenseWrapper>
                 ),
               }, {
                 path: 'subscribe-message',
                 element: (
                   <SuspenseWrapper>
-                    <Subscribers />
+                    <SubscriberDashboard />
                   </SuspenseWrapper>
                 ),
               },

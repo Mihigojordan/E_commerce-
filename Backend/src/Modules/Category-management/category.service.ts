@@ -7,6 +7,7 @@ export class CategoryService {
 
   // CREATE a new category
   async create(data: { name: string; subCategory?: string; status?: string }) {
+    
     return this.prisma.category.create({ data });
   }
 

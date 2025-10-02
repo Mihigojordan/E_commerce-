@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, MessageSquare, Users } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import testimonialService, { type Testimonial } from '../../../services/testmonialService';
 import { API_URL } from '../../../api/api';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
@@ -16,40 +16,54 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col justify-between"
+      className="bg-gradient-to-br from-gray-50 to-primary-50 rounded-3xl p-8 shadow-sm border border-primary-100 hover:shadow-lg transition-all duration-300 transform hover:scale-105 min-h-[230px] flex flex-col justify-between"
     >
       <div>
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-gray-200 rounded-full flex-shrink-0 overflow-hidden">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex-shrink-0 overflow-hidden ring-4 ring-primary-100">
             {testimonial.profileImage ? (
               <img
                 src={`${API_URL}${testimonial.profileImage}`}
                 alt={testimonial.fullName}
                 className="w-full h-full object-cover"
                 loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent && !parent.querySelector('.fallback-initials')) {
+                    const fallback = document.createElement('div');
+                    fallback.className = 'fallback-initials w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-cyan-500 text-white text-lg font-bold';
+                    fallback.textContent = testimonial.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    parent.appendChild(fallback);
+                  }
+                }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm font-medium">
-                {testimonial.fullName.split(' ').map(n => n[0]).join('')}
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-cyan-500 text-white text-lg font-bold">
+                {testimonial.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
               </div>
             )}
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-gray-800">{testimonial.fullName}</h4>
-            <p className="text-xs text-gray-500">{testimonial.position}</p>
+            <h4 className="text-md font-bold text-gray-900">{testimonial.fullName}</h4>
+            <p className="text-primary-600 font-medium text-sm">{testimonial.position}</p>
           </div>
         </div>
-        <div className="flex mb-3">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`h-4 w-4 ${i < Math.floor(testimonial.rate) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-            />
-          ))}
-        </div>
-        <div className="text-sm text-gray-600 line-clamp-4" 
-        dangerouslySetInnerHTML={{__html:testimonial.message || 'Thank you for your service'}}
+        
+        <div 
+          className="text-gray-600 leading-relaxed text-sm mb-4 line-clamp-4"
+          dangerouslySetInnerHTML={{__html: testimonial.message ? `${testimonial.message}` : '"Thank you for your excellent service!"'}}
         />
+      </div>
+      
+      <div className="flex mt-4">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`w-4 h-4 ${i < Math.floor(testimonial.rate) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+          />
+        ))}
       </div>
     </motion.div>
   );
@@ -80,61 +94,132 @@ const TestimonialSection = () => {
     fetchTestimonials();
   }, []);
 
+  // Loading State
   if (loading) {
     return (
-      <div className="w-full py-12 px-4 bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+      <div className="w-full py-24 px-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 lg:px-14">
+          <div className="text-center mb-16">
+            <div className="h-6 bg-gray-200 rounded w-32 mx-auto mb-4 animate-pulse"></div>
+            <div className="h-12 bg-gray-200 rounded w-3/4 mx-auto mb-6 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto animate-pulse"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="bg-gray-50 rounded-3xl p-8 h-[280px] animate-pulse">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+                  <div className="flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="h-3 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                </div>
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-4 h-4 bg-gray-200 rounded"></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
+  // Error State
   if (error) {
     return (
-      <div className="w-full py-12 px-4 bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600">{error}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full py-12 px-4 bg-gray-50">
-      <div className="w-11/12 mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold">
-            <span className="text-teal-600">What Our</span>{' '}
-            <span className="text-gray-800">Customers Say</span>
-          </h2>
-          <div className="flex gap-2">
+      <div className="w-full py-24 px-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 lg:px-14">
+          <div className="text-center mb-16">
+            <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-4">
+              TESTIMONIALS
+            </div>
+            <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6">
+              Take a look what our <span className="bg-gradient-to-r from-primary-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+            </h2>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center py-16 px-4 bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl border-2 border-red-100">
+            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+              <MessageSquare className="w-10 h-10 text-red-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Unable to Load Testimonials</h3>
+            <p className="text-gray-600 text-center mb-6 max-w-md">{error}</p>
             <button
-              ref={prevRef}
-              className="w-10 h-10 rounded-full bg-gray-100 hover:bg-teal-600 hover:text-white transition-all duration-300 flex items-center justify-center group"
-              aria-label="Previous testimonial"
+              onClick={() => window.location.reload()}
+              className="px-8 py-3 bg-gradient-to-r from-primary-600 to-cyan-600 text-white rounded-full hover:from-primary-700 hover:to-cyan-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              ref={nextRef}
-              className="w-10 h-10 rounded-full bg-gray-100 hover:bg-teal-600 hover:text-white transition-all duration-300 flex items-center justify-center group"
-              aria-label="Next testimonial"
-            >
-              <ChevronRight className="w-5 h-5" />
+              Try Again
             </button>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {testimonials.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-lg font-medium text-gray-900 mb-2">No testimonials available</p>
-            <p className="text-sm text-gray-500">Check back later for customer feedback.</p>
+  // Empty State
+  if (testimonials.length === 0) {
+    return (
+      <div className="w-full py-24 px-4 bg-white">
+        <div className="max-w-7xl mx-auto px-4 lg:px-14">
+          <div className="text-center mb-16">
+            <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-4">
+              TESTIMONIALS
+            </div>
+            <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6">
+              Take a look what our <span className="bg-gradient-to-r from-primary-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+            </h2>
+            <p className="text-md text-gray-600 max-w-3xl mx-auto">
+              Hear from our satisfied partners on how our ecommerce platform has boosted their online presence and transformed their business growth.
+            </p>
           </div>
-        ) : (
+          
+          <div className="flex flex-col items-center justify-center py-16 px-4 bg-gradient-to-br from-gray-50 to-primary-50 rounded-3xl border-2 border-primary-100">
+            <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+              <Users className="w-12 h-12 text-primary-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">No Testimonials Yet</h3>
+            <p className="text-gray-600 text-center max-w-md text-lg">
+              We're collecting feedback from our valued customers. Check back soon to see what they have to say!
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Success State with Testimonials
+  return (
+    <div className="w-full py-24 px-4 bg-white">
+      <div className="w-11/12 mx-auto px-4 lg:px-14">
+        <div className="text-center mb-16">
+          <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-4">
+            TESTIMONIALS
+          </div>
+          <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto">
+            Take a look what our <span className="bg-gradient-to-r from-primary-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+          </h2>
+          <p className="text-md text-gray-600 max-w-3xl mx-auto text-md">
+            Hear from our satisfied partners on how our ecommerce platform has boosted their online presence and transformed their business growth.
+          </p>
+        </div>
+
+        <div className="relative">
           <Swiper
             modules={[Navigation, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={32}
             slidesPerView={1}
-            loop={true}
+            loop={testimonials.length > 3}
             autoplay={{
-              delay: 3000,
+              delay: 5000,
               disableOnInteraction: false,
             }}
             navigation={{
@@ -148,22 +233,42 @@ const TestimonialSection = () => {
             breakpoints={{
               768: {
                 slidesPerView: 2,
-                spaceBetween: 20,
+                spaceBetween: 24,
               },
               1024: {
                 slidesPerView: 3,
-                spaceBetween: 20,
+                spaceBetween: 32,
               },
             }}
-            className="testimonial-swiper"
+            className="testimonial-swiper min-h-[260px]"
           >
             {testimonials.map((testimonial) => (
-              <SwiperSlide  key={testimonial.id}>
+              <SwiperSlide key={testimonial.id}>
                 <TestimonialCard testimonial={testimonial} />
               </SwiperSlide>
             ))}
           </Swiper>
-        )}
+
+          {/* Navigation Buttons */}
+          {testimonials.length > 3 && (
+            <>
+              <button
+                ref={prevRef}
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 bg-white shadow-xl rounded-full p-4 hover:bg-primary-50 transition-all duration-300 border-2 border-primary-100 hover:border-primary-300"
+                aria-label="Previous testimonial"
+              >
+                <ChevronLeft className="w-6 h-6 text-primary-600" />
+              </button>
+              <button
+                ref={nextRef}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 bg-white shadow-xl rounded-full p-4 hover:bg-primary-50 transition-all duration-300 border-2 border-primary-100 hover:border-primary-300"
+                aria-label="Next testimonial"
+              >
+                <ChevronRight className="w-6 h-6 text-primary-600" />
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

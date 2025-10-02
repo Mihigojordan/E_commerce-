@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { CategoryService } from './category.service';
+import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { CategoryFileFields, CategoryUploadConfig } from 'src/common/Utils/file-upload.util';
 
 /**
  * CategoryController
@@ -17,7 +19,13 @@ export class CategoryController {
    * Body: { name: string, subCategory?: string, status?: string }
    */
   @Post()
-  create(@Body() body: { name: string; subCategory?: string; status?: string }) {
+   @UseInterceptors(FileFieldsInterceptor(CategoryFileFields, CategoryUploadConfig))
+  create(@Body() body: { name: string; subCategory?: string; status?: string,category_image?:string; }, @UploadedFiles() files?: { category_image?: Express.Multer.File[] }) {
+      if(files?.category_image){
+        console.log(files.category_image);
+        
+        body.category_image = `/uploads/category-photos/${files?.category_image?.[0].filename}`
+    }
     return this.categoryService.create(body);
   }
 
@@ -45,10 +53,15 @@ export class CategoryController {
    * Body: { name?: string, subCategory?: string, status?: string }
    */
   @Patch(':id')
+  @UseInterceptors(FileFieldsInterceptor(CategoryFileFields, CategoryUploadConfig))
   update(
     @Param('id') id: string,
-    @Body() body: { name?: string; subCategory?: string; status?: string },
+    @Body() body: { name?: string; category_image?:string; subCategory?: string; status?: string },
+    @UploadedFiles() files?: { category_image?: Express.Multer.File[] },
   ) {
+      if(files?.category_image){
+        body.category_image = `/uploads/category-photos/${files?.category_image?.[0].filename}`
+    }
     return this.categoryService.update(Number(id), body);
   }
 

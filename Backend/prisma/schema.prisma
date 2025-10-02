@@ -38,6 +38,7 @@ model Category {
   id          Int       @id @default(autoincrement()) // Primary key
   name        String                                     // Category name
   subCategory String?                                    // Optional subcategory
+  category_image String?
   status      String   @default("active")                // Status (active, inactive, etc.)
   createdAt   DateTime @default(now())                   // Auto timestamp
   updatedAt   DateTime @updatedAt                        // Auto update timestamp
