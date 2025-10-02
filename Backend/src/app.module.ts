@@ -12,6 +12,8 @@ import { ContactModule } from './Modules/Contact-us/contact.module';
 import { OrderModule } from './Modules/order-management/order.module';
 import { PaymentModule } from './Modules/payment-management/payment.module';
 import { EmailModule } from './Global/email/email.module';
+
+import { SubscribersModule } from './Modules/subscribers/subscribers.module';
 @Module({
   imports: [
 
@@ -29,6 +31,7 @@ import { EmailModule } from './Global/email/email.module';
     ContactModule,
     OrderModule,
     PaymentModule,
+    SubscribersModule,
     
   ],
   controllers: [],

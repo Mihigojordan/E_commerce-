@@ -10,6 +10,8 @@ import ProductTabsSection from "../../components/landing/home/ProductTabsSection
 import PromoCards from "../../components/landing/home/PromoCards"
 import SampleCards from "../../components/landing/home/SampleCards"
 import TestimonialSection from "../../components/landing/home/Testimonials"
+import SummerOffer from "../../components/landing/home/SummerOffer"
+import WishingBanner from "../../components/landing/home/WishingBanner"
 
 const Home = () => {
   return (
@@ -22,8 +24,11 @@ const Home = () => {
        <PromoCards  />
        <CountdownTimer  />
        <BlogSection  />
-       <ProductTabsSection  />
+       <SummerOffer />
        <TestimonialSection  />
+       <NewArrivalProduct />
+       <WishingBanner />
+       <ProductTabsSection  />
 
       </main>
   )

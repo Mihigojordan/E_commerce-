@@ -389,6 +389,21 @@ const routes = createBrowserRouter([
                   </SuspenseWrapper>
                 ),
               },
+               {
+                path: 'contact-message',
+                element: (
+                  <SuspenseWrapper>
+                    <ContactMessage />
+                  </SuspenseWrapper>
+                ),
+              }, {
+                path: 'subscribe-message',
+                element: (
+                  <SuspenseWrapper>
+                    <Subscribers />
+                  </SuspenseWrapper>
+                ),
+              },
               {
                 path: 'category-management',
                 element: (

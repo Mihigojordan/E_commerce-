@@ -21,7 +21,7 @@ function NewArrivalProduct() {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-10">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">
@@ -40,39 +40,43 @@ function NewArrivalProduct() {
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="rounded-2xl shadow-md bg-white">
-            <div className="p-4 flex flex-col items-center">
-              {/* Badge - show availability */}
+          <div key={product.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+            {/* Image Container */}
+            <div className="relative bg-gray-100 rounded-t-2xl">
               {!product.availability && (
-                <span className="px-3 py-1 text-xs rounded-full mb-2 bg-red-100 text-red-600">
+                <span className="absolute top-3 left-3 px-2 py-1 text-xs rounded-full bg-red-100 text-red-600 z-10">
                   Out of stock
                 </span>
               )}
-
-              {/* Image */}
+              
               {product.images && product.images.length > 0 ? (
                 <img
-                  src={product.images[0]}
+                  src={`http://localhost:8000${product.images[0]}`}
                   alt={product.name}
-                  className="h-32 object-contain mb-4"
+                  className="w-full h-48 object-cover rounded-t-2xl"
                 />
               ) : (
-                <div className="h-32 w-full flex items-center justify-center bg-gray-100 text-gray-400 mb-4">
+                <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400 rounded-t-2xl">
                   No Image
                 </div>
               )}
+            </div>
 
+            {/* Content */}
+            <div className="p-4">
               {/* Title */}
-              <h3 className="font-medium text-center mb-2">{product.name}</h3>
+              <h3 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-2 min-h-[2.5rem]">
+                {product.name}
+              </h3>
 
               {/* Rating */}
-              <div className="flex mb-2">
+              <div className="flex items-center mb-3">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    size={16}
+                    size={14}
                     className={
-                      i < product.review
+                      i < (product.review || 0)
                         ? "text-yellow-400 fill-yellow-400"
                         : "text-gray-300"
                     }
@@ -81,10 +85,15 @@ function NewArrivalProduct() {
               </div>
 
               {/* Price */}
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-teal-600">
                   ${product.price}
                 </span>
+                {product.originalPrice && product.originalPrice > product.price && (
+                  <span className="text-sm text-gray-400 line-through">
+                    ${product.originalPrice}
+                  </span>
+                )}
               </div>
             </div>
           </div>
