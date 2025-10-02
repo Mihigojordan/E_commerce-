@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -62,22 +63,26 @@ function LuxuryHeroSection() {
   }, [heroSlides.length]);
 
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-white relative overflow-hidden">
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+    <div className="bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 relative overflow-hidden  flex items-center">
+      {/* Enhanced Background Pattern with Shimmer */}
+      <div className="absolute inset-0 opacity-[0.03]">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23374151' fill-opacity='1'%3E%3Cpath d='m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b8860b' fill-opacity='1'%3E%3Cpath d='M40 40L20 60h40L40 40zm0-40L20 20h40L40 0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
         />
       </div>
 
-      <div className="relative   w-[95%]  z-10  mx-auto   px-6 py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      {/* Animated gradient orbs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
+
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Main Hero Slider */}
           <div className="xl:col-span-2 relative">
-            <div className="h-[600px] rounded-3xl overflow-hidden relative shadow-2xl bg-white border border-primary-100">
+            <div className="h-[650px] rounded-3xl overflow-hidden relative shadow-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
@@ -87,30 +92,35 @@ function LuxuryHeroSection() {
                   transition={{ duration: 0.8 }}
                   className="h-full relative flex items-center justify-between p-12"
                 >
-                  {/* Background Image */}
+                  {/* Background Image with enhanced overlay */}
                   <div
-                    className="absolute inset-0 bg-cover bg-center rounded-3xl"
+                    className="absolute inset-0 bg-cover bg-center"
                     style={{
-                      backgroundImage: `linear-gradient(to right,rgba(255,255,255,0.3),rgba(0,0,0,0)),url(${heroSlides[currentSlide].image})`,
+                      backgroundImage: `url(${heroSlides[currentSlide].image})`,
+                      filter: "brightness(1.1) contrast(1.05)",
                     }}
                   />
-                  {/* Overlay for better readability */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white/40 to-primary-100/50 rounded-3xl" />
+                  
+                  {/* Sophisticated gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-900/40 to-transparent" />
+                  
+                  {/* Vignette effect */}
+                  <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.3)]" />
 
                   {/* Content */}
                   <motion.div
                     initial={{ opacity: 0, x: -60 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="max-w-lg z-10"
+                    className=" z-10"
                   >
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.3 }}
-                      className="mb-2"
+                      className="mb-4"
                     >
-                      <span className="text-xs font-medium tracking-[3px] text-primary-500 border-b border-primary-300 pb-1">
+                      <span className="inline-flex items-center text-xs font-semibold tracking-[4px] text-primary-400 bg-slate-900/40 backdrop-blur-sm px-4 py-2 rounded-full border border-primary-400/30">
                         {heroSlides[currentSlide].title}
                       </span>
                     </motion.div>
@@ -119,7 +129,7 @@ function LuxuryHeroSection() {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
-                      className="text-5xl xl:text-6xl font-light mb-3 leading-tight text-primary-900"
+                      className="text-6xl xl:text-7xl  font-light mb-2 leading-[1.1] text-white drop-shadow-2xl"
                     >
                       {heroSlides[currentSlide].heading}
                     </motion.h1>
@@ -128,7 +138,7 @@ function LuxuryHeroSection() {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.5 }}
-                      className="text-2xl xl:text-3xl font-light mb-6 text-primary-600"
+                      className="text-2xl xl:text-3xl font-light mb-6 text-primary-200/90 tracking-wide"
                     >
                       {heroSlides[currentSlide].subHeading}
                     </motion.h2>
@@ -137,7 +147,7 @@ function LuxuryHeroSection() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.6 }}
-                      className="text-primary-600 mb-8 leading-relaxed font-light"
+                      className="text-slate-100 mb-10 leading-relaxed font-light text-lg max-w-xl"
                     >
                       {heroSlides[currentSlide].description}
                     </motion.p>
@@ -146,31 +156,36 @@ function LuxuryHeroSection() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.7 }}
-                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)" }}
                       whileTap={{ scale: 0.98 }}
-                      className="group relative px-8 py-4 rounded-md bg-primary-900 text-white font-light tracking-wider text-sm uppercase overflow-hidden transition-all duration-300 hover:bg-primary-800 hover:shadow-xl"
+                      className="group relative px-10 py-4 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium tracking-widest text-sm uppercase overflow-hidden transition-all duration-300 hover:from-primary-500 hover:to-primary-400 shadow-lg shadow-primary-500/30 border border-primary-400/50"
                     >
-                      <span className="relative z-10">
+                      <span className="relative z-10 flex items-center gap-3">
                         {heroSlides[currentSlide].buttonText}
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </span>
+                      <div className="absolute inset-0 bg-white/20 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
                     </motion.button>
                   </motion.div>
 
-                  {/* Subtle border */}
-                  <div className="absolute inset-0 border-2 border-primary-200/50 rounded-3xl" />
+                  {/* Decorative corner elements */}
+                  <div className="absolute top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-primary-400/20 rounded-tl-3xl" />
+                  <div className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-primary-400/20 rounded-br-3xl" />
                 </motion.div>
               </AnimatePresence>
 
-              {/* Slide Indicators */}
-              <div className="absolute bottom-8 left-12 flex space-x-3">
+              {/* Enhanced Slide Indicators */}
+              <div className="absolute bottom-8 left-12 flex items-center gap-4 bg-slate-900/40 backdrop-blur-sm px-6 py-3 rounded-full border border-slate-700/50">
                 {heroSlides.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`w-12 h-1 transition-all duration-300 ${
+                    className={`transition-all duration-500 rounded-full ${
                       index === currentSlide
-                        ? "bg-primary-800 shadow-lg shadow-primary-400/50"
-                        : "bg-primary-300 hover:bg-primary-400"
+                        ? "w-12 h-2 bg-gradient-to-r from-primary-500 to-primary-400 shadow-lg shadow-primary-500/50"
+                        : "w-2 h-2 bg-slate-400 hover:bg-primary-300 hover:w-8"
                     }`}
                   />
                 ))}
@@ -178,34 +193,54 @@ function LuxuryHeroSection() {
             </div>
           </div>
 
-          {/* Luxury Side Panels */}
-          <div className="flex flex-col justify-center gap-12">
+          {/* Enhanced Luxury Side Panels */}
+          <div className="flex flex-col justify-center gap-3">
             {luxuryOffers.map((offer, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: 40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ scale: 1.02, y: -5 }}
-                className="group relative bg-white border-2 border-primary-100 rounded-2xl p-4 overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300"
+                whileHover={{ scale: 1.03, y: -8 }}
+                className="group  relative bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
               >
-                {/* Subtle hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Premium hover gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                <div className="relative z-10">
-                  <span className="text-xs font-medium tracking-[2px] text-primary-400 border-b border-primary-200 pb-1 inline-block mb-2 -mt-8">
-                    {offer.category}
-                  </span>
+                {/* Shimmer effect on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                </div>
 
-                  <div className="relative w-full h-48 mb-2 rounded-xl overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent z-10" />
+                <div className="relative z-10 p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-bold tracking-[3px] text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full border border-primary-200">
+                      {offer.category}
+                    </span>
+                    <svg className="w-5 h-5 text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
+
+                  <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-primary-300 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/20 to-transparent z-10" />
                     <img
                       src={offer.image}
                       alt={offer.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 border border-primary-100 rounded-xl"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   </div>
+
+                  <h3 className="text-lg  font-medium text-slate-900 mb-2 group-hover:text-primary-800 transition-colors duration-300">
+                    {offer.title}
+                  </h3>
+                  <p className="text-primary-700 text-sm font-medium tracking-wide">
+                    {offer.subtitle}
+                  </p>
                 </div>
+
+                {/* Decorative corner accent */}
+                <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-primary-400/0 group-hover:border-primary-400/30 rounded-tr-2xl transition-all duration-500" />
               </motion.div>
             ))}
           </div>

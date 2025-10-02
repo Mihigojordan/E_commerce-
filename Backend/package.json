@@ -55,6 +55,7 @@
     "serve-static": "^2.2.0",
     "socket.io": "^4.8.1",
     "stripe": "^18.1.1",
+    "uuid": "^13.0.0",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {

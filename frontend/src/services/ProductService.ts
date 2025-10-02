@@ -10,6 +10,7 @@ export interface Product {
   size: string;
   quantity: number;
   price: number;
+  discount:number; //  in 100%
   perUnit: string;
   description: string;
   subDescription: string | null;
@@ -18,7 +19,7 @@ export interface Product {
   categoryId: number;
   createdAt: string;
   updatedAt: string;
-  review?: number;
+  review?: number; // Average rating (0-5)
 }
 
 export interface CreateProductData {
@@ -28,6 +29,7 @@ export interface CreateProductData {
   size: string;
   quantity: number;
   price: number;
+  discount:number; //  in 100%
   perUnit: string;
   description: string;
   subDescription?: string | null;

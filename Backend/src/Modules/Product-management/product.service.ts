@@ -23,6 +23,7 @@ interface CreateProductData {
   subDescription?: string; // string | undefined
   review?: number;
   availability?: boolean;
+  discount:number;
   tags?: string[];
   categoryId: number; // Changed from string to number
 }
@@ -38,6 +39,7 @@ interface UpdateProductData {
   description?: string;
   subDescription?: string;
   review?: number;
+  discount:number;
   availability?: boolean;
   tags?: string[];     // Same here, accept array
   categoryId?: number; // ✅ must be number now
@@ -96,6 +98,7 @@ async createProduct(productData: CreateProductData) {
         description: productData.description,
         subDescription: productData.subDescription || null,
         review: productData.review || 0,
+        discount:productData.discount,
         availability:
           productData.availability !== undefined
             ? productData.availability
@@ -300,6 +303,7 @@ async updateProduct(id: string, updateData: UpdateProductData & { keepImages?: s
         review: updateData.review,
         availability: updateData.availability,
         categoryId: updateData.categoryId,
+        discount:updateData.discount,
         images: updatedImages as unknown as Prisma.InputJsonValue,
         tags: updateData.tags !== undefined
           ? (updateData.tags as unknown as Prisma.InputJsonValue)

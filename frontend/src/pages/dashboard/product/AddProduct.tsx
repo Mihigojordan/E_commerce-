@@ -26,6 +26,7 @@ interface ProductFormData {
   tags: string[];
   categoryId: number;
   images?: File[];
+  discount: number | ''; // Added discount field
 }
 
 interface FileState {
@@ -71,6 +72,7 @@ const ProductForm: React.FC<{
     tags: [],
     categoryId: 0,
     images: [],
+    discount: '', // Initialize discount
   });
   
   const [files, setFiles] = useState<FileState>({ images: [] });
@@ -112,6 +114,7 @@ const ProductForm: React.FC<{
             tags: product.tags || [],
             categoryId: product.categoryId || 0,
             images: [],
+            discount: product.discount || '', // Initialize discount from product
           });
           setExistingFiles({
             images: product.images?.map(img => img.startsWith('http') ? img : `${API_BASE_URL}${img}`) || [],
@@ -256,6 +259,9 @@ const ProductForm: React.FC<{
     if (files.images.length + existingFiles.images.length > 4) {
       newErrors.images = 'Maximum 4 images allowed';
     }
+    if (formData.discount !== '' && (typeof formData.discount === 'number' && (formData.discount < 0 || formData.discount > 100))) {
+      newErrors.discount = 'Discount must be between 0 and 100';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -278,6 +284,7 @@ const ProductForm: React.FC<{
       formDataToSend.append('categoryId', String(formData.categoryId));
       formDataToSend.append('tags', JSON.stringify(formData.tags));
       formDataToSend.append('availability', String(formData.availability ?? true));
+      formDataToSend.append('discount', String(formData.discount ?? '')); // Append discount
       
       if (productId) {
         const keepImages = existingFiles.images.map(img => 
@@ -541,6 +548,22 @@ const ProductForm: React.FC<{
                         placeholder="Enter quantity"
                       />
                       {errors.quantity && <p className="text-xs text-red-600 mt-1 flex items-center gap-1"><X className="h-3 w-3" />{errors.quantity}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                        Discount (%)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={formData.discount}
+                        onChange={(e) => handleInputChange('discount', e.target.value ? parseInt(e.target.value) : '')}
+                        className="w-full px-3 py-2.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="Enter discount percentage"
+                      />
+                      {errors.discount && <p className="text-xs text-red-600 mt-1 flex items-center gap-1"><X className="h-3 w-3" />{errors.discount}</p>}
                     </div>
 
                     <div>

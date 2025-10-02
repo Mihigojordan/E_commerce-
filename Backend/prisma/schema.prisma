@@ -60,6 +60,7 @@ model Product {
   availability   Boolean  @default(true)
   tags           Json     // Store multiple tags as JSON array
   categoryId     Int
+  discount       Int  @default(0)
   category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -71,6 +72,7 @@ model Product {
   @@index([price])
   @@map("products")
   ProductReview ProductReview[]
+   orderItems     OrderItem[]
 }
 
 model ProductReview {
@@ -154,4 +156,79 @@ model User {
   isLocked  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+
+
+model Order {
+  id             String       @id @default(uuid())
+  customerName   String
+  customerEmail  String
+  customerPhone  String
+  amount         Float
+  currency       String
+  status         OrderStatus  @default(PENDING)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  orderItems     OrderItem[]
+  payment        Payment?
+  
+  purchasingUserId String?         
+  purchasingUser   PurchasingUser? @relation(fields: [purchasingUserId], references: [id],onDelete: Cascade)
+}
+
+
+// Enums
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+
+model OrderItem {
+  id           String   @id @default(uuid())
+
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id],onDelete: Cascade)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity     Int
+  price        Float
+  subtotal     Float
+}
+
+
+model Payment {
+  id             String        @id @default(uuid())
+  orderId        String         @unique
+  order          Order         @relation(fields: [orderId], references: [id])
+  txRef          String        @unique
+  transactionId  String?       // Flutterwave transaction ID
+  amount         Float
+  currency       String
+  status         PaymentStatus @default(PENDING)
+  paymentMethod  String        // card, mobilemoneyrwanda, etc.
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+model PurchasingUser {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  phoneNumber  String    @unique
+  password     String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  orders       Order[]   // A user can place multiple orders
 }
