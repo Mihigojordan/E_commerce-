@@ -5,6 +5,8 @@ import MainBanner from "../../components/landing/home/MainBanner"
 import NewArrivalProduct from "../../components/landing/home/NewArrivalProduct"
 import PopularCategory from "../../components/landing/home/PopularCategory"
 import SampleCards from "../../components/landing/home/SampleCards"
+import SummerOffer from "../../components/landing/home/SummerOffer"
+import WishingBanner from "../../components/landing/home/WishingBanner"
 
 const Home = () => {
   return (
@@ -14,6 +16,9 @@ const Home = () => {
        <BestSellProduct />
        <MainBanner />
        <PopularCategory />
+       <SummerOffer />
+       <NewArrivalProduct />
+       <WishingBanner />
 
       </main>
   )

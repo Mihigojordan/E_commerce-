@@ -44,6 +44,8 @@ import BlogDashboard from '../pages/dashboard/blog/BlogManagement';
 import BlogFormPage from '../pages/dashboard/blog/BlogFormPage';
 import ProductViewMorePage from '../pages/dashboard/product/ProductViewPage';
 import BlogViewMorePage from '../pages/dashboard/blog/BlogViewMorePage';
+import ContactMessage from '../pages/dashboard/ContactMessage';
+import Subscribers from '../pages/dashboard/Subscribers';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -342,6 +344,21 @@ const routes = createBrowserRouter([
                 element: (
                   <SuspenseWrapper>
                     <MaterialManagement />
+                  </SuspenseWrapper>
+                ),
+              },
+               {
+                path: 'contact-message',
+                element: (
+                  <SuspenseWrapper>
+                    <ContactMessage />
+                  </SuspenseWrapper>
+                ),
+              }, {
+                path: 'subscribe-message',
+                element: (
+                  <SuspenseWrapper>
+                    <Subscribers />
                   </SuspenseWrapper>
                 ),
               },

@@ -26,24 +26,10 @@ import {
   MessageCircle
 } from 'lucide-react';
 import Logo from '../../assets/logo.png'
+import subscriberService from '../../services/subscribeService';
 
 
-// Mock axios for demonstration
-const axios = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  post: async (url: any, data: { email: string | string[]; }) => {
-    // Simulate API call
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (data.email && data.email.includes('@')) {
-          resolve({ data: { success: true, message: 'Subscription successful!' } });
-        } else {
-          reject(new Error('Invalid email address'));
-        }
-      }, 1000);
-    });
-  }
-};
+
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -62,10 +48,7 @@ const Footer = () => {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const response = await axios.post('/api/subscribe', {
-        email: email,
-        source: 'footer_newsletter'
-      });
+      const response = await subscriberService.createSubscriber(email);
       
       setSubscribeStatus('success');
       setMessage('Thank you for subscribing! Check your email for confirmation.');

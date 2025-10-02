@@ -9,6 +9,8 @@ import { PartnerModule } from './Modules/partner-management/partner.module';
 import { TestimonialModule } from './Modules/testmonial-management/testmonial.module';
 import { BlogModule } from './Modules/Blog-management/blog.module';
 import { ContactModule } from './Modules/Contact-us/contact.module';
+
+import { SubscribersModule } from './Modules/subscribers/subscribers.module';
 @Module({
   imports: [
 
@@ -22,7 +24,8 @@ import { ContactModule } from './Modules/Contact-us/contact.module';
     PartnerModule,
     TestimonialModule,
     BlogModule,
-    ContactModule
+    ContactModule,
+    SubscribersModule
     
   ],
   controllers: [],

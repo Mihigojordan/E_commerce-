@@ -1,10 +1,10 @@
 import React from 'react';
 import BannerImage from '../../../assets/banner-4.png';
 
-function MainBanner() {
+function WishingBanner() {
   return (
     <div
-      className="relative min-h-96 overflow-hidden bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
+      className="relative min-h-48 overflow-hidden bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
       style={{ backgroundImage: `url(${BannerImage})` }}
     >
       {/* Background decorative elements */}
@@ -30,27 +30,20 @@ function MainBanner() {
         </svg>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-16">
+      <div className="relative z-10 max-w-8xl mx-auto px-6 py-4 lg:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div className="space-y-6">
             <div className="space-y-4">
               <p className="text-primary-600 font-medium text-lg tracking-wide">
-                Premium Jewelry
+    Shop Today’s Deals
               </p>
-              <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
-                Discover Elegant
+              <h1 className="text-4xl lg:text-2xl xl:text-3xl font-bold text-gray-900 leading-tight">
+         Happy Mother's Day. Big Sale Up to 40%
                 <br />
-                <span className="text-gray-800">Jewelry for Every Occasion</span>
-              </h1>
+            </h1>
             </div>
 
-            <button className="inline-flex items-center px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 group">
-              Read More
-              <svg className="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
@@ -58,4 +51,4 @@ function MainBanner() {
   );
 }
 
-export default MainBanner;
+export default WishingBanner;

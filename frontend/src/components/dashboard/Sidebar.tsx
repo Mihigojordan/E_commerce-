@@ -71,6 +71,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     { id: "Category", label: "Category Management", icon: Layers, path: "/admin/dashboard/category-management" },
     { id: "Product Management", label: "Product Management", icon: Store, path: "/admin/dashboard/product-management" },
     { id: "Product Management", label: "Blog Management", icon: Newspaper, path: "/admin/dashboard/blog-management" },
+    { id: "Contact Message", label: "Contact Message", icon: Newspaper, path: "/admin/dashboard/contact-message" },
+ 
+          { id: "Subscribers", label: "Subscribers Message", icon: Newspaper, path: "/admin/dashboard/subscribe-message" },
  
   ];
 
