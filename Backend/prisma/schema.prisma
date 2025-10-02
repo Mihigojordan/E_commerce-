@@ -60,6 +60,7 @@ model Product {
   availability   Boolean  @default(true)
   tags           Json     // Store multiple tags as JSON array
   categoryId     Int
+  discount       Int  @default(0)
   category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

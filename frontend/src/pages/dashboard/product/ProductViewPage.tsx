@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { 
   Star, 
@@ -21,7 +22,7 @@ import productService, { type Product, type ProductReview } from '../../../servi
 import { API_URL } from '../../../api/api';
 
 const ProductViewMorePage: React.FC = () => {
-  const { id: productId } = useParams();
+  const { id: productId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<ProductReview[]>([]);
@@ -96,6 +97,11 @@ const ProductViewMorePage: React.FC = () => {
       day: 'numeric'
     });
   };
+
+  // Calculate discounted price
+  const discountedPrice = product.discount && product.discount > 0 
+    ? product.price * (1 - product.discount / 100)
+    : product.price;
 
   // Pagination logic
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
@@ -220,7 +226,13 @@ const ProductViewMorePage: React.FC = () => {
 
               {/* Price */}
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-gray-900">${product.price}</span>
+                <span className="text-4xl font-bold text-gray-900">${discountedPrice.toFixed(2)}</span>
+                {product.discount && product.discount > 0 && (
+                  <>
+                    <span className="text-xl text-gray-500 line-through">${product.price.toFixed(2)}</span>
+                    <span className="text-sm text-red-600 font-medium">{product.discount}% OFF</span>
+                  </>
+                )}
                 <span className="text-gray-500">/ {product.perUnit}</span>
               </div>
 
@@ -300,7 +312,7 @@ const ProductViewMorePage: React.FC = () => {
 
             <div className="px-8 py-8">
               {activeTab === 'description' && (
-                <div className="bg-white p-3 rounded border text-sm  text-gray-700 leading-relaxed">
+                <div className="bg-white p-3 rounded border text-sm text-gray-700 leading-relaxed">
                   <div
                     dangerouslySetInnerHTML={{
                       __html: product.subDescription!

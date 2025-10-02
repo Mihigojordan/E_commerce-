@@ -14,8 +14,8 @@ const ShoppingPage: React.FC = () => {
   const [newProducts, setNewProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [priceRange, setPriceRange] = useState([16, 300]);
-  const [minPriceInput, setMinPriceInput] = useState('16');
+  const [priceRange, setPriceRange] = useState([0, 300]);
+  const [minPriceInput, setMinPriceInput] = useState('0');
   const [maxPriceInput, setMaxPriceInput] = useState('300');
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
@@ -448,7 +448,7 @@ const ShoppingPage: React.FC = () => {
                         setSearchQuery('');
                         setSelectedColors([]);
                         setSelectedConditions([]);
-                        setMinPriceInput('16');
+                        setMinPriceInput('0');
                         setMaxPriceInput('300');
                         setCurrentPage(1);
                       }}

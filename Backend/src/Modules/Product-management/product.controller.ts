@@ -21,6 +21,7 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
+import { parse } from 'path';
 // Define the expected body structure
 // Define the expected body structure
 @Controller('products')
@@ -64,6 +65,7 @@ export class ProductController {
         perUnit: body.perUnit,
         description: body.description,
         subDescription: body.subDescription, // string | undefined
+        discount: parseInt(body.discount),
         review: body.review ? parseFloat(body.review) : 0,
         availability: body.availability ? body.availability === 'true' : true,
         tags: body.tags ? JSON.parse(body.tags) : [],
@@ -180,6 +182,7 @@ async updateProduct(
     if (body.brand !== undefined) updateData.brand = body.brand;
     if (body.size !== undefined) updateData.size = body.size;
     if (body.quantity !== undefined) updateData.quantity = parseInt(body.quantity);
+    if (body.discount !== undefined) updateData.discount = parseInt(body.discount);
     if (body.price !== undefined) updateData.price = parseFloat(body.price);
     if (body.perUnit !== undefined) updateData.perUnit = body.perUnit;
     if (body.description !== undefined) updateData.description = body.description;

@@ -42,6 +42,7 @@ CREATE TABLE `products` (
     `availability` BOOLEAN NOT NULL DEFAULT true,
     `tags` JSON NOT NULL,
     `categoryId` INTEGER NOT NULL,
+    `discount` INTEGER NOT NULL DEFAULT 0,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 

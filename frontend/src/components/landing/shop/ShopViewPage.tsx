@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Heart, 
@@ -13,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
+  AlertCircle
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import productService, { type Product, type ProductReview } from '../../../services/ProductService';
@@ -21,13 +23,14 @@ import { API_URL } from '../../../api/api';
 import Swal from 'sweetalert2';
 import { useCart } from '../../../context/CartContext';
 import { useWishlist } from '../../../context/WishlistContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import FilterBar from './FilterBar';
 
 const ShopViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { cart, addToCart } = useCart();
+  const { cart, addToCart, updateQuantity } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<ProductReview[]>([]);
@@ -60,15 +63,35 @@ const ShopViewPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
 
-  const toggleWishlist = () => {
+  // Check if product is in cart
+  const isInCart = useCallback(() => {
+    if (!id || !product) return false;
+    return cart.some(item => item.id === id);
+  }, [id, product, cart]);
+
+  const toggleWishlist = useCallback(() => {
     if (!id) return;
     if (isInWishlist(id)) {
       removeFromWishlist(id);
+      Swal.fire({
+        title: 'Removed from Wishlist',
+        text: 'This product has been removed from your wishlist.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } else {
       if (!product) return;
       addToWishlist(product);
+      Swal.fire({
+        title: 'Added to Wishlist',
+        text: `${product.name} has been added to your wishlist!`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
     }
-  };
+  }, [id, product, isInWishlist, removeFromWishlist, addToWishlist]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -196,16 +219,16 @@ const ShopViewPage: React.FC = () => {
     setPriceRange([min, max]);
   }, [minPriceInput, maxPriceInput]);
 
-  const getTagColor = (tag: string) => {
+  const getTagColor = useCallback((tag: string) => {
     switch (tag.toLowerCase()) {
       case 'hot': return 'bg-pink-500';
       case 'new': return 'bg-primary-500';
       case 'sale': return 'bg-red-500';
       default: return 'bg-blue-500';
     }
-  };
+  }, []);
 
-  const handleNavigateProduct = (product: Product) => {
+  const handleNavigateProduct = useCallback((product: Product) => {
     if (!product.id) {
       Swal.fire({
         icon: 'error',
@@ -216,7 +239,7 @@ const ShopViewPage: React.FC = () => {
       return;
     }
     navigate(`/products/${product.id}`);
-  };
+  }, [navigate]);
 
   const handleApplyFilters = useCallback(() => {
     const params = new URLSearchParams();
@@ -232,26 +255,39 @@ const ShopViewPage: React.FC = () => {
     setSelectedCategory(categoryId);
   }, []);
 
-  const handleAddToCart = () => {
-    if (!product) return;
+  const handleCartAction = useCallback(() => {
+    if (!product || !id) return;
+    
+    // Stock validation
     if (!product.availability || product.quantity < quantity) {
       Swal.fire({
-        icon: 'error',
         title: 'Out of Stock',
-        text: 'This product is out of stock or the selected quantity exceeds available stock.',
+        text: product.availability 
+          ? `Only ${product.quantity} units of ${product.name} available.`
+          : `${product.name} is currently out of stock.`,
+        icon: 'warning',
         confirmButtonColor: '#3085d6',
+        timer: 2000,
       });
       return;
     }
-    addToCart(product, quantity);
+
+    const currentInCart = isInCart();
+    if (currentInCart) {
+      updateQuantity(id, quantity);
+    } else {
+      addToCart(product, quantity);
+    }
+
+    // Unified "Update Cart" message
     Swal.fire({
+      title: 'Update Cart',
+      text: `Your cart has been updated with ${quantity} ${quantity === 1 ? 'item' : 'items'} of ${product.name}.`,
       icon: 'success',
-      title: 'Added to Cart',
-      text: `${product.name} (x${quantity}) has been added to your cart!`,
       timer: 1500,
       showConfirmButton: false,
     });
-  };
+  }, [product, id, quantity, isInCart, updateQuantity, addToCart]);
 
   const handleReviewSubmit = async () => {
     if (!id || !product) return;
@@ -330,9 +366,14 @@ const ShopViewPage: React.FC = () => {
     }
   };
 
-  const handleStarClick = (rating: number) => {
+  const handleStarClick = useCallback((rating: number) => {
     setReviewRating(rating);
-  };
+  }, []);
+
+  // Calculate discounted price
+  const discountedPrice = product?.discount && product.discount > 0 
+    ? product.price * (1 - product.discount / 100)
+    : product?.price;
 
   // Pagination logic
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
@@ -340,47 +381,79 @@ const ShopViewPage: React.FC = () => {
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
   const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-  };
+  }, []);
 
-  const handlePrevPage = () => {
+  const handlePrevPage = useCallback(() => {
     setCurrentPage(prev => Math.max(prev - 1, 1));
-  };
+  }, []);
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  };
+  }, [totalPages]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading product...</p>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen bg-gray-50 flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading product...</p>
+        </div>
+      </motion.div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-red-500">{error || 'Product not found.'}</p>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen bg-gray-50 flex items-center justify-center"
+      >
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <p className="text-red-500 text-lg">{error || 'Product not found.'}</p>
+          <button
+            onClick={() => navigate('/products')}
+            className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Back to Products
+          </button>
+        </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen bg-gray-50"
+    >
       <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="w-full lg:w-72 space-y-6">
+          <motion.aside 
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="w-full lg:w-72 space-y-6"
+          >
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 mb-6 text-lg">Category</h3>
               {categoryLoading ? (
-                <p className="text-gray-600">Loading categories...</p>
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                  <span className="ml-2 text-gray-600">Loading...</span>
+                </div>
               ) : categoryError ? (
-                <p className="text-red-500">{categoryError}</p>
+                <p className="text-red-500 text-sm">{categoryError}</p>
               ) : categories.length === 0 ? (
-                <p className="text-gray-600">No categories available.</p>
+                <p className="text-gray-600 text-sm">No categories available.</p>
               ) : (
                 <ul className="space-y-4">
                   {categories.map((category) => (
@@ -407,46 +480,52 @@ const ShopViewPage: React.FC = () => {
               setMinPriceInput={setMinPriceInput}
               maxPriceInput={maxPriceInput}
               setMaxPriceInput={setMaxPriceInput}
-              selectedColors={[]} // Not used in ShopViewPage
-              setSelectedColors={() => {}} // Not used in ShopViewPage
-              selectedConditions={[]} // Not used in ShopViewPage
-              setSelectedConditions={() => {}} // Not used in ShopViewPage
+              selectedColors={[]} 
+              setSelectedColors={() => {}} 
+              selectedConditions={[]} 
+              setSelectedConditions={() => {}} 
               setCurrentPage={setCurrentPage}
               onApplyFilters={handleApplyFilters}
-              showColorAndConditionFilters={false} // Hide color and condition filters
+              showColorAndConditionFilters={false} 
             />
 
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 mb-6 text-lg">New Products</h3>
               {newProductsLoading ? (
-                <p className="text-gray-600">Loading new products...</p>
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                  <span className="ml-2 text-gray-600 text-sm">Loading...</span>
+                </div>
               ) : newProductsError ? (
-                <p className="text-red-500">{newProductsError}</p>
+                <p className="text-red-500 text-sm">{newProductsError}</p>
               ) : newProducts.length === 0 ? (
-                <p className="text-gray-600">No new products available.</p>
+                <p className="text-gray-600 text-sm">No new products available.</p>
               ) : (
                 <div className="space-y-5">
-                  {newProducts.map((product) => (
+                  {newProducts.map((productItem) => (
                     <div 
-                      key={product.id} 
+                      key={productItem.id} 
                       className="flex gap-4 group cursor-pointer" 
-                      onClick={() => handleNavigateProduct(product)}
+                      onClick={() => handleNavigateProduct(productItem)}
                       role="button"
-                      aria-label={`View product ${product.name}`}
+                      aria-label={`View product ${productItem.name}`}
                     >
                       <img 
-                        src={`${API_URL}${product.images[0]}` || 'https://via.placeholder.com/60'} 
-                        alt={product.name} 
+                        src={`${API_URL}${productItem.images[0]}` || 'https://via.placeholder.com/60'} 
+                        alt={productItem.name} 
                         className="w-14 h-14 rounded-lg object-cover group-hover:scale-105 transition-transform" 
+                        loading="lazy"
                       />
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">{product.name}</h4>
-                        <p className="text-sm text-primary-600 font-semibold">${product.price.toFixed(2)}</p>
+                        <h4 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                          {productItem.name}
+                        </h4>
+                        <p className="text-sm text-primary-600 font-semibold">${productItem.price.toFixed(2)}</p>
                         <div className="flex mt-1">
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i} 
-                              className={`h-3 w-3 ${i < Math.floor(product.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                              className={`h-3 w-3 ${i < Math.floor(productItem.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
                             />
                           ))}
                         </div>
@@ -456,15 +535,24 @@ const ShopViewPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </aside>
+          </motion.aside>
 
-          <main className="flex-1">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <motion.main 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex-1"
+          >
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="bg-white rounded-lg shadow-sm overflow-hidden"
+            >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
                 <div className="space-y-4">
                   <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square">
                     <button 
-                      className="absolute top-4 right-4 p-2 bg-white/80 rounded-full hover:bg-white z-10"
+                      className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white z-10 transition-colors"
                       aria-label="Zoom image"
                     >
                       <Search className="h-5 w-5 text-gray-600" />
@@ -472,34 +560,47 @@ const ShopViewPage: React.FC = () => {
                     <img 
                       src={`${API_URL}${product.images[selectedImage]}` || 'https://via.placeholder.com/600'} 
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
                     />
                   </div>
                   
                   <div className="grid grid-cols-4 gap-2">
-                    {product.images.map((image, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedImage(index)}
-                        className={`relative rounded-lg overflow-hidden aspect-square ${
-                          selectedImage === index ? 'ring-2 ring-primary-500' : ''
-                        }`}
-                        aria-label={`Select image ${index + 1} of ${product.name}`}
-                      >
-                        <img 
-                          src={`${API_URL}${image}` || 'https://via.placeholder.com/120'} 
-                          alt={`${product.name} ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+                    <AnimatePresence>
+                      {product.images.map((image, index) => (
+                        <motion.button
+                          key={index}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          onClick={() => setSelectedImage(index)}
+                          className={`relative rounded-lg overflow-hidden aspect-square ${
+                            selectedImage === index ? 'ring-2 ring-primary-500' : ''
+                          }`}
+                          aria-label={`Select image ${index + 1} of ${product.name}`}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <img 
+                            src={`${API_URL}${image}` || 'https://via.placeholder.com/120'} 
+                            alt={`${product.name} ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </motion.button>
+                      ))}
+                    </AnimatePresence>
                   </div>
                 </div>
 
                 <div className="space-y-6">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-                    <p className="text-lg text-primary-600 mb-4">{product.tags[0]}</p>
+                    {product.tags[0] && (
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getTagColor(product.tags[0])} text-white mb-4`}>
+                        {product.tags[0]}
+                      </span>
+                    )}
                     
                     <div className="flex items-center gap-4 mb-4">
                       <p className="text-sm text-gray-600">{product.brand}</p>
@@ -508,7 +609,7 @@ const ShopViewPage: React.FC = () => {
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i} 
-                              className={`h-4 w-4 ${i < Math.floor(product.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                              className={`h-4 w-4 transition-colors ${i < Math.floor(product.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
                             />
                           ))}
                         </div>
@@ -516,57 +617,89 @@ const ShopViewPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 mb-6">
-                      <span className="text-3xl font-bold text-primary-600">${product.price.toFixed(2)}</span>
+                    <div className="flex items-baseline gap-2 mb-6">
+                      <span className="text-3xl font-bold text-primary-600">${discountedPrice?.toFixed(2)}</span>
+                      {product.discount && product.discount > 0 && (
+                        <>
+                          <span className="text-xl text-gray-500 line-through">${product.price.toFixed(2)}</span>
+                          <span className="text-sm text-red-600 font-medium">{product.discount}% OFF</span>
+                        </>
+                      )}
+                      <span className="text-gray-500">/ {product.perUnit}</span>
                     </div>
 
-                    <p className="text-gray-600 mb-6">{product.description}</p>
+                    <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="flex items-center border rounded-md">
+                    <div className="flex items-center border border-gray-200 rounded-md overflow-hidden">
                       <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="p-2 hover:bg-gray-50"
+                        className="p-2 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        disabled={quantity <= 1}
                         aria-label="Decrease quantity"
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className="px-4 py-2 border-x" aria-label={`Quantity: ${quantity}`}>{quantity}</span>
+                      <span className="px-4 py-2 text-sm font-medium border-x border-gray-200" aria-label={`Quantity: ${quantity}`}>
+                        {quantity}
+                      </span>
                       <button
-                        onClick={() => setQuantity(quantity + 1)}
-                        className="p-2 hover:bg-gray-50"
+                        onClick={() => {
+                          if (quantity < product.quantity) {
+                            setQuantity(quantity + 1);
+                          } else {
+                            Swal.fire({
+                              title: 'Stock Limited',
+                              text: `Only ${product.quantity} units of ${product.name} available.`,
+                              icon: 'warning',
+                              confirmButtonColor: '#3085d6',
+                              timer: 2000,
+                            });
+                          }
+                        }}
+                        className="p-2 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        disabled={quantity >= product.quantity}
                         aria-label="Increase quantity"
                       >
                         <Plus className="h-4 w-4" />
                       </button>
                     </div>
 
-                    <button 
-                      onClick={handleAddToCart}
-                      className="flex-1 bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
-                      aria-label="Add to cart"
+                    <motion.button 
+                      onClick={handleCartAction}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex-1 bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition-colors flex items-center justify-center gap-2 font-medium disabled:opacity-50 ${
+                        isInCart() ? 'bg-green-600 hover:bg-green-700' : ''
+                      }`}
+                      disabled={!product.availability || product.quantity < quantity}
+                      aria-label={isInCart() ? `Update quantity of ${product.name} in cart` : `Add ${quantity} ${product.name} to cart`}
                     >
                       <ShoppingCart className="h-5 w-5" />
-                      Add to cart
-                    </button>
+                      {isInCart() ? 'Update Cart' : 'Add to Cart'}
+                    </motion.button>
 
-                    <button
+                    <motion.button
                       onClick={toggleWishlist}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                       className={`p-3 border rounded-md hover:bg-gray-50 transition-colors ${
-                        isInWishlist(id || '') ? 'text-red-500 border-red-200' : 'text-gray-600'
+                        isInWishlist(id || '') ? 'text-red-500 border-red-200 bg-red-50' : 'text-gray-600 border-gray-200'
                       }`}
                       aria-label={isInWishlist(id || '') ? 'Remove from wishlist' : 'Add to wishlist'}
                     >
-                      <Heart className={`h-5 w-5 ${isInWishlist(id || '') ? 'fill-current' : ''}`} />
-                    </button>
+                      <Heart className={`h-5 w-5 transition-colors ${isInWishlist(id || '') ? 'fill-current' : ''}`} />
+                    </motion.button>
 
-                    <button 
-                      className="p-3 border rounded-md hover:bg-gray-50 transition-colors"
+                    <motion.button 
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
                       aria-label="Share product"
                     >
                       <Share2 className="h-5 w-5 text-gray-600" />
-                    </button>
+                    </motion.button>
                   </div>
 
                   <div className="pt-4 border-t">
@@ -574,18 +707,26 @@ const ShopViewPage: React.FC = () => {
                       <div className="flex gap-2">
                         <span className="text-sm text-gray-600">Share this:</span>
                         <div className="flex gap-2">
-                          <button aria-label="Share on Facebook"><Facebook className="h-4 w-4 text-blue-600" /></button>
-                          <button aria-label="Share on Twitter"><Twitter className="h-4 w-4 text-blue-400" /></button>
-                          <button aria-label="Share on Instagram"><Instagram className="h-4 w-4 text-pink-500" /></button>
-                          <button aria-label="Share on YouTube"><Youtube className="h-4 w-4 text-red-600" /></button>
+                          <motion.button whileTap={{ scale: 0.95 }} aria-label="Share on Facebook">
+                            <Facebook className="h-4 w-4 text-blue-600 hover:scale-110 transition-transform" />
+                          </motion.button>
+                          <motion.button whileTap={{ scale: 0.95 }} aria-label="Share on Twitter">
+                            <Twitter className="h-4 w-4 text-blue-400 hover:scale-110 transition-transform" />
+                          </motion.button>
+                          <motion.button whileTap={{ scale: 0.95 }} aria-label="Share on Instagram">
+                            <Instagram className="h-4 w-4 text-pink-500 hover:scale-110 transition-transform" />
+                          </motion.button>
+                          <motion.button whileTap={{ scale: 0.95 }} aria-label="Share on YouTube">
+                            <Youtube className="h-4 w-4 text-red-600 hover:scale-110 transition-transform" />
+                          </motion.button>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 space-y-2">
                       <p><span className="font-medium">Tags:</span> {product.tags.join(', ')}</p>
                       <p><span className="font-medium">Availability:</span> 
-                        <span className={product.availability ? 'text-green-600' : 'text-red-600'}>
+                        <span className={product.availability ? 'text-green-600' : 'text-red-600 font-medium'}>
                           {product.availability ? `${product.quantity} Items In Stock` : 'Out of Stock'}
                         </span>
                       </p>
@@ -597,10 +738,11 @@ const ShopViewPage: React.FC = () => {
               <div className="border-t">
                 <div className="flex border-b">
                   {['DESCRIPTION', 'REVIEWS'].map((tab) => (
-                    <button
+                    <motion.button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-6 py-4 font-medium text-sm ${
+                      whileHover={{ scale: 1.02 }}
+                      className={`px-6 py-4 font-medium text-sm flex-1 text-center ${
                         activeTab === tab
                           ? 'text-primary-600 border-b-2 border-primary-600'
                           : 'text-gray-600 hover:text-gray-900'
@@ -608,19 +750,23 @@ const ShopViewPage: React.FC = () => {
                       aria-label={`View ${tab.toLowerCase()}`}
                     >
                       {tab} {tab === 'REVIEWS' ? `(${reviews.length})` : ''}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
 
-                <div className="p-8">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="p-8"
+                >
                   {activeTab === 'DESCRIPTION' && (
-                    <div className="prose bg-white p-3 rounded border text-sm  text-gray-700 leading-relaxed  max-w-none">
-                                      <div className="prose prose-lg max-w-none mb-8">
-                    <div
-                      className="space-y-6 text-gray-700 leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: product.subDescription! || 'No content available' }}
-                    />
-                  </div>
+                    <div className="prose prose-lg max-w-none">
+                      <div
+                        className="space-y-6 text-gray-700 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: product.subDescription! || 'No content available' }}
+                      />
                     </div>
                   )}
 
@@ -633,7 +779,7 @@ const ShopViewPage: React.FC = () => {
                               {[...Array(5)].map((_, i) => (
                                 <Star 
                                   key={i} 
-                                  className={`h-5 w-5 ${i < Math.floor(product.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                                  className={`h-5 w-5 transition-colors ${i < Math.floor(product.review || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
                                 />
                               ))}
                             </div>
@@ -643,14 +789,25 @@ const ShopViewPage: React.FC = () => {
                         </div>
 
                         {reviewsLoading ? (
-                          <p className="text-gray-600">Loading reviews...</p>
+                          <div className="flex items-center justify-center py-8">
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                            <span className="ml-2 text-gray-600">Loading reviews...</span>
+                          </div>
                         ) : reviews.length === 0 ? (
-                          <p className="text-gray-600">No reviews yet.</p>
+                          <div className="text-center py-12 text-gray-500">
+                            <p className="text-lg font-medium mb-2">No reviews yet.</p>
+                            <p className="text-sm">Be the first to write a review!</p>
+                          </div>
                         ) : (
                           <div>
-                            <div className="space-y-6">
+                            <AnimatePresence>
                               {currentReviews.map((review) => (
-                                <div key={review.id} className="border-b pb-6 last:border-b-0">
+                                <motion.div 
+                                  key={review.id}
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="border-b pb-6 last:border-b-0"
+                                >
                                   <div className="flex items-center gap-4 mb-3">
                                     <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                                       <span className="text-sm font-medium text-gray-600">
@@ -658,13 +815,13 @@ const ShopViewPage: React.FC = () => {
                                       </span>
                                     </div>
                                     <div>
-                                      <h4 className="font-medium">{review.fullName}</h4>
+                                      <h4 className="font-medium text-gray-900">{review.fullName}</h4>
                                       <div className="flex items-center gap-2">
                                         <div className="flex">
                                           {[...Array(5)].map((_, i) => (
                                             <Star 
                                               key={i} 
-                                              className={`h-4 w-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                                              className={`h-4 w-4 transition-colors ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
                                             />
                                           ))}
                                         </div>
@@ -674,17 +831,21 @@ const ShopViewPage: React.FC = () => {
                                       </div>
                                     </div>
                                   </div>
-                                  <p className="text-gray-600">{review.comment}</p>
-                                </div>
+                                  <p className="text-gray-600 leading-relaxed">{review.comment}</p>
+                                </motion.div>
                               ))}
-                            </div>
+                            </AnimatePresence>
 
                             {totalPages > 1 && (
-                              <div className="mt-8 flex items-center justify-between">
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="mt-8 flex items-center justify-center gap-4"
+                              >
                                 <button
                                   onClick={handlePrevPage}
                                   disabled={currentPage === 1}
-                                  className="flex items-center gap-2 text-gray-600 hover:text-primary-600 disabled:opacity-50"
+                                  className="flex items-center gap-2 text-gray-600 hover:text-primary-600 disabled:opacity-50 transition-colors"
                                   aria-label="Previous reviews page"
                                 >
                                   <ChevronLeft className="h-5 w-5" />
@@ -693,43 +854,48 @@ const ShopViewPage: React.FC = () => {
 
                                 <div className="flex gap-2">
                                   {[...Array(totalPages)].map((_, i) => (
-                                    <button
+                                    <motion.button
                                       key={i + 1}
                                       onClick={() => handlePageChange(i + 1)}
-                                      className={`px-3 py-1 rounded-md ${
+                                      whileHover={{ scale: 1.05 }}
+                                      className={`px-3 py-1 rounded-md font-medium transition-colors ${
                                         currentPage === i + 1
-                                          ? 'bg-primary-600 text-white'
+                                          ? 'bg-primary-600 text-white shadow-md'
                                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                       }`}
                                       aria-label={`Go to reviews page ${i + 1}`}
                                     >
                                       {i + 1}
-                                    </button>
+                                    </motion.button>
                                   ))}
                                 </div>
 
                                 <button
                                   onClick={handleNextPage}
                                   disabled={currentPage === totalPages}
-                                  className="flex items-center gap-2 text-gray-600 hover:text-primary-600 disabled:opacity-50"
+                                  className="flex items-center gap-2 text-gray-600 hover:text-primary-600 disabled:opacity-50 transition-colors"
                                   aria-label="Next reviews page"
                                 >
                                   Next
                                   <ChevronRight className="h-5 w-5" />
                                 </button>
-                              </div>
+                              </motion.div>
                             )}
                           </div>
                         )}
 
-                        <div className="mt-8">
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mt-8 pt-8 border-t"
+                        >
                           <h4 className="text-lg font-semibold mb-4">Write a Review</h4>
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <input 
                                 type="text" 
                                 placeholder="Your Name" 
-                                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                 value={reviewName}
                                 onChange={(e) => setReviewName(e.target.value)}
                                 aria-label="Your name"
@@ -737,98 +903,124 @@ const ShopViewPage: React.FC = () => {
                               <input 
                                 type="email" 
                                 placeholder="Your Email" 
-                                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                 value={reviewEmail}
                                 onChange={(e) => setReviewEmail(e.target.value)}
                                 aria-label="Your email"
                               />
                             </div>
                             <div>
-                              <label className="block text-sm font-medium mb-2">Your Rating</label>
+                              <label className="block text-sm font-medium mb-2 text-gray-700">Your Rating</label>
                               <div className="flex gap-1">
                                 {[...Array(5)].map((_, i) => (
-                                  <button
+                                  <motion.button
                                     key={i}
                                     onClick={() => handleStarClick(i + 1)}
+                                    whileHover={{ scale: 1.2 }}
                                     className="focus:outline-none"
                                     aria-label={`Rate ${i + 1} star${i + 1 === 1 ? '' : 's'}`}
                                   >
                                     <Star 
-                                      className={`h-6 w-6 ${
+                                      className={`h-6 w-6 transition-colors ${
                                         i < reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                                      } hover:text-yellow-400 transition-colors`} 
+                                      } hover:text-yellow-400`} 
                                     />
-                                  </button>
+                                  </motion.button>
                                 ))}
                               </div>
                             </div>
                             <textarea 
                               placeholder="Write your review..." 
                               rows={4}
-                              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                               value={reviewComment}
                               onChange={(e) => setReviewComment(e.target.value)}
                               aria-label="Write your review"
                             />
-                            <button 
+                            <motion.button 
                               onClick={handleReviewSubmit}
-                              disabled={isSubmittingReview}
-                              className={`w-full bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors ${
-                                isSubmittingReview ? 'opacity-50 cursor-not-allowed' : ''
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              disabled={isSubmittingReview || reviewRating === 0}
+                              className={`w-full bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+                                isSubmittingReview ? 'animate-pulse' : ''
                               }`}
                               aria-label="Submit review"
                             >
                               {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-                            </button>
+                            </motion.button>
                           </div>
-                        </div>
+                        </motion.div>
                       </div>
                     </div>
                   )}
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="mt-12">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="mt-12"
+            >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Related Products</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Related Products</h2>
                 <div className="flex gap-2">
-                  <button 
-                    className="p-2 border rounded-lg hover:bg-gray-50"
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     aria-label="Previous related products"
                   >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button 
-                    className="p-2 border rounded-lg hover:bg-gray-50"
+                    <ChevronLeft className="h-5 w-5 text-gray-600" />
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     aria-label="Next related products"
                   >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
+                    <ChevronRight className="h-5 w-5 text-gray-600" />
+                  </motion.button>
                 </div>
               </div>
 
               {relatedLoading ? (
-                <p className="text-gray-600">Loading related products...</p>
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                  <span className="ml-2 text-gray-600">Loading related products...</span>
+                </div>
               ) : relatedProducts.length === 0 ? (
-                <p className="text-gray-600">No related products found.</p>
+                <div className="text-center py-12 text-gray-500">
+                  <p className="text-lg font-medium mb-2">No related products found.</p>
+                  <p className="text-sm">Check out other items in this category.</p>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {relatedProducts.map((relatedProduct) => (
-                    <ProductCard
-                      key={relatedProduct.id}
-                      product={relatedProduct}
-                      tag={relatedProduct.tags[0]}
-                      tagColor={getTagColor(relatedProduct.tags[0] || '')}
-                    />
-                  ))}
+                  <AnimatePresence>
+                    {relatedProducts.map((relatedProduct) => (
+                      <motion.div
+                        key={relatedProduct.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ProductCard
+                          product={relatedProduct}
+                          tag={relatedProduct.tags[0]}
+                          tagColor={getTagColor(relatedProduct.tags[0] || '')}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               )}
-            </div>
-          </main>
+            </motion.div>
+          </motion.main>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

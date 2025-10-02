@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Users, Trophy, Globe, ShoppingBag, ArrowUp, Award, Target, Zap, Shield } from 'lucide-react';
 import HeaderBanner from '../../components/landing/HeaderBanner';
 import Testimonials from '../../components/landing/Testmonial'; // Adjust import path as needed
+import TestimonialSection from '../../components/landing/home/Testimonials';
 
 const AboutPage = () => {
   const [currentClientsSlide, setCurrentClientsSlide] = useState(0);
@@ -198,73 +199,10 @@ const AboutPage = () => {
       </div>
 
       {/* Testimonials Section */}
-      <Testimonials />
+      <TestimonialSection />
 
       {/* Featured Clients Section */}
-      <div className="py-20 bg-gradient-to-br from-teal-50 to-cyan-50 border-t border-teal-100">
-        <div className="max-w-8xl mx-auto px-6 lg:px-14">
-          <h3 className="text-3xl lg:text-3xl font-bold text-center text-gray-900 mb-4">
-            Trusted by <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Industry Leaders</span>
-          </h3>
-          <p className="text-md text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Join thousands of successful businesses who trust our platform to power their growth
-          </p>
-          
-          <div className="relative overflow-hidden">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentClientsSlide * 100}%)` }}
-            >
-              {Array.from({ length: Math.ceil(clientLogos.length / 6) }).map((_, slideIndex) => (
-                <div key={slideIndex} className="w-full flex-shrink-0">
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
-                    {clientLogos.slice(slideIndex * 6, slideIndex * 6 + 6).map((client, index) => (
-                      <div key={index} className="text-center group cursor-pointer">
-                        <div className="bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
-                          <img 
-                            src={client.logo} 
-                            alt={client.name}
-                            className="mx-auto h-12 object-contain"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Clients Navigation Arrows */}
-            <button 
-              onClick={prevClientsSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-teal-50 transition-colors border-2 border-teal-100"
-            >
-              <ChevronLeft className="w-6 h-6 text-teal-600" />
-            </button>
-            <button 
-              onClick={nextClientsSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-teal-50 transition-colors border-2 border-teal-100"
-            >
-              <ChevronRight className="w-6 h-6 text-teal-600" />
-            </button>
-          </div>
-
-          {/* Clients Dots Indicator */}
-          <div className="flex justify-center mt-10 space-x-3">
-            {Array.from({ length: Math.ceil(clientLogos.length / 6) }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentClientsSlide(index)}
-                className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                  currentClientsSlide === index 
-                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 scale-125' 
-                    : 'bg-gray-300 hover:bg-gray-400'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+    
 
       {/* Floating Action Button */}
       <button 

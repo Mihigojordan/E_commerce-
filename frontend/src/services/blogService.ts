@@ -40,6 +40,17 @@ interface DeleteResponse {
 class BlogService {
   private api: AxiosInstance = api;
 
+  
+  constructor() {
+    this.getAllBlogs = this.getAllBlogs.bind(this);
+    this.createBlog = this.createBlog.bind(this);
+    this.getBlogById = this.getBlogById.bind(this);
+    this.updateBlog = this.updateBlog.bind(this);
+    this.deleteBlog = this.deleteBlog.bind(this);
+    this.addReply = this.addReply.bind(this);
+    this.getReplies = this.getReplies.bind(this);
+  }
+
   /**
    * Create a new blog
    * @param blogData - Blog data
