@@ -27,7 +27,7 @@ import { useWishlist } from '../../../context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import FilterBar from './FilterBar';
-import CheckoutModal from './CheckoutModal';
+import CheckoutModal from './CheckOutModal';
 
 const ShopViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -742,7 +742,7 @@ const ShopViewPage: React.FC = () => {
                         onClick={handleBuyNow}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-orange-500 to-pink-600 text-white px-6 py-3 rounded-md hover:from-orange-600 hover:to-pink-700 transition-all flex items-center justify-center gap-2 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gradient-to-r from-green-500 to-primary-600 text-white px-6 py-3 rounded-md hover:from-green-600 hover:to-primary-700 transition-all flex items-center justify-center gap-2 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!product.availability || product.quantity < quantity}
                         aria-label="Buy now"
                       >
