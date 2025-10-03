@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, AlertTriangle, CheckCircle, Loader2, ShoppingCart, User, FileCheck } from 'lucide-react';
 import { useCart } from '../../../context/CartContext';
+import usePurchasingUserAuth from '../../../context/PurchasingUserAuthContext';
 import productService from '../../../services/ProductService';
 import orderService from '../../../services/orderService';
 import { API_URL } from '../../../api/api';
@@ -13,13 +14,29 @@ interface ValidationIssue {
   isAvailable: boolean;
 }
 
+interface SingleProduct {
+  id: string;
+  name: string;
+  brand: string;
+  size: string;
+  price: number;
+  discount?: number;
+  perUnit: string;
+  images?: string[];
+  quantity: number;
+  availability: boolean;
+  initialQuantity?: number; // Quantity to checkout
+}
+
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
+  singleProduct?: SingleProduct | null; // New prop for single product checkout
 }
 
-const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
+const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singleProduct = null }) => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { user } = usePurchasingUserAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
@@ -33,12 +50,84 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Step 1: Validate cart items against database
+  // Single product state
+  const [singleProductQuantity, setSingleProductQuantity] = useState(1);
+  const [singleProductRemoved, setSingleProductRemoved] = useState(false);
+
+  // Determine if we're in single product mode
+  const isSingleProductMode = !!singleProduct;
+
+  // Initialize single product quantity
+  useEffect(() => {
+    if (singleProduct && isOpen) {
+      setSingleProductQuantity(singleProduct.initialQuantity || 1);
+      setSingleProductRemoved(false);
+    }
+  }, [singleProduct, isOpen]);
+
+  // Prefill customer info if user is authenticated
+  useEffect(() => {
+    if (isOpen && user) {
+      setCustomerName(user.name || '');
+      setCustomerEmail(user.email || '');
+      setCustomerPhone(user.phoneNumber || '');
+    }
+  }, [isOpen, user]);
+
+  // Validate cart/product on mount and when dependencies change
   useEffect(() => {
     if (isOpen && step === 1) {
-      validateCart();
+      if (isSingleProductMode) {
+        validateSingleProduct();
+      } else {
+        validateCart();
+      }
     }
-  }, [isOpen, step]);
+  }, [isOpen, step, cart.length, isSingleProductMode]);
+
+  const validateSingleProduct = async () => {
+    setLoading(true);
+    setError(null);
+    const issues: ValidationIssue[] = [];
+
+    try {
+      // Fetch latest product data
+      const product = await productService.getProductById(singleProduct!.id);
+      
+      const issue: ValidationIssue = {
+        productId: product.id,
+        productName: product.name,
+        cartQuantity: singleProductQuantity,
+        availableQuantity: product.quantity,
+        isAvailable: product.quantity >= singleProductQuantity && product.availability
+      };
+
+      if (!issue.isAvailable) {
+        issues.push(issue);
+      }
+
+      setValidationIssues(issues);
+      setValidatedItems([{
+        ...singleProduct,
+        cartQuantity: singleProductQuantity,
+        dbQuantity: product.quantity,
+        dbAvailability: product.availability,
+        discount: product.discount || 0
+      }]);
+    } catch (err) {
+      setError('Failed to validate product. Please try again.');
+      issues.push({
+        productId: singleProduct!.id,
+        productName: singleProduct!.name,
+        cartQuantity: singleProductQuantity,
+        availableQuantity: 0,
+        isAvailable: false
+      });
+      setValidationIssues(issues);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validateCart = async () => {
     setLoading(true);
@@ -66,7 +155,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
           validated.push({
             ...item,
             dbQuantity: product.quantity,
-            dbAvailability: product.availability
+            dbAvailability: product.availability,
+            discount: product.discount || 0
           });
         } catch (err) {
           issues.push({
@@ -89,17 +179,85 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
   };
 
   const handleQuantityUpdate = (productId: string, newQuantity: number) => {
-    updateQuantity(productId, newQuantity);
-    // Re-validate after update
-    setTimeout(() => validateCart(), 100);
+    if (isSingleProductMode) {
+      setSingleProductQuantity(newQuantity);
+      
+      // Update validation state
+      setValidatedItems(prev =>
+        prev.map(item =>
+          item.id === productId ? { ...item, cartQuantity: newQuantity } : item
+        )
+      );
+      
+      // Check if this creates a validation issue
+      const item = validatedItems.find(v => v.id === productId);
+      if (item) {
+        if (newQuantity > item.dbQuantity) {
+          setValidationIssues([{
+            productId,
+            productName: item.name,
+            cartQuantity: newQuantity,
+            availableQuantity: item.dbQuantity,
+            isAvailable: false
+          }]);
+        } else {
+          setValidationIssues([]);
+        }
+      }
+    } else {
+      updateQuantity(productId, newQuantity);
+      
+      // Update local validation state optimistically
+      setValidatedItems(prev =>
+        prev.map(item =>
+          item.id === productId ? { ...item, cartQuantity: newQuantity } : item
+        )
+      );
+      
+      // Check if this creates a validation issue
+      const item = validatedItems.find(v => v.id === productId);
+      if (item) {
+        if (newQuantity > item.dbQuantity) {
+          setValidationIssues(prev => {
+            const existing = prev.find(i => i.productId === productId);
+            if (existing) {
+              return prev.map(i =>
+                i.productId === productId
+                  ? { ...i, cartQuantity: newQuantity }
+                  : i
+              );
+            }
+            return [...prev, {
+              productId,
+              productName: item.name,
+              cartQuantity: newQuantity,
+              availableQuantity: item.dbQuantity,
+              isAvailable: false
+            }];
+          });
+        } else {
+          setValidationIssues(prev => prev.filter(i => i.productId !== productId));
+        }
+      }
+    }
   };
 
   const handleRemoveItem = (productId: string) => {
-    removeFromCart(productId);
-    setTimeout(() => validateCart(), 100);
+    if (isSingleProductMode) {
+      // In single product mode, removing the item closes the modal
+      setSingleProductRemoved(true);
+      handleClose();
+    } else {
+      removeFromCart(productId);
+      setValidatedItems(prev => prev.filter(item => item.id !== productId));
+      setValidationIssues(prev => prev.filter(issue => issue.productId !== productId));
+    }
   };
 
   const canProceedToStep2 = () => {
+    if (isSingleProductMode) {
+      return validationIssues.length === 0 && !singleProductRemoved;
+    }
     return validationIssues.length === 0 && cart.length > 0;
   };
 
@@ -110,8 +268,30 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
            customerPhone.trim() !== '';
   };
 
+  const getItemsToDisplay = () => {
+    if (isSingleProductMode) {
+      return validatedItems.length > 0 ? validatedItems : [];
+    }
+    return validatedItems;
+  };
+
   const calculateTotal = () => {
-    return cart.reduce((sum, item) => sum + (item.price * item.cartQuantity), 0);
+    const items = isSingleProductMode ? validatedItems : cart;
+    return items.reduce((sum, item) => {
+      const currentPrice = item.discount && item.discount > 0 
+        ? item.price * (1 - item.discount / 100)
+        : item.price;
+      return sum + (currentPrice * item.cartQuantity);
+    }, 0);
+  };
+
+  const calculateOriginalTotal = () => {
+    const items = isSingleProductMode ? validatedItems : cart;
+    return items.reduce((sum, item) => sum + (item.price * item.cartQuantity), 0);
+  };
+
+  const calculateSavings = () => {
+    return calculateOriginalTotal() - calculateTotal();
   };
 
   const handleSubmitOrder = async () => {
@@ -119,24 +299,29 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
     setError(null);
 
     try {
+      const items = isSingleProductMode ? validatedItems : cart;
+      
       const orderData = {
         customerName,
         customerEmail,
         customerPhone,
         currency: 'RWF',
-        items: cart.map(item => ({
+        items: items.map(item => ({
           productId: item.id,
-          price: item.price,
+          price: item.discount && item.discount > 0 
+            ? item.price * (1 - item.discount / 100)
+            : item.price,
           quantity: item.cartQuantity
         }))
       };
 
       const result = await orderService.checkout(orderData);
       
-      // Clear cart on success
-      clearCart();
+      // Clear cart only if we're not in single product mode
+      if (!isSingleProductMode) {
+        clearCart();
+      }
       
-      // Redirect to payment link
       if (result.paymentLink) {
         window.location.href = result.paymentLink;
       } else {
@@ -152,12 +337,19 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
 
   const resetModal = () => {
     setStep(1);
-    setCustomerName('');
-    setCustomerEmail('');
-    setCustomerPhone('');
+    if (!user) {
+      setCustomerName('');
+      setCustomerEmail('');
+      setCustomerPhone('');
+    } else {
+      setCustomerName(user.name || '');
+      setCustomerEmail(user.email || '');
+      setCustomerPhone(user.phoneNumber || '');
+    }
     setValidationIssues([]);
     setValidatedItems([]);
     setError(null);
+    setSingleProductRemoved(false);
   };
 
   const handleClose = () => {
@@ -167,13 +359,18 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  const itemsToDisplay = getItemsToDisplay();
+  const hasItems = itemsToDisplay.length > 0;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Checkout</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {isSingleProductMode ? 'Quick Checkout' : 'Checkout'}
+            </h2>
             <p className="text-sm text-gray-500 mt-1">Step {step} of 3</p>
           </div>
           <button
@@ -193,7 +390,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
               }`}>
                 <ShoppingCart className="w-4 h-4" />
               </div>
-              <span className="text-sm font-medium">Validate Cart</span>
+              <span className="text-sm font-medium">Validate {isSingleProductMode ? 'Product' : 'Cart'}</span>
             </div>
             <div className="flex-1 h-1 bg-gray-300 mx-4">
               <div className={`h-full transition-all ${step >= 2 ? 'bg-teal-600 w-full' : 'w-0'}`} />
@@ -222,13 +419,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
-          {/* Step 1: Cart Validation */}
+          {/* Step 1: Cart/Product Validation */}
           {step === 1 && (
             <div className="space-y-4">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
-                  <span className="ml-3 text-gray-600">Validating cart items...</span>
+                  <span className="ml-3 text-gray-600">
+                    Validating {isSingleProductMode ? 'product' : 'cart items'}...
+                  </span>
                 </div>
               ) : (
                 <>
@@ -244,25 +443,32 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                       <div className="flex items-start gap-3">
                         <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-medium text-yellow-800">Some items need attention</p>
+                          <p className="font-medium text-yellow-800">
+                            {isSingleProductMode ? 'Product needs attention' : 'Some items need attention'}
+                          </p>
                           <p className="text-sm text-yellow-700 mt-1">
-                            Please update quantities or remove items before proceeding.
+                            Please update {isSingleProductMode ? 'quantity' : 'quantities'} or remove {isSingleProductMode ? 'the product' : 'items'} before proceeding.
                           </p>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {cart.length === 0 ? (
+                  {!hasItems ? (
                     <div className="text-center py-12">
                       <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-600">Your cart is empty</p>
+                      <p className="text-gray-600">
+                        {isSingleProductMode ? 'No product selected' : 'Your cart is empty'}
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {validatedItems.map((item) => {
+                      {itemsToDisplay.map((item) => {
                         const issue = validationIssues.find(i => i.productId === item.id);
                         const hasIssue = !!issue;
+                        const currentPrice = item.discount && item.discount > 0 
+                          ? item.price * (1 - item.discount / 100)
+                          : item.price;
 
                         return (
                           <div
@@ -282,9 +488,21 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900">{item.name}</h4>
                                 <p className="text-sm text-gray-600">{item.brand} - {item.size}</p>
-                                <p className="text-sm font-medium text-gray-900 mt-1">
-                                  {item.price.toLocaleString()} RWF / {item.perUnit}
-                                </p>
+                                <div className="text-sm font-medium text-gray-900 mt-1 flex items-center gap-2">
+                                  <span>
+                                    {currentPrice.toLocaleString()} RWF / {item.perUnit}
+                                  </span>
+                                  {item.discount && item.discount > 0 && (
+                                    <>
+                                      <span className="text-sm text-gray-500 line-through">
+                                        {item.price.toLocaleString()} RWF
+                                      </span>
+                                      <span className="text-sm text-pink-500">
+                                        {item.discount}% off
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
 
                                 <div className="mt-3 flex items-center gap-4">
                                   <div className="flex items-center gap-2">
@@ -323,8 +541,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                               </div>
                               <div className="text-right">
                                 <p className="text-lg font-bold text-gray-900">
-                                  {(item.price * item.cartQuantity).toLocaleString()} RWF
+                                  {(currentPrice * item.cartQuantity).toLocaleString()} RWF
                                 </p>
+                                {item.discount && item.discount > 0 && (
+                                  <p className="text-sm text-gray-500 line-through">
+                                    {(item.price * item.cartQuantity).toLocaleString()} RWF
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -406,26 +629,56 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Order Summary</h3>
                 <div className="space-y-3">
-                  {cart.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center py-2 border-b">
-                      <div>
-                        <p className="font-medium text-gray-900">{item.name}</p>
-                        <p className="text-sm text-gray-600">
-                          {item.cartQuantity} × {item.price.toLocaleString()} RWF
+                  {itemsToDisplay.map((item) => {
+                    const currentPrice = item.discount && item.discount > 0 
+                      ? item.price * (1 - item.discount / 100)
+                      : item.price;
+
+                    return (
+                      <div key={item.id} className="flex justify-between items-center py-2 border-b">
+                        <div>
+                          <p className="font-medium text-gray-900">{item.name}</p>
+                          <div className="text-sm text-gray-600 flex items-center gap-2">
+                            <span>
+                              {item.cartQuantity} × {currentPrice.toLocaleString()} RWF
+                            </span>
+                            {item.discount && item.discount > 0 && (
+                              <>
+                                <span className="text-sm text-gray-500 line-through">
+                                  {item.price.toLocaleString()} RWF
+                                </span>
+                                <span className="text-sm text-pink-500">
+                                  {item.discount}% off
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <p className="font-medium">
+                          {(currentPrice * item.cartQuantity).toLocaleString()} RWF
                         </p>
                       </div>
-                      <p className="font-medium">
-                        {(item.cartQuantity * item.price).toLocaleString()} RWF
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
               <div className="border-t pt-4">
-                <div className="flex justify-between items-center text-lg font-bold">
-                  <span>Total Amount:</span>
-                  <span className="text-teal-600">{calculateTotal().toLocaleString()} RWF</span>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Subtotal</span>
+                    <span>{calculateTotal().toLocaleString()} RWF</span>
+                  </div>
+                  {calculateSavings() > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span>Savings</span>
+                      <span className="text-pink-500">-{calculateSavings().toLocaleString()} RWF</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total Amount:</span>
+                    <span className="text-teal-600">{calculateTotal().toLocaleString()} RWF</span>
+                  </div>
                 </div>
               </div>
             </div>

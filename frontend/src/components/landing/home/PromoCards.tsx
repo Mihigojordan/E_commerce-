@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import watches from '../../../assets/category-thumb-4.jpg';
-import earrings from '../../../assets/category-thumb-5.jpg';
-import handbags from '../../../assets/category-thumb-8.jpg';
+import watches from '../../../assets/images/banner/banner7.jpg';
+import earrings from '../../../assets/images/banner/banner3.jpg';
+import handbags from '../../../assets/images/banner/banner4.jpg';
 
 
 
@@ -46,12 +46,13 @@ const PromoCards = () => {
               key={promo.id}
               className=" p-8 relative overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer min-h-[220px] flex flex-col justify-between"
               style={{
-                backgroundImage: promo.bgImage ? `linear-gradient(to right, rgba(255,255,255,0.4),rgba(0,0,0,0)),url(${promo.bgImage})` : 'none',
+                backgroundImage: promo.bgImage ? `url(${promo.bgImage})` : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundColor: promo.bgImage ? 'transparent' : '#f3f4f6'
               }}
             >
+                          <div className="absolute inset-0 bg-gradient-to-r  from-primary-800/30 via-black/60 to-transparent"></div>
               <div className="relative z-10">
                 <p className={`${promo.labelColor} text-sm font-medium mb-2`}>
                   {promo.label}

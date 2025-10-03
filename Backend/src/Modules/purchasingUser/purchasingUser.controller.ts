@@ -11,6 +11,12 @@ export class PurchasingUserController {
     return this.userService.createOrGetUser(body);
   }
 
+  // ✅ Fetch all users
+  @Get('all')
+  async findAllUsers() {
+    return this.userService.findAllUsers();
+  }
+
   // Find user
   @Get()
   async findUser(

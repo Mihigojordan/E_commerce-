@@ -22,6 +22,7 @@ export interface Order {
   updatedAt: string;
   orderItems: OrderItem[];
   payment?: any;
+  purchasingUserId?: string;
 }
 
 export interface CreateOrderData {
@@ -32,10 +33,14 @@ export interface CreateOrderData {
   items: OrderItem[];
 }
 
+export interface OrderQuery {
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+}
+
 const orderService = {
-  /**
-   * Checkout: create order and get payment link
-   */
+  // ✅ Checkout
   async checkout(data: CreateOrderData): Promise<{ order: Order; paymentLink: string }> {
     try {
       const response = await api.post('/orders/checkout', data);
@@ -46,9 +51,7 @@ const orderService = {
     }
   },
 
-  /**
-   * Get order by ID
-   */
+  // ✅ Get order by ID
   async getOrder(orderId: string): Promise<Order> {
     try {
       const response = await api.get(`/orders/${orderId}`);
@@ -59,9 +62,29 @@ const orderService = {
     }
   },
 
-  /**
-   * Optional: Update order status
-   */
+  // ✅ Fetch all orders with optional query filters
+  async getAllOrders(query?: OrderQuery): Promise<Order[]> {
+    try {
+      const response = await api.get('/orders', { params: query });
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching all orders:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  // ✅ Fetch orders by user ID
+  async getOrdersByUser(userId: string): Promise<Order[]> {
+    try {
+      const response = await api.get(`/orders/user/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error(`Error fetching orders for user ${userId}:`, error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  // Optional: Update order status
   async updateStatus(orderId: string, status: OrderStatus): Promise<Order> {
     try {
       const response = await api.put(`/orders/${orderId}/status`, { status });
@@ -70,7 +93,7 @@ const orderService = {
       console.error(`Error updating order ${orderId} status:`, error.response?.data || error.message);
       throw error;
     }
-  }
+  },
 };
 
 export default orderService;

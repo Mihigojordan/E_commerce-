@@ -1,12 +1,12 @@
 import React from 'react';
-import BannerImage from '../../../assets/banner-4.png';
-
+import BannerImage from '../../../assets/images/back-banner/back-banner-3.jpg';
 function MainBanner() {
   return (
     <div
       className="relative min-h-96 overflow-hidden bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
       style={{ backgroundImage: `url(${BannerImage})` }}
     >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         {/* Scattered dots */}

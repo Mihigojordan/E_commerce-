@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
-import banner2 from '../../../assets/images/banner-6.jpg'
-import banner3 from '../../../assets/images/banner-7.jpg'
+import banner2 from '../../../assets/images/banner/banner1.jpeg'
+import banner3 from '../../../assets/images/banner/banner5.jpg'
 
 const PromoCard = ({ bgColor, badge, title, subtitle, price, originalPrice, days, hours, mins, secs, bgImage }) => {
   return (
@@ -9,63 +9,63 @@ const PromoCard = ({ bgColor, badge, title, subtitle, price, originalPrice, days
       className={`${bgColor} w-full rounded-lg overflow-hidden shadow-lg min-h-[400px] bg-cover bg-center bg-no-repeat relative`}
       style={{ backgroundImage: bgImage ? `url(${bgImage})` : 'none' }}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/40 to-transparent"></div>
       
       <div className="relative z-10 p-8 md:p-10 max-w-xl">
         <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-teal-700">{badge}</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary-500">{badge}</h2>
         </div>
-        <p className="text-sm text-gray-600 mb-4">Limited quantities.</p>
+        <p className="text-sm text-gray-200 mb-4">Limited quantities.</p>
         
-        <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+        <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
           {title}
         </h3>
-        {subtitle && <p className="text-gray-600 mb-6">{subtitle}</p>}
+        {subtitle && <p className="text-gray-300 mb-6">{subtitle}</p>}
         
         <div className="mb-6">
           <span className="text-3xl font-bold text-red-500">${price}</span>
-          <span className="text-xl text-gray-400 line-through ml-3">${originalPrice}</span>
+          <span className="text-xl text-gray-200 line-through ml-3">${originalPrice}</span>
         </div>
         
-        <p className="text-sm font-medium text-gray-700 mb-3">Hurry Up! Offer End In:</p>
+        <p className="text-sm font-medium text-gray-300 mb-3">Hurry Up! Offer End In:</p>
         
         <div className="flex gap-2 mb-6">
           <div className="flex flex-col items-center">
-            <div className="bg-teal-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
+            <div className="bg-primary-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
               <span className="text-2xl font-bold">{String(days).padStart(2, '0')}</span>
             </div>
-            <span className="text-xs text-gray-600 mt-1 uppercase">Days</span>
+            <span className="text-xs text-gray-200 mt-1 uppercase">Days</span>
           </div>
           
-          <div className="flex items-center justify-center text-2xl font-bold text-gray-700">:</div>
+          <div className="flex items-center justify-center text-2xl font-bold text-gray-200">:</div>
           
           <div className="flex flex-col items-center">
-            <div className="bg-teal-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
+            <div className="bg-primary-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
               <span className="text-2xl font-bold">{String(hours).padStart(2, '0')}</span>
             </div>
-            <span className="text-xs text-gray-600 mt-1 uppercase">Hours</span>
+            <span className="text-xs text-gray-200 mt-1 uppercase">Hours</span>
           </div>
           
-          <div className="flex items-center justify-center text-2xl font-bold text-gray-700">:</div>
+          <div className="flex items-center justify-center text-2xl font-bold text-gray-300">:</div>
           
           <div className="flex flex-col items-center">
-            <div className="bg-teal-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
+            <div className="bg-primary-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
               <span className="text-2xl font-bold">{String(mins).padStart(2, '0')}</span>
             </div>
-            <span className="text-xs text-gray-600 mt-1 uppercase">Mins</span>
+            <span className="text-xs text-gray-200 mt-1 uppercase">Mins</span>
           </div>
           
-          <div className="flex items-center justify-center text-2xl font-bold text-gray-700">:</div>
+          <div className="flex items-center justify-center text-2xl font-bold text-gray-300">:</div>
           
           <div className="flex flex-col items-center">
-            <div className="bg-teal-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
+            <div className="bg-primary-700 text-white rounded-md w-16 h-16 flex items-center justify-center">
               <span className="text-2xl font-bold">{String(secs).padStart(2, '0')}</span>
             </div>
-            <span className="text-xs text-gray-600 mt-1 uppercase">Sec</span>
+            <span className="text-xs text-gray-300 mt-1 uppercase">Sec</span>
           </div>
         </div>
         
-        <button className="border-2 border-teal-700 text-teal-700 px-6 py-3 rounded-md font-semibold hover:bg-teal-700 hover:text-white transition-colors flex items-center gap-2">
+        <button className="border-2 border-primary-700 text-white px-6 py-3 rounded-md font-semibold hover:bg-primary-700 hover:text-white transition-colors flex items-center gap-2">
           Shop Now
           <ArrowRight size={20} />
         </button>

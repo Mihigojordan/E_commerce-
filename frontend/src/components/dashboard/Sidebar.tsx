@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
 import {
-
   TrendingUp,
   User,
   X,
-
   Store,
-
   Layers,
-
   ChevronDown,
   ChevronUp,
-
   Newspaper,
   TestTube,
+  Clipboard,
 } from "lucide-react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
 import Logo from '../../assets/logo.png';
+import type { OutletContextType } from "../../router";
+import usePurchasingUserAuth from "../../context/PurchasingUserAuthContext";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -31,10 +29,16 @@ interface NavItem {
   path?: string;
   isDropdown?: boolean;
   children?: NavItem[];
+  allowedRoles?: string[]; // Add role-based access control
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
-  const { user } = useAdminAuth();
+  const { role } = useOutletContext<OutletContextType>();
+  const { user:adminData } = useAdminAuth();
+  const { user:userData } = usePurchasingUserAuth();
+
+  
+  const user : any = role == 'admin' ? adminData : userData;
   const navigate = useNavigate();
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -43,13 +47,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
   useEffect(() => {
     const currentPath = location.pathname;
     const materialPages = [
-      "/admin/dashboard/material-management",
-      "/admin/dashboard/category-management",
-      "/admin/dashboard/units-management",
+      `/${role}/dashboard/material-management`,
+      `/${role}/dashboard/category-management`,
+      `/${role}/dashboard/units-management`,
     ];
     const sitePages = [
-      "/admin/dashboard/site-assign-management",
-      "/admin/dashboard/site-management"
+      `/${role}/dashboard/site-assign-management`,
+      `/${role}/dashboard/site-management`
     ];
 
     if (materialPages.includes(currentPath)) {
@@ -67,16 +71,69 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     setOpenDropdown(openDropdown === dropdownId ? null : dropdownId);
   };
 
+  // Define navigation items with role permissions
   const navlinks: NavItem[] = [
-    { id: "dashboard", label: "Dashboard", icon: TrendingUp, path: "/admin/dashboard" },
-    { id: "Category", label: "Category Management", icon: Layers, path: "/admin/dashboard/category-management" },
-    { id: "Product Management", label: "Product Management", icon: Store, path: "/admin/dashboard/product-management" },
-    { id: "Blog Management", label: "Blog Management", icon: Newspaper, path: "/admin/dashboard/blog-management" },
-    { id: "Testimonial Management", label: "Testimonial Management", icon: TestTube, path: "/admin/dashboard/testimonial-management" },
- 
+    { 
+      id: "dashboard", 
+      label: "Dashboard", 
+      icon: TrendingUp, 
+      path: `/${role}/dashboard`,
+      allowedRoles: ["admin", "user"] // Both can access dashboard
+    },
+    { 
+      id: "Category", 
+      label: "Category Management", 
+      icon: Layers, 
+      path: `/${role}/dashboard/category-management`,
+      allowedRoles: ["admin"] // Only admin
+    },
+    { 
+      id: "Product Management", 
+      label: "Product Management", 
+      icon: Store, 
+      path: `/${role}/dashboard/product-management`,
+      allowedRoles: ["admin",] // Both can access
+    },
+    { 
+      id: "Blog Management", 
+      label: "Blog Management", 
+      icon: Newspaper, 
+      path: `/${role}/dashboard/blog-management`,
+      allowedRoles: ["admin"] // Only admin
+    },
+    { 
+      id: "Testimonial Management", 
+      label: "Testimonial Management", 
+      icon: TestTube, 
+      path: `/${role}/dashboard/testimonial-management`,
+      allowedRoles: ["admin"] // Both can access
+    },
+    { 
+      id: "Order Management", 
+      label: "Order Management", 
+      icon: TestTube, 
+      path: `/${role}/dashboard/order-management`,
+      allowedRoles: ["admin"] // Both can access
+    },
+    { 
+      id: "My Order Management", 
+      label: "My Orders", 
+      icon: Clipboard, 
+      path: `/${role}/dashboard/my-orders`,
+      allowedRoles: ["user"] // Both can access
+    },
   ];
 
-  const getProfileRoute = () => "/admin/dashboard/profile";
+  // Filter navigation items based on user role
+  const filteredNavlinks = navlinks.filter((item) => {
+    // If no allowedRoles specified, show to everyone
+    if (!item.allowedRoles) return true;
+    
+    // Check if user's role is in the allowed roles
+    return item.allowedRoles.includes(role);
+  });
+
+  const getProfileRoute = () => `/${role}/dashboard/profile`;
 
   const handleNavigateProfile = () => {
     const route = getProfileRoute();
@@ -89,7 +146,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
 
     if (item.isDropdown) {
       const isOpen = openDropdown === item.id;
-      const hasActiveChild = item.children?.some(
+      
+      // Filter children based on role
+      const filteredChildren = item.children?.filter((child) => {
+        if (!child.allowedRoles) return true;
+        return child.allowedRoles.includes(role);
+      });
+
+      // Don't show dropdown if no accessible children
+      if (!filteredChildren || filteredChildren.length === 0) return null;
+
+      const hasActiveChild = filteredChildren.some(
         (child) => child.path && location.pathname === child.path
       );
 
@@ -115,7 +182,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
           </button>
           {isOpen && (
             <div className="space-y-1 ml-4">
-              {item.children?.map((child) => (
+              {filteredChildren.map((child) => (
                 <NavLink
                   key={child.id}
                   to={child.path!}
@@ -178,7 +245,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
 
         <div className="flex-1 overflow-y-auto p-3">
           <nav className="space-y-1">
-            {navlinks.map(renderMenuItem)}
+            {filteredNavlinks.map(renderMenuItem)}
           </nav>
         </div>
 
@@ -187,10 +254,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
             <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
               <User className="w-4 h-4 text-primary-600" />
             </div>
-            <div className="flex-1 min-w-0">
+            {
+              role == 'admin'   ?
+
+              <div className="flex-1 min-w-0">
               <p className="text-xs font-normal text-gray-900 truncate">{user?.names || "Admin User"}</p>
               <p className="text-xs text-gray-500 truncate">{user?.email || "admin@example.com"}</p>
             </div>
+            :
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-normal text-gray-900 truncate">{user?.name || " User"}</p>
+              <p className="text-xs text-gray-500 truncate">{user?.email || "user@example.com"}</p>
+            </div>
+            }
           </div>
         </div>
       </div>

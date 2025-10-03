@@ -7,7 +7,8 @@ import {
   TrendingUp
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import Banner from '../../assets/banner-4.png'
+
+import Banner from '../../assets/images/back-banner/back-banner-2.jpg';
 
 // Define interfaces and types
 interface BreadcrumbItem {
@@ -64,7 +65,7 @@ const EcommerceHeader: React.FC<EcommerceHeaderProps> = ({
   ctaButtons = [],
   badge,
   overlayOpacity = 0.4,
-  height = 'medium',
+  height = 'compact',
   layout = 'centered',
   showDecorations = true
 }) => {

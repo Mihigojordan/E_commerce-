@@ -62,55 +62,64 @@ export class PaymentService {
         }
     }
 async verifyPaymentAndGetRedirect(txRef: string, transactionId: string): Promise<string> {
-    // 1️⃣ Verify with Flutterwave
-    const res = await axios.get<any>(`${this.baseUrl}/transactions/${transactionId}/verify`, {
-        headers: { Authorization: `Bearer ${this.secretKey}` },
-    });
+  // 1️⃣ Verify with Flutterwave
+  const res = await axios.get<any>(`${this.baseUrl}/transactions/${transactionId}/verify`, {
+    headers: { Authorization: `Bearer ${this.secretKey}` },
+  });
 
-    const status = res.data.data.status === 'successful' ? 'SUCCESSFUL' : 'FAILED';
+  const data = res.data.data;
+  const status = data.status === 'successful' ? 'SUCCESSFUL' : 'FAILED';
+  console.log('data : +> ::: ', data);
+  
+  const paymentMethod = data.payment_type || data.payment_type || 'unknown'; // Flutterwave field for method
 
-    // 2️⃣ Update Payment record
-    const payment = await this.prisma.payment.update({
-        where: { txRef },
-        data: { status, transactionId },
-    });
+  // 2️⃣ Update Payment record (now includes paymentMethod)
+  const payment = await this.prisma.payment.update({
+    where: { txRef },
+    data: {
+      status,
+      transactionId,
+      paymentMethod, // save which method was used
+    },
+  });
 
-    // 3️⃣ Get order with items
-    const order = await this.prisma.order.findUnique({
-        where: { id: payment.orderId },
-        include: { orderItems: true },
-    });
-    if (!order) throw new BadRequestException('Order not found for this payment');
+  // 3️⃣ Get order with items
+  const order = await this.prisma.order.findUnique({
+    where: { id: payment.orderId },
+    include: { orderItems: true },
+  });
+  if (!order) throw new BadRequestException('Order not found for this payment');
 
-    // 4️⃣ Link or create PurchasingUser
-    const user: any = await this.purchasingUserService.createOrGetUser({
-        name: order.customerName,
-        email: order.customerEmail,
-        phoneNumber: order.customerPhone,
-    });
+  // 4️⃣ Link or create PurchasingUser
+  const user: any = await this.purchasingUserService.createOrGetUser({
+    name: order.customerName,
+    email: order.customerEmail,
+    phoneNumber: order.customerPhone,
+  });
 
-    // 5️⃣ Update order
-    await this.prisma.order.update({
-        where: { id: order.id },
-        data: {
-            status: status === 'SUCCESSFUL' ? 'COMPLETED' : order.status,
-            purchasingUserId: user.id ?? user.user?.id,
-        },
-    });
+  // 5️⃣ Update order
+  await this.prisma.order.update({
+    where: { id: order.id },
+    data: {
+      status: status === 'SUCCESSFUL' ? 'COMPLETED' : order.status,
+      purchasingUserId: user.id ?? user.user?.id,
+    },
+  });
 
-    // 6️⃣ Decrease product quantity if successful
-    if (status === 'SUCCESSFUL') {
-        for (const item of order.orderItems) {
-            await this.prisma.product.update({
-                where: { id: item.productId },
-                data: { quantity: { decrement: item.quantity } },
-            });
-        }
+  // 6️⃣ Decrease product quantity if successful
+  if (status === 'SUCCESSFUL') {
+    for (const item of order.orderItems) {
+      await this.prisma.product.update({
+        where: { id: item.productId },
+        data: { quantity: { decrement: item.quantity } },
+      });
     }
+  }
 
-    // 7️⃣ Construct frontend redirect URL
-    return `${process.env.FRONTEND_BASE_URL}/payment-status?status=${status === 'SUCCESSFUL' ? 'success' : 'failed'}&orderId=${order.id}&amount=${order.amount}&currency=${order.currency}`;
+  // 7️⃣ Construct frontend redirect URL
+  return `${process.env.FRONTEND_BASE_URL}/payment-status?status=${status === 'SUCCESSFUL' ? 'success' : 'failed'}&orderId=${order.id}&amount=${order.amount}&currency=${order.currency}&method=${paymentMethod}`;
 }
+
 
 
 }

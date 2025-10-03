@@ -13,13 +13,13 @@ import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../api/api';
 import Swal from 'sweetalert2';
-import CheckoutModal from '../../components/landing/shop/CheckOutModal'; // Import the checkout modal
+import CheckoutModal from '../../components/landing/shop/CheckOutModal';
 
 const ShoppingCartPage: React.FC = () => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const [localCart, setLocalCart] = useState(cart);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false); // Add state for modal
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,9 +55,8 @@ const ShoppingCartPage: React.FC = () => {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        removeFromCart(id)
+        removeFromCart(id);
         setLocalCart(prev => prev.filter(item => item.id !== id));
-
         Swal.fire({
           title: 'Removed!',
           text: `"${itemName}" has been removed from your cart.`,
@@ -143,7 +142,6 @@ const ShoppingCartPage: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    // Check if cart has unsaved changes
     if (hasCartChanged()) {
       Swal.fire({
         title: 'Unsaved Changes',
@@ -155,12 +153,19 @@ const ShoppingCartPage: React.FC = () => {
       return;
     }
     
-    // Open the checkout modal
     setIsCheckoutOpen(true);
   };
 
+  // Calculate prices and savings
   const totalItems = localCart.reduce((sum, item) => sum + item.cartQuantity, 0);
-  const subtotal = localCart.reduce((sum, item) => sum + item.cartQuantity * item.price, 0);
+  const subtotal = localCart.reduce((sum, item) => {
+    const currentPrice = item.discount && item.discount > 0 
+      ? item.price * (1 - item.discount / 100)
+      : item.price;
+    return sum + item.cartQuantity * currentPrice;
+  }, 0);
+  const originalSubtotal = localCart.reduce((sum, item) => sum + item.cartQuantity * item.price, 0);
+  const totalSavings = originalSubtotal - subtotal;
 
   if (localCart.length === 0) {
     return (
@@ -235,76 +240,98 @@ const ShoppingCartPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {localCart.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
-                <div className="flex gap-4">
-                  {/* Product Image */}
-                  <div className="flex-shrink-0">
-                    <img
-                      src={`${API_URL}${item.images[0]}`}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-                    />
-                  </div>
+            {localCart.map((item) => {
+              const currentPrice = item.discount && item.discount > 0 
+                ? item.price * (1 - item.discount / 100)
+                : item.price;
+              const totalItemPrice = currentPrice * item.cartQuantity;
 
-                  {/* Product Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-semibold text-gray-900 cursor-pointer hover:text-primary-600 transition-colors text-sm"
-                          onClick={() => navigate(`/products/${item.id}`)}>
-                        {item.name}
-                      </h3>
-                      <button
-                        onClick={() => removeFromLocalCart(item.id, item.name)}
-                        className="p-1 text-gray-400 hover:text-red-500 transition-colors ml-2"
-                        title="Remove item"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                      <span>{item.brand}</span>
-                      <span>•</span>
-                      <span>Size: {item.size}</span>
+              return (
+                <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+                  <div className="flex gap-4">
+                    {/* Product Image */}
+                    <div className="flex-shrink-0">
+                      <img
+                        src={`${API_URL}${item.images[0]}`}
+                        alt={item.name}
+                        className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                      />
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      {/* Quantity Controls */}
-                      <div className="flex items-center bg-gray-50 rounded-lg">
-                        <button
-                          onClick={() => updateLocalQuantity(item.id, item.cartQuantity - 1)}
-                          className="p-2 hover:bg-gray-200 rounded-l-lg transition-colors"
-                          disabled={item.cartQuantity <= 1}
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 
+                          className="font-semibold text-gray-900 cursor-pointer hover:text-primary-600 transition-colors text-sm"
+                          onClick={() => navigate(`/products/${item.id}`)}
                         >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="px-3 py-2 text-sm font-medium min-w-[2.5rem] text-center">
-                          {item.cartQuantity}
-                        </span>
+                          {item.name}
+                        </h3>
                         <button
-                          onClick={() => updateLocalQuantity(item.id, item.cartQuantity + 1)}
-                          className="p-2 hover:bg-gray-200 rounded-r-lg transition-colors"
-                          disabled={item.cartQuantity >= item.quantity}
+                          onClick={() => removeFromLocalCart(item.id, item.name)}
+                          className="p-1 text-gray-400 hover:text-red-500 transition-colors ml-2"
+                          title="Remove item"
                         >
-                          <Plus className="h-3 w-3" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
+                      
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                        <span>{item.brand}</span>
+                        <span>•</span>
+                        <span>Size: {item.size}</span>
+                      </div>
 
-                      {/* Price */}
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-gray-900">
-                          ${(item.price * item.cartQuantity).toFixed(2)}
+                      <div className="flex items-center justify-between">
+                        {/* Quantity Controls */}
+                        <div className="flex items-center bg-gray-50 rounded-lg">
+                          <button
+                            onClick={() => updateLocalQuantity(item.id, item.cartQuantity - 1)}
+                            className="p-2 hover:bg-gray-200 rounded-l-lg transition-colors"
+                            disabled={item.cartQuantity <= 1}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <span className="px-3 py-2 text-sm font-medium min-w-[2.5rem] text-center">
+                            {item.cartQuantity}
+                          </span>
+                          <button
+                            onClick={() => updateLocalQuantity(item.id, item.cartQuantity + 1)}
+                            className="p-2 hover:bg-gray-200 rounded-r-lg transition-colors"
+                            disabled={item.cartQuantity >= item.quantity}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
                         </div>
-                        <div className="text-xs text-gray-500">
-                          ${item.price.toFixed(2)} each
+
+                        {/* Price with Discount */}
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-gray-900">
+                            ${totalItemPrice.toFixed(2)}
+                          </div>
+                          <div className="flex items-center gap-2 justify-end">
+                            {item.discount && item.discount > 0 ? (
+                              <>
+                                <span className="text-xs text-gray-500 line-through">
+                                  ${(item.price * item.cartQuantity).toFixed(2)}
+                                </span>
+                                <span className="text-xs text-red-500 font-medium">
+                                  {item.discount}% off
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-xs text-gray-500">
+                                ${item.price.toFixed(2)} each
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {/* Cart Actions */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -342,6 +369,12 @@ const ShoppingCartPage: React.FC = () => {
                   <span className="text-gray-600">Subtotal ({totalItems} items)</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
+                {totalSavings > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Savings</span>
+                    <span className="text-red-500 font-medium">-${totalSavings.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shipping</span>
                   <span className="text-green-600 font-medium">Free</span>

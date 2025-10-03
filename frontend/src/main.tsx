@@ -5,15 +5,18 @@ import App from './App.tsx'
 import { AuthContextProvider } from './context/AuthContext.tsx'
 import { CartProvider } from './context/CartContext.tsx'
 import { WishlistProvider } from './context/WishlistContext.tsx'
+import { PurchasingUserAuthProvider } from './context/PurchasingUserAuthContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthContextProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <App />
-        </WishlistProvider>
-      </CartProvider>
+      <PurchasingUserAuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <App />
+          </WishlistProvider>
+        </CartProvider>
+      </PurchasingUserAuthProvider>
     </AuthContextProvider>
   </StrictMode>,
 )

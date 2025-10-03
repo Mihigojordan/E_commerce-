@@ -145,7 +145,14 @@ const Navbar: React.FC = () => {
             {/* Login/Signup */}
             <div className="flex items-center space-x-1 text-xs">
               <User size={12} />
-              <span>Log In / Sign Up</span>
+              <span>
+                <span className='cursor-pointer' onClick={()=> navigate('/auth/user/login')}>Log In</span> 
+                {' '}
+                / 
+                {' '}
+                <span className='cursor-pointer' onClick={()=> navigate('/auth/user/register')}> Sign Up</span> 
+               
+                </span>
             </div>
           </div>
         </div>

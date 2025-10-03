@@ -1,6 +1,7 @@
 // src/context/WishlistContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import type { Product } from "../services/ProductService"; // adjust path if needed
+import type { Product } from "../services/ProductService";
+import productService from "../services/ProductService"; // your API service
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -13,17 +14,38 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Load from localStorage initially
-  const [wishlist, setWishlist] = useState<Product[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem("wishlist");
-      return stored ? JSON.parse(stored) : [];
-    } catch (error) {
-      console.error("Failed to load wishlist:", error);
-      return [];
-    }
-  });
+  const [wishlist, setWishlist] = useState<Product[]>([]);
+
+  // On mount, load wishlist from localStorage and fetch valid products
+  useEffect(() => {
+    const loadWishlist = async () => {
+      if (typeof window === "undefined") return;
+
+      try {
+        const storedWishlist = localStorage.getItem("wishlist");
+        if (!storedWishlist) return;
+
+        const parsedWishlist: Product[] = JSON.parse(storedWishlist);
+        const validWishlist: Product[] = [];
+
+        for (const item of parsedWishlist) {
+          try {
+            const product = await productService.getProductById(item.id);
+            validWishlist.push(product);
+          } catch (error) {
+            console.warn(`Product ${item.id} not found in DB, removing from wishlist`);
+          }
+        }
+
+        setWishlist(validWishlist);
+        localStorage.setItem("wishlist", JSON.stringify(validWishlist));
+      } catch (error) {
+        console.error("Failed to load wishlist from localStorage or backend:", error);
+      }
+    };
+
+    loadWishlist();
+  }, []);
 
   // Save to localStorage whenever wishlist changes
   useEffect(() => {
@@ -31,7 +53,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
     } catch (error) {
-      console.error("Failed to save wishlist:", error);
+      console.error("Failed to save wishlist to localStorage:", error);
     }
   }, [wishlist]);
 

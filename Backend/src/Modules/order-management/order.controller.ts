@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, ConflictException } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { PaymentService } from '../payment-management/payment.service';
 
@@ -24,4 +24,22 @@ export class OrderController {
   async getOrder(@Param('id') orderId: string) {
     return this.orderService.getOrder(orderId);
   }
+
+  @Get()
+  async getAllOrders(
+    @Query('customerName') customerName?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerPhone') customerPhone?: string,
+  ) {
+    return this.orderService.getAllOrders({ customerName, customerEmail, customerPhone });
+  }
+
+  // ✅ Fetch all orders for a specific user
+@Get('user/:userId')
+async getOrdersByUser(@Param('userId') userId: string) {
+  if (!userId) {
+    throw new ConflictException('User ID is required');
+  }
+  return this.orderService.getOrdersByUserId(userId);
+}
 }

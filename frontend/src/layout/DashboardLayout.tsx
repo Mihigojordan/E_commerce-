@@ -4,7 +4,8 @@ import Header from '../components/dashboard/Header';
 
 import Sidebar from '../components/dashboard/Sidebar';
 
-import { Outlet } from 'react-router-dom';
+import { Outlet, useOutletContext } from 'react-router-dom';
+import type { OutletContextType } from '../router';
 
 const DashboardLayout = () => {
 
@@ -13,6 +14,7 @@ const DashboardLayout = () => {
   const onToggle = () => {
     setIsOpen(!isOpen)
   }
+  const context = useOutletContext<OutletContextType>();
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -20,7 +22,7 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header onToggle={onToggle} />
         <main className="flex-1 overflow-y-auto">
-         <Outlet />
+         <Outlet context={context} />
         </main>
       </div>
     </div>

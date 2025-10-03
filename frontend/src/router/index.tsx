@@ -1,14 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { type FC, lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useRouteError } from 'react-router-dom';
 import Home from '../pages/landing/Home';
 import MainLayout from '../layout/MainLayout';
 import BlogsPage from '../pages/landing/BlogsPage';
 import BlogViewPage from '../components/landing/BlogViewPage';
 import AuthLayout from '../layout/AuthLayout';
-import AdminLogin from '../pages/auth/Login';
+import AdminLogin from '../pages/auth/admin/Login';
 import logo from '../assets/images/aby_hr.png';
-import UnlockScreen from '../pages/auth/UnlockScreen';
+import UnlockScreen from '../pages/auth/admin/UnlockScreen';
 import DashboardLayout from '../layout/DashboardLayout';
 import DashboardHome from '../pages/dashboard/DashboardHome';
 import ProtectPrivateAdminRoute from '../components/protectors/ProtectPrivateAdminRoute';
@@ -28,14 +28,11 @@ import MaterialManagement from '../pages/dashboard/MaterialManagement';
 import CategoryDashboard from '../pages/dashboard/CategoryManagement';
 import UnitDashboard from '../pages/dashboard/UnitManagement';
 import RoleManagement from '../pages/dashboard/RoleManagement';
-
 import MaterialRequisition from '../pages/dashboard/MaterialRequisition';
-
 import SiteAssignmentDashboard from '../pages/dashboard/SiteAssignmentDashboard';
 import MaterialRequisitionDetail from '../pages/dashboard/MaterialRequisitionDetail';
 import ProductFormExample from '../pages/dashboard/product/AddProduct';
 import ProductManagement from '../pages/dashboard/product/ProductManagement';
-
 import ProductViewPage from '../components/landing/shop/ShopViewPage';
 import ShoppingCartPage from '../pages/landing/ShoppingCartPage';
 import Gallery from '../pages/landing/Gallery';
@@ -50,6 +47,23 @@ import TestimonialViewMorePage from '../pages/dashboard/testimonial/TestimonialV
 import PaymentStatusPage from '../pages/landing/PaymentStatusPage';
 import ContactMessagesDashboard from '../pages/dashboard/ContactMessage';
 import SubscriberDashboard from '../pages/dashboard/Subscribers';
+import HelpCenter from '../pages/landing/HelpCenterPage';
+import FAQ from '../pages/landing/FaqPage';
+import ShippingInfo from '../pages/landing/ShipingInfoPage';
+import CustomerService from '../pages/landing/CustomerServicePage';
+import SizeGuide from '../pages/landing/SizeGuidePage';
+import TermsAndConditions from '../pages/landing/Terms&Condition';
+import PrivacyPolicy from '../pages/landing/PrivacyPolicyPage';
+import LoginPage from '../pages/auth/purcahing-user/Login';
+import RegisterPage from '../pages/auth/purcahing-user/Register';
+import ProtectPrivatePurchasingUserRoute from '../components/protectors/ProtectPrivatePurchasingUserRoute';
+import OrderDashboard from '../pages/dashboard/order/OrderDashboard';
+import AdminOrderDetailView from '../pages/dashboard/order/AdminOrderDetailView';
+import CustomerOrderDetailView from '../pages/user-dashboard/CustomerOrderDetailView';
+import CustomerOrderDashboard from '../pages/user-dashboard/CustomerOrderDashboard';
+import NotFoundPage from '../components/landing/Notfound';
+import ErrorBoundary from '../pages/landing/ErrorBoundary';
+import { AlertTriangle, RefreshCw, Home as HomeIcon } from 'lucide-react';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
 const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
@@ -57,18 +71,128 @@ const ContactPage = lazy(() => import('../pages/landing/ContactUs'));
 const AboutPage = lazy(() => import('../pages/landing/AboutPage'));
 const StockManagement = lazy(() => import('../pages/dashboard/StockManagement'));
 
+export type OutletContextType = {
+  role: 'admin' | 'user';
+};
+
 /**
  * Loading spinner component for Suspense fallback
  */
 const LoadingSpinner: FC = () => (
-  <div className="flex items-center justify-center h-screen bg-white">
-    <img src={logo} alt="Loading..." className="h-40 animate-zoomInOut" />
+  <div className="w-full min-h-screen py-12 px-4 bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
   </div>
 );
 
 /**
+ * Router Error Handler Component
+ * This displays errors caught by React Router's errorElement
+ */
+const RouterErrorBoundary: FC = () => {
+  const error = useRouteError() as any;
+
+  const handleReload = () => {
+    window.location.reload();
+  };
+
+  const handleGoHome = () => {
+    window.location.href = '/';
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-green-50 to-teal-50 flex items-center justify-center p-4">
+      <div className="max-w-3xl w-full">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-teal-500 to-green-600 p-8 text-white">
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full">
+                <AlertTriangle className="w-16 h-16" />
+              </div>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-center mb-2">
+              Oops! Something Went Wrong
+            </h1>
+            <p className="text-center text-teal-100 text-lg">
+              Your sparkle got dimmed for a moment
+            </p>
+          </div>
+
+          <div className="p-8">
+            <div className="mb-8">
+              <p className="text-gray-700 text-lg mb-4 text-center">
+                Don't worry, our team has been notified and we're working to restore the shine.
+              </p>
+              <p className="text-gray-600 text-center">
+                In the meantime, you can try refreshing the page or returning to discover more jewelry.
+              </p>
+            </div>
+
+            {process.env.NODE_ENV === 'development' && error && (
+              <details className="mb-8 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <summary className="cursor-pointer font-semibold text-gray-700 mb-2">
+                  Technical Details (Dev Mode)
+                </summary>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700 mb-2">Error Message:</p>
+                    <pre className="bg-teal-50 border border-teal-200 p-3 rounded text-xs text-teal-800 overflow-x-auto">
+                      {error?.message || error?.toString() || 'Unknown error'}
+                    </pre>
+                  </div>
+                  {error?.stack && (
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Stack Trace:</p>
+                      <pre className="bg-gray-100 border border-gray-300 p-3 rounded text-xs text-gray-700 overflow-x-auto max-h-64 overflow-y-auto">
+                        {error.stack}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              </details>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <button
+                onClick={handleReload}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-green-600 hover:from-teal-700 hover:to-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <RefreshCw className="w-5 h-5" />
+                Refresh Page
+              </button>
+              <button
+                onClick={handleGoHome}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200"
+              >
+                <HomeIcon className="w-5 h-5" />
+                Back to Home
+              </button>
+            </div>
+
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-6 text-center">
+              <h3 className="font-semibold text-gray-900 mb-2">Need Help?</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                If this problem persists, please contact our customer support team.
+              </p>
+              <a
+                href="mailto:support@novagems.rw"
+                className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium text-sm"
+              >
+                support@novagems.rw
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Error ID: {Date.now().toString(36).toUpperCase()}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/**
  * Suspense wrapper for lazy-loaded components
- * @param props - Component props with children
  */
 interface SuspenseWrapperProps {
   children: React.ReactNode;
@@ -84,7 +208,12 @@ const SuspenseWrapper: FC<SuspenseWrapperProps> = ({ children }) => {
 const routes = createBrowserRouter([
   {
     path: '/',
-    element: <Outlet />,
+    element: (
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
+    ),
+    errorElement: <RouterErrorBoundary />,
     children: [
       {
         path: '',
@@ -106,7 +235,7 @@ const routes = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
-            {
+          {
             path: 'cart',
             element: (
               <SuspenseWrapper>
@@ -114,7 +243,7 @@ const routes = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
-            {
+          {
             path: 'payment-status',
             element: (
               <SuspenseWrapper>
@@ -122,7 +251,7 @@ const routes = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
-            {
+          {
             path: 'wishlist',
             element: (
               <SuspenseWrapper>
@@ -138,7 +267,7 @@ const routes = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
-                {
+          {
             path: 'products',
             element: (
               <SuspenseWrapper>
@@ -151,47 +280,6 @@ const routes = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <ProductViewPage />
-              </SuspenseWrapper>
-            ),
-          },
-      
-          {
-            path: 'solutions',
-            element: (
-              <SuspenseWrapper>
-                <ServicesPage />
-              </SuspenseWrapper>
-            ),
-          },
-          {
-            path: 'jobs',
-            element: (
-              <SuspenseWrapper>
-                <JobBoard />
-              </SuspenseWrapper>
-            ),
-          },
-          {
-            path: 'jobs',
-            element: (
-              <SuspenseWrapper>
-                <JobBoard />
-              </SuspenseWrapper>
-            ),
-          },
-          {
-            path: 'jobs/:id',
-            element: (
-              <SuspenseWrapper>
-                <JobPostView />
-              </SuspenseWrapper>
-            ),
-          },
-          {
-            path: '/jobs/apply-job/:id',
-            element: (
-              <SuspenseWrapper>
-                <JobApplicationForm />
               </SuspenseWrapper>
             ),
           },
@@ -219,6 +307,108 @@ const routes = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
+          {
+            path: '/help-center',
+            element: (
+              <SuspenseWrapper>
+                <HelpCenter />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/faq',
+            element: (
+              <SuspenseWrapper>
+                <FAQ />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/shipping-info',
+            element: (
+              <SuspenseWrapper>
+                <ShippingInfo />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/customer-service',
+            element: (
+              <SuspenseWrapper>
+                <CustomerService />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/size-guide',
+            element: (
+              <SuspenseWrapper>
+                <SizeGuide />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/terms-condition',
+            element: (
+              <SuspenseWrapper>
+                <TermsAndConditions />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/privacy-policy',
+            element: (
+              <SuspenseWrapper>
+                <PrivacyPolicy />
+              </SuspenseWrapper>
+            ),
+          },
+        ],
+      },
+      {
+        path: 'user',
+        element: (
+          <SuspenseWrapper>
+            <ProtectPrivatePurchasingUserRoute>
+              <Outlet context={{ role: 'user' } satisfies OutletContextType} />
+            </ProtectPrivatePurchasingUserRoute>
+          </SuspenseWrapper>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/user/dashboard" replace />,
+          },
+          {
+            path: 'dashboard',
+            element: <DashboardLayout />,
+            children: [
+              {
+                path: '',
+                element: (
+                  <SuspenseWrapper>
+                    <DashboardHome />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'my-orders',
+                element: (
+                  <SuspenseWrapper>
+                    <CustomerOrderDashboard />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'my-orders/:id',
+                element: (
+                  <SuspenseWrapper>
+                    <CustomerOrderDetailView />
+                  </SuspenseWrapper>
+                ),
+              },
+            ],
+          },
         ],
       },
       {
@@ -226,7 +416,7 @@ const routes = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <ProtectPrivateAdminRoute>
-              <Outlet />
+              <Outlet context={{ role: 'admin' } satisfies OutletContextType} />
             </ProtectPrivateAdminRoute>
           </SuspenseWrapper>
         ),
@@ -256,10 +446,18 @@ const routes = createBrowserRouter([
                 ),
               },
               {
-                path: 'stock-management',
+                path: 'order-management',
                 element: (
                   <SuspenseWrapper>
-                    <StockManagement />
+                    <OrderDashboard />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: 'order-management/:id',
+                element: (
+                  <SuspenseWrapper>
+                    <AdminOrderDetailView />
                   </SuspenseWrapper>
                 ),
               },
@@ -267,7 +465,7 @@ const routes = createBrowserRouter([
                 path: 'product-management',
                 element: (
                   <SuspenseWrapper>
-                  <ProductManagement />
+                    <ProductManagement />
                   </SuspenseWrapper>
                 ),
               },
@@ -291,7 +489,7 @@ const routes = createBrowserRouter([
                 path: 'product-management/:id',
                 element: (
                   <SuspenseWrapper>
-                  <ProductViewMorePage />
+                    <ProductViewMorePage />
                   </SuspenseWrapper>
                 ),
               },
@@ -299,7 +497,7 @@ const routes = createBrowserRouter([
                 path: 'blog-management',
                 element: (
                   <SuspenseWrapper>
-                  <BlogDashboard />
+                    <BlogDashboard />
                   </SuspenseWrapper>
                 ),
               },
@@ -323,15 +521,15 @@ const routes = createBrowserRouter([
                 path: 'blog-management/:id',
                 element: (
                   <SuspenseWrapper>
-                  <BlogViewMorePage />
+                    <BlogViewMorePage />
                   </SuspenseWrapper>
                 ),
               },
-                            {
+              {
                 path: 'testimonial-management',
                 element: (
                   <SuspenseWrapper>
-                  <TestimonialDashboard />
+                    <TestimonialDashboard />
                   </SuspenseWrapper>
                 ),
               },
@@ -355,7 +553,7 @@ const routes = createBrowserRouter([
                 path: 'testimonial-management/:id',
                 element: (
                   <SuspenseWrapper>
-                  <TestimonialViewMorePage />
+                    <TestimonialViewMorePage />
                   </SuspenseWrapper>
                 ),
               },
@@ -391,14 +589,15 @@ const routes = createBrowserRouter([
                   </SuspenseWrapper>
                 ),
               },
-               {
+              {
                 path: 'contact-message',
                 element: (
                   <SuspenseWrapper>
                     <ContactMessagesDashboard />
                   </SuspenseWrapper>
                 ),
-              }, {
+              },
+              {
                 path: 'subscribe-message',
                 element: (
                   <SuspenseWrapper>
@@ -494,52 +693,70 @@ const routes = createBrowserRouter([
                   </SuspenseWrapper>
                 ),
               },
-                  {
+              {
                 path: 'material-requisition',
                 element: (
                   <SuspenseWrapper>
-                     <MaterialRequisition />
+                    <MaterialRequisition />
                   </SuspenseWrapper>
                 ),
               },
-                 {
+              {
                 path: 'material-requisition/:id',
                 element: (
                   <SuspenseWrapper>
-                     <MaterialRequisitionDetail />
+                    <MaterialRequisitionDetail />
                   </SuspenseWrapper>
                 ),
               },
-        
             ],
           },
         ],
       },
-    ],
-  },
-  {
-    path: '/auth',
-    element: <AuthLayout />,
-    children: [
       {
-        path: 'admin/login',
-        element: (
-          <SuspenseWrapper>
-            <AdminLogin />
-          </SuspenseWrapper>
-        ),
+        path: '/auth',
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'admin/login',
+            element: (
+              <SuspenseWrapper>
+                <AdminLogin />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: 'admin/unlock',
+            element: (
+              <SuspenseWrapper>
+                <UnlockScreen />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: 'user/login',
+            element: (
+              <SuspenseWrapper>
+                <LoginPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: 'user/register',
+            element: (
+              <SuspenseWrapper>
+                <RegisterPage />
+              </SuspenseWrapper>
+            ),
+          },
+        ],
       },
       {
-        path: 'admin/unlock',
-        element: (
-          <SuspenseWrapper>
-            <UnlockScreen />
-          </SuspenseWrapper>
-        ),
+        path: '*',
+        element: <NotFoundPage />,
       },
     ],
   },
 ]);
 
 export default routes;
-

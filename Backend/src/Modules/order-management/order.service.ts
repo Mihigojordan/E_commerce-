@@ -81,7 +81,47 @@ export class OrderService {
   async getOrder(orderId: string) {
     return this.prisma.order.findUnique({
       where: { id: orderId },
+      include: {
+         orderItems: {
+        include:{
+          product:true,
+        },
+      }, 
+      purchasingUser:true,
+      payment: true },
+    });
+  }
+
+  async getAllOrders(query?: {
+    customerName?: string;
+    customerEmail?: string;
+    customerPhone?: string;
+  }) {
+    const where: any = {};
+
+    if (query?.customerName) {
+      where.customerName = { contains: query.customerName, mode: 'insensitive' };
+    }
+    if (query?.customerEmail) {
+      where.customerEmail = { contains: query.customerEmail, mode: 'insensitive' };
+    }
+    if (query?.customerPhone) {
+      where.customerPhone = { contains: query.customerPhone, mode: 'insensitive' };
+    }
+
+    return this.prisma.order.findMany({
+      where,
       include: { orderItems: true, payment: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  // ✅ Fetch all orders for a specific user
+  async getOrdersByUserId(purchasingUserId: string) {
+    return this.prisma.order.findMany({
+      where: { purchasingUserId }, // Assuming your Order model has a `userId` field
+      include: { orderItems: true, payment: true },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

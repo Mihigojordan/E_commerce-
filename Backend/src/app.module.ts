@@ -14,6 +14,7 @@ import { PaymentModule } from './Modules/payment-management/payment.module';
 import { EmailModule } from './Global/email/email.module';
 
 import { SubscribersModule } from './Modules/subscribers/subscribers.module';
+import { PurchasingUserModule } from './Modules/purchasingUser/purchasingUser.module';
 @Module({
   imports: [
 
@@ -32,6 +33,7 @@ import { SubscribersModule } from './Modules/subscribers/subscribers.module';
     OrderModule,
     PaymentModule,
     SubscribersModule,
+    PurchasingUserModule,
     
   ],
   controllers: [],

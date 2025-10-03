@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import Logo from '../../assets/logo.png'
 import subscriberService from '../../services/subscribeService';
+import { Link } from 'react-router-dom';
 
 
 
@@ -67,33 +68,39 @@ const Footer = () => {
     { name: 'Contact', href: '/contact', icon: Phone }
   ];
 
-  const myAccountLinks = [
-    'My Profile',
-    'Order History',
-    'Wishlist',
-    'Track Orders',
-    'Returns & Refunds',
-    'Account Settings',
-    'Logout'
-  ];
+const myAccountLinks = [
+  { name: 'My Profile', path: '/my-profile' },
+  { name: 'Order History', path: '/order-history' },
+  { name: 'Wishlist', path: '/wishlist' },
+  { name: 'Track Orders', path: '/track-orders' },
+  { name: 'Cart', path: '/cart' },
+  { name: 'Returns & Refunds', path: '/returns-refunds' },
+  { name: 'Account Settings', path: '/account-settings' },
+  { name: 'Logout', path: '/logout' }
+];
 
-  const supportLinks = [
-    'Help Center',
-    'Customer Service',
-    'Live Chat',
-    'FAQ',
-    'Shipping Info',
-    'Size Guide'
-  ];
+const supportLinks = [
+  { name: 'Help Center', path: '/help-center' },
+  { name: 'Customer Service', path: '/customer-service' },
+  { name: 'Live Chat', path: '/contact' },
+  { name: 'FAQ', path: '/faq' },
+  { name: 'Shipping Info', path: '/shipping-info' },
+  { name: 'Size Guide', path: '/size-guide' },
+  { name: 'Privacy Policy', path: '/privacy-policy' },
+  { name: 'Terms & Condition', path: '/terms-condition' },
+];
 
-  const companyLinks = [
-    'About ABY HR',
-    'Careers',
-    'Press',
-    'Investor Relations',
-    'Corporate Social Responsibility',
-    'Sustainability'
-  ];
+const companyLinks = [
+  { name: 'About NovaGems', path: '/about' },
+  { name: 'Gallery', path: '/gallery' },
+  { name: 'News & Paper', path: '/blogs' },
+  { name: 'Products', path: '/product' },
+     { name: 'Contact', href: '/contact',}
+  // { name: 'Investor Relations', path: '/investor-relations' },
+  // { name: 'Corporate Social Responsibility', path: '/corporate-social-responsibility' },
+  // { name: 'Sustainability', path: '/sustainability' }
+];
+
 
   const socialLinks = [
     { icon: Facebook, href: '#', name: 'Facebook', color: 'hover:text-primary-600' },
@@ -198,7 +205,7 @@ const Footer = () => {
 
 <p className="text-gray-600 mb-6 ml-2 leading-relaxed">
   Discover a wide range of quality products at unbeatable prices.  
-  Shop smarter and enjoy a seamless online shopping experience with ABY Store.  
+  Shop smarter and enjoy a seamless online shopping experience with NovaGems Store.  
   Fast delivery and secure checkout — everything you need, just a click away.
 </p>
 
@@ -217,72 +224,72 @@ const Footer = () => {
 
           {/* My Account */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <User size={20} className="text-primary-600" />
-              My Account
-            </h3>
-            <ul className="space-y-2">
-              {myAccountLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay: 0.1 }}
+  viewport={{ once: true }}
+>
+  <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center gap-2">
+    <User size={20} className="text-primary-600" />
+    My Account
+  </h3>
+  <ul className="space-y-2">
+    {myAccountLinks.map((link, index) => (
+      <li key={index}>
+        <Link
+          to={link.path}
+          className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
+        >
+          {link.name}
+        </Link>
+      </li>
+    ))}
+  </ul>
+</motion.div>
 
-          {/* Support */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-lg font-semibold mb-4 text-gray-900">Customer Support</h3>
-            <ul className="space-y-2">
-              {supportLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+{/* Support */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay: 0.2 }}
+  viewport={{ once: true }}
+>
+  <h3 className="text-lg font-semibold mb-4 text-gray-900">Customer Support</h3>
+  <ul className="space-y-2">
+    {supportLinks.map((link, index) => (
+      <li key={index}>
+        <Link
+          to={link.path}
+          className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
+        >
+          {link.name}
+        </Link>
+      </li>
+    ))}
+  </ul>
+</motion.div>
 
-          {/* Company */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-lg font-semibold mb-4 text-gray-900">Company</h3>
-            <ul className="space-y-2">
-              {companyLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href="#"
-                    className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
+{/* Company */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay: 0.3 }}
+  viewport={{ once: true }}
+>
+  <h3 className="text-lg font-semibold mb-4 text-gray-900">Company</h3>
+  <ul className="space-y-2">
+    {companyLinks.map((link, index) => (
+      <li key={index}>
+        <Link
+          to={link.path}
+          className="text-gray-600 hover:text-primary-600 transition-colors text-sm block py-1"
+        >
+          {link.name}
+        </Link>
+      </li>
+    ))}
+  </ul>
+</motion.div>
 
           {/* Contact Section */}
           <motion.div

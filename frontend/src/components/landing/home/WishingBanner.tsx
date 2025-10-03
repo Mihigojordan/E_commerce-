@@ -1,21 +1,22 @@
 import React from 'react';
-import BannerImage from '../../../assets/banner-4.png';
+import BannerImage from '../../../assets/images/back-banner/back-banner-3.jpg';
 
 function WishingBanner() {
   return (
     <div
-      className="relative min-h-48 overflow-hidden bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
-      style={{ backgroundImage: `url(${BannerImage})` }}
+      className="relative min-h-48 overflow-hidden bg-gradient-to-br from-pink-50 via-primary-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
+      style={{ backgroundImage: `url(${BannerImage})`, }}
     >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         {/* Scattered dots */}
-        <div className="absolute top-12 right-96 w-2 h-2 bg-orange-300 rounded-full opacity-60"></div>
-        <div className="absolute top-20 right-80 w-3 h-3 bg-orange-400 rounded-full opacity-40"></div>
+        <div className="absolute top-12 right-96 w-2 h-2 bg-primary-300 rounded-full opacity-60"></div>
+        <div className="absolute top-20 right-80 w-3 h-3 bg-primary-400 rounded-full opacity-40"></div>
         <div className="absolute top-32 right-72 w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-50"></div>
-        <div className="absolute top-16 right-64 w-2.5 h-2.5 bg-orange-300 rounded-full opacity-45"></div>
+        <div className="absolute top-16 right-64 w-2.5 h-2.5 bg-primary-300 rounded-full opacity-45"></div>
         <div className="absolute top-24 right-56 w-1 h-1 bg-yellow-500 rounded-full opacity-60"></div>
-        <div className="absolute top-36 right-48 w-2 h-2 bg-orange-400 rounded-full opacity-35"></div>
+        <div className="absolute top-36 right-48 w-2 h-2 bg-primary-400 rounded-full opacity-35"></div>
 
         {/* Abstract line drawings */}
         <svg className="absolute bottom-0 left-0 w-64 h-64 text-gray-300 opacity-30" viewBox="0 0 200 200" fill="none">

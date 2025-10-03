@@ -47,7 +47,7 @@ export default function NotFoundPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50 flex items-center justify-center">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8 text-center">
         
         {/* Main Error Display */}
         <div className="mb-12">
@@ -66,7 +66,7 @@ export default function NotFoundPage() {
             <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-4">
               Oops! Page Not Found
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
+            <p className="text-xl text-gray-600  mx-auto mb-6">
               The page you're looking for seems to have wandered off into the digital void. 
               Don't worry, even the best technology sometimes takes unexpected detours!
             </p>
@@ -111,7 +111,7 @@ export default function NotFoundPage() {
             <HelpCircle className="w-8 h-8 text-primary-600 mr-3" />
             <h3 className="text-2xl font-bold text-gray-900">Helpful Tips</h3>
           </div>
-          <div className="grid md:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-4 text-left  mx-auto">
             {helpfulTips.map((tip, index) => (
               <div key={index} className="flex items-start space-x-3">
                 <div className="w-6 h-6 rounded-full bg-primary-600 text-white flex items-center justify-center text-sm font-bold mt-0.5">
@@ -126,7 +126,7 @@ export default function NotFoundPage() {
         {/* Contact Support */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-white">
           <h3 className="text-2xl font-bold mb-4">Still Need Help?</h3>
-          <p className="text-primary-100 mb-6 max-w-2xl mx-auto">
+          <p className="text-primary-100 mb-6  mx-auto">
             Our support team is here to help you find exactly what you need. 
             Don't hesitate to reach out!
           </p>

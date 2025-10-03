@@ -3,13 +3,14 @@ import { PrismaService } from 'src/Prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/Global/email/email.service';
+// import { EmailService } from 'src/Global/email/email.service';
 
 @Injectable()
 export class PurchasingUserService {
   constructor(
     private prisma: PrismaService,
-    // private email: EmailService,
-) {}
+    private email: EmailService,
+  ) {}
 
   // Create or return existing user
   async createOrGetUser(data: { name: string; email: string; phoneNumber: string }) {
@@ -31,21 +32,29 @@ export class PurchasingUserService {
       data: { name, email, phoneNumber, password: hashedPassword },
     });
 
-     const currentYear = new Date().getFullYear();
-    // await this.email.sendEmail(
-    //   email,
-    //   'Welcome to AbyTech Store',
-    //   'purchasing-user-welcome', // name of the HBS template
-    //   {
-    //     name:name,
-    //     email:email,
-    //     phoneNumber:phoneNumber,
-    //     password: rawPassword,
-    //     year: currentYear,
-    //   },
-    // );
+    const currentYear = new Date().getFullYear();
+    await this.email.sendEmail(
+      email,
+      'Welcome to AbyTech Store',
+      'purchasing-user-welcome', // name of the HBS template
+      {
+        name:name,
+        email:email,
+        phoneNumber:phoneNumber,
+        password: rawPassword,
+        year: currentYear,
+      },
+    );
 
+    // Optionally send welcome email here
     return { user, rawPassword };
+  }
+
+  // ✅ Fetch all users
+  async findAllUsers() {
+    return await this.prisma.purchasingUser.findMany({
+      orderBy: { createdAt: 'desc' }, // newest first
+    });
   }
 
   // Find user by ID, email, or phone
@@ -60,7 +69,6 @@ export class PurchasingUserService {
     id: string,
     data: { name?: string; email?: string; phoneNumber?: string; password?: string },
   ) {
-   
     try {
       const user = await this.prisma.purchasingUser.update({
         where: { id },

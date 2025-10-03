@@ -41,7 +41,7 @@ const PaymentStatusPage: React.FC = () => {
   };
 
   const handleViewOrders = () => {
-    navigate('/orders');
+    navigate(`/user/dashboard/my-orders/${orderId}`);
   };
 
   if (isLoading) {
