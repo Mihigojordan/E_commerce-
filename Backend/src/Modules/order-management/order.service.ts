@@ -88,7 +88,8 @@ export class OrderService {
         },
       }, 
       purchasingUser:true,
-      payment: true },
+      payments: true
+     },
     });
   }
 
@@ -111,7 +112,11 @@ export class OrderService {
 
     return this.prisma.order.findMany({
       where,
-      include: { orderItems: true, payment: true },
+      include: { orderItems: {
+        include:{
+          product:true,
+        },
+      }, payments: true },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -120,8 +125,9 @@ export class OrderService {
   async getOrdersByUserId(purchasingUserId: string) {
     return this.prisma.order.findMany({
       where: { purchasingUserId }, // Assuming your Order model has a `userId` field
-      include: { orderItems: true, payment: true },
+      include: { orderItems: true, payments: true },
       orderBy: { createdAt: 'desc' },
     });
   }
+
 }

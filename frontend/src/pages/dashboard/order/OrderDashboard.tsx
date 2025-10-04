@@ -14,7 +14,9 @@ import {
   Settings,
   DollarSign,
   Clock,
+  Download,
 } from "lucide-react";
+import jsPDF from 'jspdf';
 import orderService, { type Order, type OrderStatus } from "../../../services/orderService";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { type OutletContextType } from "../../../router";
@@ -39,7 +41,8 @@ const OrderDashboard: React.FC = () => {
   const [itemsPerPage] = useState<number>(8);
   const [operationStatus, setOperationStatus] = useState<OperationStatus | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>("table"); // Added viewMode state
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
+  const [generatingPDF, setGeneratingPDF] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -141,11 +144,186 @@ const OrderDashboard: React.FC = () => {
   };
 
   const getPaymentStatus = (order: Order): string => {
-    return order.payment?.status || "N/A";
+    if (!order.payments || order.payments.length === 0) return "N/A";
+    
+    const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+    if (successfulPayment) return "SUCCESSFUL";
+    
+    const pendingPayment = order.payments.find(p => p.status === "PENDING");
+    if (pendingPayment) return "PENDING";
+    
+    return "FAILED";
   };
 
   const getPaymentAmount = (order: Order): string => {
-    return order.payment?.amount ? formatCurrency(order.payment.amount, order.currency) : "N/A";
+    if (!order.payments || order.payments.length === 0) return "N/A";
+    
+    const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+    const latestPayment = order.payments[order.payments.length - 1];
+    const paymentToShow = successfulPayment || latestPayment;
+    
+    return formatCurrency(paymentToShow.amount, order.currency);
+  };
+
+  const handleDownloadPDF = async (order: Order) => {
+    if (!order?.id) return;
+    
+    setGeneratingPDF(order.id);
+    showOperationStatus('info', 'Generating PDF...');
+
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      let yPos = margin;
+
+      // Helper function to add text with word wrap
+      const addText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 10, isBold: boolean = false) => {
+        pdf.setFontSize(fontSize);
+        pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+        const lines = pdf.splitTextToSize(text, maxWidth);
+        pdf.text(lines, x, y);
+        return y + (lines.length * fontSize * 0.4);
+      };
+
+      // Header
+      pdf.setFillColor(34, 197, 94);
+      pdf.rect(0, 0, pageWidth, 25, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ORDER RECEIPT', pageWidth / 2, 15, { align: 'center' });
+      
+      yPos = 35;
+      pdf.setTextColor(0, 0, 0);
+
+      // Order Information
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Order Information', margin, yPos);
+      yPos += 8;
+
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Order ID: ${order.id}`, margin, yPos);
+      yPos += 6;
+      pdf.text(`Order Date: ${formatDate(order.createdAt)}`, margin, yPos);
+      yPos += 6;
+      pdf.text(`Status: ${order.status}`, margin, yPos);
+      yPos += 6;
+      pdf.text(`Total Amount: ${formatCurrency(order.amount, order.currency)}`, margin, yPos);
+      yPos += 10;
+
+      // Customer Information
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Customer Information', margin, yPos);
+      yPos += 8;
+
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Name: ${order.customerName || 'N/A'}`, margin, yPos);
+      yPos += 6;
+      pdf.text(`Email: ${order.customerEmail || 'N/A'}`, margin, yPos);
+      yPos += 6;
+      pdf.text(`Phone: ${order.customerPhone || 'N/A'}`, margin, yPos);
+      yPos += 10;
+
+      // Payment Information
+      if (order.payments && order.payments.length > 0) {
+        const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+        const displayPayment = successfulPayment || order.payments[order.payments.length - 1];
+
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Payment Information', margin, yPos);
+        yPos += 8;
+
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`Payment Status: ${displayPayment.status}`, margin, yPos);
+        yPos += 6;
+        pdf.text(`Payment Method: ${displayPayment.paymentMethod || 'N/A'}`, margin, yPos);
+        yPos += 6;
+        pdf.text(`Payment Amount: ${formatCurrency(displayPayment.amount, displayPayment.currency)}`, margin, yPos);
+        yPos += 6;
+        pdf.text(`Transaction Ref: ${displayPayment.txRef || 'N/A'}`, margin, yPos);
+        yPos += 10;
+      }
+
+      // Order Items
+      if (order.orderItems && order.orderItems.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Order Items', margin, yPos);
+        yPos += 8;
+
+        // Table header
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(margin, yPos - 5, pageWidth - 2 * margin, 8, 'F');
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Product', margin + 2, yPos);
+        pdf.text('Qty', pageWidth - margin - 50, yPos);
+        pdf.text('Price', pageWidth - margin - 30, yPos);
+        yPos += 8;
+
+        // Table rows
+        pdf.setFont('helvetica', 'normal');
+        order.orderItems.forEach((item, index) => {
+          if (yPos > pageHeight - 30) {
+            pdf.addPage();
+            yPos = margin;
+          }
+
+          const productName = item.product.name || 'N/A';
+          const quantity = item.quantity.toString();
+          const price = formatCurrency(item.product.price, order.currency);
+
+          pdf.text(productName.substring(0, 40), margin + 2, yPos);
+          pdf.text(quantity, pageWidth - margin - 50, yPos);
+          pdf.text(price, pageWidth - margin - 30, yPos);
+          yPos += 7;
+
+          // Add line separator
+          if (index < order.orderItems.length - 1) {
+            pdf.setDrawColor(220, 220, 220);
+            pdf.line(margin, yPos - 2, pageWidth - margin, yPos - 2);
+          }
+        });
+
+        yPos += 5;
+      }
+
+      // Total
+      pdf.setDrawColor(0, 0, 0);
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 8;
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('TOTAL:', pageWidth - margin - 60, yPos);
+      pdf.text(formatCurrency(order.amount, order.currency), pageWidth - margin - 30, yPos, { align: 'right' });
+
+      // Footer
+      yPos = pageHeight - 20;
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(128, 128, 128);
+      pdf.text(`Generated on ${new Date().toLocaleString()}`, pageWidth / 2, yPos, { align: 'center' });
+      pdf.text('Thank you for your order!', pageWidth / 2, yPos + 5, { align: 'center' });
+
+      // Save PDF
+      pdf.save(`Order_${order.id}_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+      showOperationStatus('success', 'PDF downloaded successfully!');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      showOperationStatus('error', 'Failed to generate PDF');
+    } finally {
+      setGeneratingPDF(null);
+    }
   };
 
   const totalPages = Math.ceil(orders.length / itemsPerPage);
@@ -206,6 +384,11 @@ const OrderDashboard: React.FC = () => {
                   <ChevronDown className={`w-3 h-3 ${sortBy === "status" ? "text-green-600" : "text-gray-400"}`} />
                 </div>
               </th>
+              <th className="text-left py-2 px-2 text-gray-600 font-medium hidden sm:table-cell">
+                <div className="flex items-center space-x-1">
+                  <span>Attempts</span>
+                </div>
+              </th>
               <th
                 className="text-left py-2 px-2 text-gray-600 font-medium cursor-pointer hover:bg-gray-100 hidden md:table-cell"
                 onClick={() => {
@@ -260,6 +443,9 @@ const OrderDashboard: React.FC = () => {
                     {order.status}
                   </span>
                 </td>
+                <td className="py-2 px-2 text-gray-700 hidden sm:table-cell">
+                  {order.payments?.length || 0}
+                </td>
                 <td className="py-2 px-2 text-gray-700 hidden md:table-cell">{formatDate(order.createdAt)}</td>
                 <td className="py-2 px-2">
                   <div className="flex items-center justify-end space-x-1">
@@ -269,6 +455,18 @@ const OrderDashboard: React.FC = () => {
                       title="View"
                     >
                       <Eye className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => handleDownloadPDF(order)}
+                      disabled={generatingPDF === order.id}
+                      className="text-gray-400 hover:text-blue-600 p-1 disabled:opacity-50"
+                      title="Download PDF"
+                    >
+                      {generatingPDF === order.id ? (
+                        <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Download className="w-3 h-3" />
+                      )}
                     </button>
                   </div>
                 </td>
@@ -316,6 +514,18 @@ const OrderDashboard: React.FC = () => {
                 title="View"
               >
                 <Eye className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => handleDownloadPDF(order)}
+                disabled={generatingPDF === order.id}
+                className="text-gray-400 hover:text-blue-600 p-1 disabled:opacity-50"
+                title="Download PDF"
+              >
+                {generatingPDF === order.id ? (
+                  <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Download className="w-3 h-3" />
+                )}
               </button>
             </div>
           </div>
@@ -372,6 +582,18 @@ const OrderDashboard: React.FC = () => {
                 title="View Order"
               >
                 <Eye className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleDownloadPDF(order)}
+                disabled={generatingPDF === order.id}
+                className="text-gray-400 hover:text-blue-600 p-1.5 rounded-full hover:bg-blue-50 transition-colors disabled:opacity-50"
+                title="Download PDF"
+              >
+                {generatingPDF === order.id ? (
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -615,10 +837,10 @@ const OrderDashboard: React.FC = () => {
                   ? "bg-green-50 border border-green-200 text-green-800"
                   : operationStatus.type === "error"
                   ? "bg-red-50 border border-red-200 text-red-800"
-                  : "bg-green-50 border border-green-200 text-green-800"
+                  : "bg-blue-50 border border-blue-200 text-blue-800"
               }`}
             >
-              <AlertCircle className="w-4 h-4 text-green-600" />
+              <AlertCircle className="w-4 h-4" />
               <span className="font-medium">{operationStatus.message}</span>
             </div>
           </div>

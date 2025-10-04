@@ -69,14 +69,13 @@ const Footer = () => {
   ];
 
 const myAccountLinks = [
-  { name: 'My Profile', path: '/my-profile' },
-  { name: 'Order History', path: '/order-history' },
+  { name: 'My Profile', path: '/user/dashboard/profile' },
+  { name: 'Order History', path: '/user/dashboard/my-orders' },
   { name: 'Wishlist', path: '/wishlist' },
-  { name: 'Track Orders', path: '/track-orders' },
+  { name: 'Retry Payment Orders', path: '/retry-payment' },
   { name: 'Cart', path: '/cart' },
-  { name: 'Returns & Refunds', path: '/returns-refunds' },
-  { name: 'Account Settings', path: '/account-settings' },
-  { name: 'Logout', path: '/logout' }
+  { name: 'Account Settings', path: '/user/dashboard/profile' },
+ 
 ];
 
 const supportLinks = [

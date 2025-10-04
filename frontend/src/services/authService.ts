@@ -81,10 +81,10 @@ async getProfile(isAdmin = false): Promise<User | null> {
    */
   async updateProfile(updates: Partial<User>, isAdmin: boolean = false): Promise<User> {
     try {
-      const response: AxiosResponse<{ success: boolean; data: { user: User } }> =
-        await this.api.put(isAdmin ? '/auth/profile' : '/auth/profile', updates);
+      const response: AxiosResponse<User> =
+        await this.api.put(isAdmin ? '/auth/edit-profile' : '/auth/edit-profile', updates);
 
-      return response.data.data.user;
+      return response.data;
     } catch (error: any) {
       const msg =
         error.response?.data?.message ||

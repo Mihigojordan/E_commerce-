@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { Response } from 'express';
 
@@ -15,4 +15,9 @@ export class PaymentController {
     const redirectUrl = await this.paymentService.verifyPaymentAndGetRedirect(txRef, transactionId);
     return res.redirect(redirectUrl); // redirects the browser
   }
+@Post('retry/:orderId')
+async retryPayment(@Param('orderId') orderId: string) {
+  return this.paymentService.retryPayment(orderId);
+}
+  
 }

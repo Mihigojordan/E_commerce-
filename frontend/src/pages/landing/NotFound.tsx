@@ -6,7 +6,7 @@ export default function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-green-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-green-50 to-primary-50 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center">
           {/* 404 Animation */}
@@ -36,7 +36,7 @@ export default function NotFoundPage() {
             </button>
             <button
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-green-600 hover:from-teal-700 hover:to-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-green-600 hover:from-primary-700 hover:to-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl w-full sm:w-auto"
             >
               <Home className="w-5 h-5" />
               Back to Home
@@ -49,21 +49,21 @@ export default function NotFoundPage() {
             <div className="flex flex-wrap gap-3 justify-center">
               <button
                 onClick={() => navigate('/product')}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors duration-200"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200"
               >
                 <ShoppingBag className="w-4 h-4" />
                 Shop Now
               </button>
               <button
                 onClick={() => navigate('/product')}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors duration-200"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200"
               >
                 <Search className="w-4 h-4" />
                 Search Products
               </button>
               <button
                 onClick={() => navigate('/cart')}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors duration-200"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200"
               >
                 <ShoppingBag className="w-4 h-4" />
                 View Cart

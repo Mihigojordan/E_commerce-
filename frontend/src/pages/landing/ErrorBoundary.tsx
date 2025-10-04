@@ -48,11 +48,11 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-teal-50 via-green-50 to-teal-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-primary-50 via-green-50 to-primary-50 flex items-center justify-center p-4">
           <div className="max-w-3xl w-full">
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-teal-500 to-green-600 p-8 text-white">
+              <div className="bg-gradient-to-r from-primary-500 to-green-600 p-8 text-white">
                 <div className="flex items-center justify-center mb-4">
                   <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full">
                     <AlertTriangle className="w-16 h-16" />
@@ -61,7 +61,7 @@ class ErrorBoundary extends Component<Props, State> {
                 <h1 className="text-3xl md:text-4xl font-bold text-center mb-2">
                   Oops! Something Went Wrong
                 </h1>
-                <p className="text-center text-teal-100 text-lg">
+                <p className="text-center text-primary-100 text-lg">
                   Your sparkle got dimmed for a moment
                 </p>
               </div>
@@ -86,7 +86,7 @@ class ErrorBoundary extends Component<Props, State> {
                     <div className="mt-4 space-y-4">
                       <div>
                         <p className="text-sm font-semibold text-gray-700 mb-2">Error Message:</p>
-                        <pre className="bg-teal-50 border border-teal-200 p-3 rounded text-xs text-teal-800 overflow-x-auto">
+                        <pre className="bg-primary-50 border border-primary-200 p-3 rounded text-xs text-primary-800 overflow-x-auto">
                           {this.state.error.toString()}
                         </pre>
                       </div>
@@ -106,7 +106,7 @@ class ErrorBoundary extends Component<Props, State> {
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
                   <button
                     onClick={this.handleReload}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-green-600 hover:from-teal-700 hover:to-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-green-600 hover:from-primary-700 hover:to-green-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     <RefreshCw className="w-5 h-5" />
                     Refresh Page
@@ -121,15 +121,15 @@ class ErrorBoundary extends Component<Props, State> {
                 </div>
 
                 {/* Help Section */}
-                <div className="bg-teal-50 border border-teal-200 rounded-lg p-6 text-center">
-                  <Mail className="w-8 h-8 text-teal-600 mx-auto mb-3" />
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-6 text-center">
+                  <Mail className="w-8 h-8 text-primary-600 mx-auto mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Need Help?</h3>
                   <p className="text-sm text-gray-600 mb-4">
                     If this problem persists, please contact our customer support team.
                   </p>
                   <a
                     href="mailto:support@novagems.rw"
-                    className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-medium text-sm"
+                    className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm"
                   >
                     <Mail className="w-4 h-4" />
                     support@novagems.rw
