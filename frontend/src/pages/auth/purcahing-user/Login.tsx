@@ -18,7 +18,7 @@ const LoginPage = () => {
     // Redirect if already authenticated
     useEffect(() => {
       if (isAuthenticated && !authLoading) {
-        const from = location.state?.from?.pathname || "/admin/dashboard";
+        const from =  "/user/dashboard";
         navigate(from);
       }
     }, [isAuthenticated, authLoading, location, navigate]);
@@ -77,7 +77,7 @@ const LoginPage = () => {
       });
      
       if (response) {
-        const from = location.state?.from?.pathname || "/admin/dashboard";
+        const from =  "/user/dashboard";
         navigate(from);
       }
     } catch (err: any) {
