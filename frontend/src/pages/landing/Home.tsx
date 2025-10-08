@@ -1,7 +1,6 @@
 import BestSellProduct from "../../components/landing/home/BestSellProduct"
 import BlogSection from "../../components/landing/home/BlogSection"
 import CountdownTimer from "../../components/landing/home/CountdownTimer"
-import FeaturesBrands from "../../components/landing/home/FeaturesBrands"
 import HeroSection from "../../components/landing/home/HeroSection"
 import MainBanner from "../../components/landing/home/MainBanner"
 import NewArrivalProduct from "../../components/landing/home/NewArrivalProduct"

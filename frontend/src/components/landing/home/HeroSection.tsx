@@ -79,10 +79,10 @@ function LuxuryHeroSection() {
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
 
       <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-2">
           {/* Main Hero Slider */}
           <div className="xl:col-span-2 relative">
-            <div className="h-[650px] rounded-3xl overflow-hidden relative shadow-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50">
+            <div className=" md:h-[490px] rounded-3xl overflow-hidden relative shadow-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
@@ -90,7 +90,7 @@ function LuxuryHeroSection() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="h-full relative flex items-center justify-between p-12"
+                  className="h-full relative flex items-center justify-between p-6"
                 >
                   {/* Background Image with enhanced overlay */}
                   <div
@@ -158,7 +158,7 @@ function LuxuryHeroSection() {
                       transition={{ duration: 0.6, delay: 0.7 }}
                       whileHover={{ scale: 1.02, boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)" }}
                       whileTap={{ scale: 0.98 }}
-                      className="group relative px-10 py-4 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium tracking-widest text-sm uppercase overflow-hidden transition-all duration-300 hover:from-primary-500 hover:to-primary-400 shadow-lg shadow-primary-500/30 border border-primary-400/50"
+                      className="group relative px-10 py-4 md:mb-10 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium tracking-widest text-sm uppercase overflow-hidden transition-all duration-300 hover:from-primary-500 hover:to-primary-400 shadow-lg shadow-primary-500/30 border border-primary-400/50"
                     >
                       <span className="relative z-10 flex items-center gap-3">
                         {heroSlides[currentSlide].buttonText}
@@ -212,7 +212,7 @@ function LuxuryHeroSection() {
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 </div>
 
-                <div className="relative z-10 p-6">
+                <div className="relative z-10 p-3">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold tracking-[3px] text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full border border-primary-200">
                       {offer.category}
@@ -222,7 +222,7 @@ function LuxuryHeroSection() {
                     </svg>
                   </div>
 
-                  <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-primary-300 transition-all duration-300">
+                  <div className="relative w-full h-40 mb-2 rounded-xl overflow-hidden ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-primary-300 transition-all duration-300">
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/20 to-transparent z-10" />
                     <img
                       src={offer.image}
@@ -231,12 +231,6 @@ function LuxuryHeroSection() {
                     />
                   </div>
 
-                  <h3 className="text-lg  font-medium text-slate-900 mb-2 group-hover:text-primary-800 transition-colors duration-300">
-                    {offer.title}
-                  </h3>
-                  <p className="text-primary-700 text-sm font-medium tracking-wide">
-                    {offer.subtitle}
-                  </p>
                 </div>
 
                 {/* Decorative corner accent */}
