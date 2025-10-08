@@ -135,13 +135,15 @@ async createProduct(productData: CreateProductData) {
 /**
  * Get all products with pagination and filters
  */
+/**
+ * Get all products with pagination and filters
+ */
 async getAllProducts(
   page = 1,
   limit = 10,
   filters: Partial<ProductFilters> = {}
 ) {
   try {
-    const skip = (page - 1) * limit;
     const where: Prisma.ProductWhereInput = {};
 
     // Category filter
@@ -167,28 +169,40 @@ async getAllProducts(
 
     // Tags filter (for JSON field)
     if (filters.tags && filters.tags.length > 0) {
-      // Will match if product has AT LEAST ONE of the tags
       where.OR = filters.tags.map(tag => ({
         tags: { array_contains: tag },
       }));
     }
 
-    const [products, total] = await Promise.all([
-      this.prisma.product.findMany({
-        where,
-        skip,
-        take: limit,
-        include: {
-          category: { select: { id: true, name: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      }),
-      this.prisma.product.count({ where }),
-    ]);
+    // Fetch products with database filters
+    let products = await this.prisma.product.findMany({
+      where,
+      include: {
+        category: { select: { id: true, name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // 🔍 Apply search filter in JavaScript
+    if (filters.search && filters.search.trim() !== "") {
+      const searchTerm = filters.search.trim().toLowerCase();
+      products = products.filter(product => 
+        product.name?.toLowerCase().includes(searchTerm) ||
+        product.brand?.toLowerCase().includes(searchTerm) ||
+        product.description?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Get total after filtering
+    const total = products.length;
+
+    // Apply pagination in JavaScript
+    const skip = (page - 1) * limit;
+    const paginatedProducts = products.slice(skip, skip + limit);
 
     return {
       success: true,
-      data: products,
+      data: paginatedProducts,
       pagination: {
         page,
         limit,
@@ -204,7 +218,6 @@ async getAllProducts(
     );
   }
 }
-
 
   /**
    * Get single product by ID

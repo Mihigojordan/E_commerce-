@@ -78,7 +78,7 @@ function LuxuryHeroSection() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
 
-      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Main Hero Slider */}
           <div className="xl:col-span-2 relative">

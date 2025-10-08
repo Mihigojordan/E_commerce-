@@ -5,6 +5,7 @@ import productService, { type Product } from '../../../services/ProductService';
 import { API_URL } from '../../../api/api';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '../../../context/CartContext';
 
 const ProductGrid: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,6 +15,8 @@ const ProductGrid: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const productsPerPage = 12; // Corrected from 1 to 12
+  const { addToCart } = useCart();
+
 
   const tabs = ['Featured', 'Popular', 'New added'];
   
@@ -286,13 +289,15 @@ const ProductGrid: React.FC = () => {
                               </span>
                             )}
                           </div>
-                          <motion.button
-                            whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(217, 119, 6, 0.3)' }}
-                            whileTap={{ scale: 0.98 }}
-                            className="w-10 h-10 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all duration-300 flex items-center justify-center shadow-lg shadow-primary-500/30"
-                          >
-                            <ShoppingBag className="w-5 h-5" />
-                          </motion.button>
+<motion.button
+  whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(217, 119, 6, 0.3)' }}
+  whileTap={{ scale: 0.98 }}
+  onClick={() => addToCart(product)} // ✅ Add product or increment if exists
+  className="w-10 h-10 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all duration-300 flex items-center justify-center shadow-lg shadow-primary-500/30"
+>
+  <ShoppingBag className="w-5 h-5" />
+</motion.button>
+
                         </div>
                       </div>
 

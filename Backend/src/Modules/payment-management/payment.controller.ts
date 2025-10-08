@@ -10,9 +10,10 @@ export class PaymentController {
   async flutterwaveCallback(
     @Query('tx_ref') txRef: string,
     @Query('transaction_id') transactionId: string,
+    @Query('status') status: string,
     @Res() res: Response,
   ) {
-    const redirectUrl = await this.paymentService.verifyPaymentAndGetRedirect(txRef, transactionId);
+    const redirectUrl = await this.paymentService.verifyPaymentAndGetRedirect(txRef, transactionId,status);
     return res.redirect(redirectUrl); // redirects the browser
   }
 @Post('retry/:orderId')
