@@ -40,17 +40,7 @@ const AdminProfilePage: React.FC = () => {
                 <User className="w-4 h-4 mr-2" />
                 Profile Settings
               </button>
-              <button
-                onClick={() => setActiveTab('security')}
-                className={`w-full flex items-center px-3 py-2 text-xs font-medium rounded transition-colors ${
-                  activeTab === 'security'
-                    ? 'bg-primary-50 text-primary-600 border-r-4 border-primary-500'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <Lock className="w-4 h-4 mr-2" />
-                Security Settings
-              </button>
+             
               
             </nav>
           </div>
@@ -73,7 +63,7 @@ const AdminProfilePage: React.FC = () => {
               </div>
               <div className="p-4">
                 {activeTab === 'profile' && <ProfileSettings />}
-                {activeTab === 'security' && <SecuritySettings />}
+                {/* {activeTab === 'security' && <SecuritySettings />} */}
                
               </div>
             </div>

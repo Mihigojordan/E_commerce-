@@ -4,9 +4,9 @@ import useAuth ,{ type AuthContextType } from '../../../../context/AuthContext';
 
 interface User {
   id: number;
-  full_name: string;
+  names: string;
   email: string;
-  phone?: string;
+
   role: { name: string };
   active?: boolean;
   created_at?: string;
@@ -14,9 +14,9 @@ interface User {
 }
 
 interface FormData {
-  full_name: string;
+  names: string;
   email: string;
-  phone: string;
+  
   created_at: string;
 }
 
@@ -25,19 +25,19 @@ const ProfileSettings: React.FC = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    full_name: user?.full_name || '',
+    names: user?.names || '',
     email: user?.email || '',
-    phone: user?.phone || '',
+   
     created_at: user?.created_at || '',
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setFormData({
-      full_name: user?.full_name || '',
+      names: user?.names || '',
       email: user?.email || '',
-      phone: user?.phone || '',
-      created_at: user?.created_at || '',
+     
+      created_at: user?.createdAt || '',
     });
   }, [user]);
 
@@ -54,9 +54,9 @@ const ProfileSettings: React.FC = () => {
       setLoading(true);
 
       const updatePayload: Partial<User> = {
-        full_name: formData.full_name,
+        names: formData.names,
         email: formData.email,
-        phone: formData.phone,
+       
       };
 
       await updateProfile(updatePayload);
@@ -88,9 +88,9 @@ const ProfileSettings: React.FC = () => {
 
   const handleCancel = () => {
     setFormData({
-      full_name: user?.full_name || '',
+      names: user?.names || '',
       email: user?.email || '',
-      phone: user?.phone || '',
+    
       created_at: user?.created_at || '',
     });
     setIsEditing(false);
@@ -117,16 +117,16 @@ const ProfileSettings: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label
-              htmlFor="full_name"
+              htmlFor="names"
               className="block text-xs font-medium text-gray-600 mb-1"
             >
               Full Name
             </label>
             <input
               type="text"
-              id="full_name"
-              name="full_name"
-              value={formData.full_name}
+              id="names"
+              name="names"
+              value={formData.names}
               onChange={handleInputChange}
               readOnly={!isEditing}
               className={`w-full px-3 py-1.5 border border-gray-200 rounded text-xs ${
@@ -137,28 +137,7 @@ const ProfileSettings: React.FC = () => {
               placeholder="Enter full name"
             />
           </div>
-          <div>
-            <label
-              htmlFor="phone"
-              className="block text-xs font-medium text-gray-600 mb-1"
-            >
-              Phone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              readOnly={!isEditing}
-              className={`w-full px-3 py-1.5 border border-gray-200 rounded text-xs ${
-                isEditing
-                  ? 'focus:ring-primary-500 focus:border-primary-500'
-                  : 'bg-gray-100 text-gray-600 cursor-not-allowed'
-              }`}
-              placeholder="Enter phone number"
-            />
-          </div>
+          
           <div>
             <label
               htmlFor="email"

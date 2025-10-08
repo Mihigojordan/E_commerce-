@@ -162,22 +162,22 @@ model User {
 
 
 model Order {
-  id             String       @id @default(uuid())
-  customerName   String
-  customerEmail  String
-  customerPhone  String
-  amount         Float
-  currency       String
-  status         OrderStatus  @default(PENDING)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  orderItems     OrderItem[]
-  payment        Payment?
-  
-  purchasingUserId String?         
-  purchasingUser   PurchasingUser? @relation(fields: [purchasingUserId], references: [id],onDelete: Cascade)
-}
+  id               String        @id @default(uuid())
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+  amount           Float
+  currency         String
+  status           OrderStatus   @default(PENDING)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
+  // Relations
+  orderItems       OrderItem[]
+  payments         Payment[]     // ⬅️ one order → many payments
+  purchasingUserId String?         
+  purchasingUser   PurchasingUser? @relation(fields: [purchasingUserId], references: [id], onDelete: Cascade)
+}
 
 // Enums
 enum OrderStatus {
@@ -202,19 +202,23 @@ model OrderItem {
 
 
 model Payment {
-  id             String        @id @default(uuid())
-  orderId        String         @unique
-  order          Order         @relation(fields: [orderId], references: [id])
-  txRef          String        @unique
-  transactionId  String?       // Flutterwave transaction ID
-  amount         Float
-  currency       String
-  status         PaymentStatus @default(PENDING)
-  paymentMethod  String        // card, mobilemoneyrwanda, etc.
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-}
+  id              String    @id @default(uuid())
+  txRef           String    @unique
+  orderId         String
+  order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount          Float
+  currency        String
+  status          String
+  paymentMethod   String?
+  transactionId   String?
+  // 🔁 Self-relation (to track retries)
+  retryOfPaymentId String?  
+  retryOfPayment    Payment?   @relation("RetryRelation", fields: [retryOfPaymentId], references: [id])
+  retriedPayments   Payment[]  @relation("RetryRelation")
 
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
 enum PaymentStatus {
   PENDING
   SUCCESSFUL

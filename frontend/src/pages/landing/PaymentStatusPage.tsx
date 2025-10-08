@@ -43,12 +43,15 @@ const PaymentStatusPage: React.FC = () => {
   const handleViewOrders = () => {
     navigate(`/user/dashboard/my-orders/${orderId}`);
   };
+  const handleTryAgain = () => {
+    navigate(`/retry-payment?orderId=${orderId}`);
+  };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-teal-600 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary-600 mx-auto mb-4" />
           <p className="text-gray-600">Processing payment status...</p>
         </div>
       </div>
@@ -57,12 +60,12 @@ const PaymentStatusPage: React.FC = () => {
 
   if (status === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-teal-50">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-emerald-50 to-primary-50">
         <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           {/* Success Animation Container */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-teal-100 rounded-full mb-6 animate-bounce">
-              <CheckCircle className="w-16 h-16 text-teal-600" strokeWidth={2.5} />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-primary-100 rounded-full mb-6 animate-bounce">
+              <CheckCircle className="w-16 h-16 text-primary-600" strokeWidth={2.5} />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-3">
               Payment Successful! 🎉
@@ -74,7 +77,7 @@ const PaymentStatusPage: React.FC = () => {
 
           {/* Order Details Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-teal-500 to-emerald-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-primary-500 to-emerald-600 px-6 py-4">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                 <Package className="w-5 h-5" />
                 Order Details
@@ -103,7 +106,7 @@ const PaymentStatusPage: React.FC = () => {
               {amount && (
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600 font-medium">Amount Paid</span>
-                  <span className="text-2xl font-bold text-teal-600">
+                  <span className="text-2xl font-bold text-primary-600">
                     {parseFloat(amount).toLocaleString()} RWF
                   </span>
                 </div>
@@ -111,7 +114,7 @@ const PaymentStatusPage: React.FC = () => {
               
               <div className="flex justify-between items-center py-3">
                 <span className="text-gray-600 font-medium">Status</span>
-                <span className="inline-flex items-center gap-2 bg-teal-100 text-teal-800 px-4 py-2 rounded-full font-semibold text-sm">
+                <span className="inline-flex items-center gap-2 bg-primary-100 text-primary-800 px-4 py-2 rounded-full font-semibold text-sm">
                   <CheckCircle className="w-4 h-4" />
                   Confirmed
                 </span>
@@ -124,8 +127,8 @@ const PaymentStatusPage: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">What happens next?</h3>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                  <Mail className="w-4 h-4 text-teal-600" />
+                <div className="flex-shrink-0 w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                  <Mail className="w-4 h-4 text-primary-600" />
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">Order Confirmation Email</h4>
@@ -148,8 +151,8 @@ const PaymentStatusPage: React.FC = () => {
               </div>
               
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                  <Phone className="w-4 h-4 text-teal-600" />
+                <div className="flex-shrink-0 w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                  <Phone className="w-4 h-4 text-primary-600" />
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">Stay Updated</h4>
@@ -165,7 +168,7 @@ const PaymentStatusPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleViewOrders}
-              className="px-8 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl"
+              className="px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl"
             >
               <Package className="w-5 h-5" />
               View My Orders
@@ -185,7 +188,7 @@ const PaymentStatusPage: React.FC = () => {
             <p className="text-sm text-gray-600 mb-2">Need help with your order?</p>
             <button
               onClick={handleGoHome}
-              className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-1 mx-auto"
+              className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center gap-1 mx-auto"
             >
               <Home className="w-4 h-4" />
               Go to Homepage
@@ -254,8 +257,8 @@ const PaymentStatusPage: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={handleContinueShopping}
-              className="px-8 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl"
+              onClick={handleTryAgain}
+              className="px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl"
             >
               <ShoppingBag className="w-5 h-5" />
               Try Again
@@ -275,7 +278,7 @@ const PaymentStatusPage: React.FC = () => {
             <p className="text-sm text-gray-600 mb-2">Need help with your payment?</p>
             <button
               onClick={() => navigate('/contact')}
-              className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-1 mx-auto"
+              className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center gap-1 mx-auto"
             >
               <Phone className="w-4 h-4" />
               Contact Support
@@ -345,7 +348,7 @@ const PaymentStatusPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={handleViewOrders}
-            className="px-8 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl"
+            className="px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-200 flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl"
           >
             <Package className="w-5 h-5" />
             Check Orders
@@ -365,7 +368,7 @@ const PaymentStatusPage: React.FC = () => {
           <p className="text-sm text-gray-600 mb-2">Need help with your payment?</p>
           <button
             onClick={() => navigate('/contact')}
-            className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-1 mx-auto"
+            className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center gap-1 mx-auto"
           >
             <Phone className="w-4 h-4" />
             Contact Support

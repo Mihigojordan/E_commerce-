@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
+  ShoppingCart,
+  Package,
   Users,
-  UserPlus,
+  DollarSign,
   Calendar,
   Clock,
   TrendingUp,
@@ -12,61 +14,68 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   RefreshCw,
-  Building2,
-  Award,
-  CheckCircle
+  Layers,
+  Star,
+  Mail,
+  FileText,
+  Tag
 } from 'lucide-react';
 
+import orderService, { type Order } from '../../services/orderService';
+import productService, { type Product } from '../../services/ProductService';
+import purchasingUserService, { type PurchasingUser } from '../../services/purchasingUserService';
+import testimonialService, { type Testimonial } from '../../services/testmonialService';
+import subscriberService, { type Subscriber } from '../../services/subscribeService';
+import contactService, { type ContactMessage } from '../../services/contactService';
+import blogService, { type Blog } from '../../services/blogService';
+import categoryService, { type Category } from '../../services/categoryService';
+
 // --- Type Definitions ---
-interface Employee {
-  id: number;
-  name: string;
-  position: string;
-  department: string;
-  status?: string;
-  startDate: string;
+interface RecentOrder {
+  id: string;
+  customerName: string;
+  amount: number;
+  status: string;
+  createdAt: string;
 }
 
-interface RecentHire {
-  id: number;
-  name: string;
-  position: string;
-  department: string;
-  startDate: string;
+interface PendingContact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: string;
 }
 
-interface LeaveRequest {
-  id: number;
-  employee: string;
-  type: string;
-  days: number;
-  status: 'pending' | 'approved' | 'rejected';
-  startDate: string;
-}
-
-interface Birthday {
-  id: number;
-  name: string;
-  date: string;
-  department: string;
+interface RecentBlog {
+  id: string;
+  title: string;
+  createdAt: string;
 }
 
 interface Stats {
-  totalEmployees: number;
-  activeEmployees: number;
-  newHires: number;
-  pendingLeaves: number;
-  departments: number;
-  avgSalary: number;
-  attendanceRate: number;
-  turnoverRate: number;
+  totalProducts: number;
+  totalOrders: number;
+  totalCustomers: number;
+  totalRevenue: number;
+  newOrders: number;
+  pendingOrders: number;
+  lowStockProducts: number;
+  totalCategories: number;
+  totalSubscribers: number;
+  totalTestimonials: number;
 }
 
 interface DashboardData {
-  employees: Employee[];
-  recentHires: RecentHire[];
-  leaveRequests: LeaveRequest[];
-  upcomingBirthdays: Birthday[];
+  products: Product[];
+  orders: Order[];
+  users: PurchasingUser[];
+  testimonials: Testimonial[];
+  subscribers: Subscriber[];
+  contacts: ContactMessage[];
+  blogs: Blog[];
+  categories: Category[];
+  lowStockProducts: Product[];
   stats: Stats;
 }
 
@@ -82,97 +91,164 @@ interface StatCard {
 // --- Component ---
 const DashboardHome: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData>({
-    employees: [],
-    recentHires: [],
-    leaveRequests: [],
-    upcomingBirthdays: [],
+    products: [],
+    orders: [],
+    users: [],
+    testimonials: [],
+    subscribers: [],
+    contacts: [],
+    blogs: [],
+    categories: [],
+    lowStockProducts: [],
     stats: {
-      totalEmployees: 0,
-      activeEmployees: 0,
-      newHires: 0,
-      pendingLeaves: 0,
-      departments: 0,
-      avgSalary: 0,
-      attendanceRate: 0,
-      turnoverRate: 0
+      totalProducts: 0,
+      totalOrders: 0,
+      totalCustomers: 0,
+      totalRevenue: 0,
+      newOrders: 0,
+      pendingOrders: 0,
+      lowStockProducts: 0,
+      totalCategories: 0,
+      totalSubscribers: 0,
+      totalTestimonials: 0,
     }
   });
 
   const [loading, setLoading] = useState(true);
 
-  // Mock data for demonstration
   useEffect(() => {
-    setTimeout(() => {
-      setDashboardData({
-        employees: [
-          { id: 1, name: 'John Smith', position: 'Software Engineer', department: 'Engineering', status: 'active', startDate: '2023-01-15' },
-          { id: 2, name: 'Sarah Johnson', position: 'Product Manager', department: 'Product', status: 'active', startDate: '2023-03-10' },
-          { id: 3, name: 'Mike Davis', position: 'HR Specialist', department: 'Human Resources', status: 'active', startDate: '2023-02-20' },
-          { id: 4, name: 'Emily Chen', position: 'UX Designer', department: 'Design', status: 'active', startDate: '2023-04-05' },
-          { id: 5, name: 'David Wilson', position: 'Sales Manager', department: 'Sales', status: 'active', startDate: '2023-01-30' }
-        ],
-        recentHires: [
-          { id: 1, name: 'Alex Rodriguez', position: 'Frontend Developer', department: 'Engineering', startDate: '2025-08-15' },
-          { id: 2, name: 'Lisa Park', position: 'Marketing Coordinator', department: 'Marketing', startDate: '2025-08-10' },
-          { id: 3, name: 'James Brown', position: 'Data Analyst', department: 'Analytics', startDate: '2025-08-05' }
-        ],
-        leaveRequests: [
-          { id: 1, employee: 'Sarah Johnson', type: 'Vacation', days: 5, status: 'pending', startDate: '2025-09-01' },
-          { id: 2, employee: 'Mike Davis', type: 'Sick Leave', days: 2, status: 'approved', startDate: '2025-08-25' },
-          { id: 3, employee: 'Emily Chen', type: 'Personal', days: 1, status: 'pending', startDate: '2025-08-30' }
-        ],
-        upcomingBirthdays: [
-          { id: 1, name: 'John Smith', date: '2025-09-25', department: 'Engineering' },
-          { id: 2, name: 'Sarah Johnson', date: '2025-09-28', department: 'Product' },
-          { id: 3, name: 'Mike Davis', date: '2025-10-02', department: 'Human Resources' }
-        ],
-        stats: {
-          totalEmployees: 152,
-          activeEmployees: 148,
-          newHires: 8,
-          pendingLeaves: 12,
-          departments: 6,
-          avgSalary: 75000,
-          attendanceRate: 94.2,
-          turnoverRate: 5.8
-        }
-      });
-      setLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      try {
+        const [
+          productsRes,
+          orders,
+          users,
+          testimonials,
+          subscribers,
+          contacts,
+          blogs,
+          categories,
+          lowStock
+        ] = await Promise.all([
+          productService.getAllProducts(),
+          orderService.getAllOrders(),
+          purchasingUserService.getAllUsers(),
+          testimonialService.getAllTestimonials(),
+          subscriberService.getAllSubscribers(),
+          contactService.getAllMessages(),
+          blogService.getAllBlogs(),
+          categoryService.getAllCategories(),
+          productService.getLowStockProducts(10) // threshold 10
+        ]);
+
+        const products = productsRes.data;
+
+        // Calculate stats
+        const currentDate = new Date('2025-10-04');
+        const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+
+        const totalRevenue = orders
+          .filter(o => o.status === 'COMPLETED')
+          .reduce((sum, o) => sum + o.amount, 0);
+
+        const newOrders = orders.filter(o => o.createdAt.startsWith(currentMonth)).length;
+
+        const pendingOrders = orders.filter(o => o.status === 'PENDING').length;
+
+        const stats: Stats = {
+          totalProducts: products.length,
+          totalOrders: orders.length,
+          totalCustomers: users.length,
+          totalRevenue,
+          newOrders,
+          pendingOrders,
+          lowStockProducts: lowStock.length,
+          totalCategories: categories.length,
+          totalSubscribers: subscribers.length,
+          totalTestimonials: testimonials.length,
+        };
+
+        setDashboardData({
+          products,
+          orders,
+          users,
+          testimonials,
+          subscribers,
+          contacts,
+          blogs,
+          categories,
+          lowStockProducts: lowStock,
+          stats
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  // Prepare recent orders (last 3, sorted by createdAt desc)
+  const recentOrders = [...dashboardData.orders]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 3)
+    .map(order => ({
+      id: order.id,
+      customerName: order.customerName,
+      amount: order.amount,
+      status: order.status,
+      createdAt: order.createdAt
+    }));
+
+  // Prepare pending contacts (last 3, sorted by createdAt desc)
+  const pendingContacts = [...dashboardData.contacts]
+    .sort((a, b) => new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime())
+    .slice(0, 3);
+
+  // Prepare recent blogs (last 3, sorted by createdAt desc)
+  const recentBlogs = [...dashboardData.blogs]
+    .sort((a, b) => new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime())
+    .slice(0, 3)
+    .map(blog => ({
+      id: blog.id,
+      title: blog.title,
+      createdAt: blog.createdAt ?? ''
+    }));
 
   const statsCards: StatCard[] = [
     {
-      label: 'Total Employees',
-      value: dashboardData.stats.totalEmployees,
+      label: 'Total Products',
+      value: dashboardData.stats.totalProducts,
       change: '+5.2%',
+      icon: Package,
+      color: 'bg-primary-500',
+      trend: 'up'
+    },
+    {
+      label: 'Total Orders',
+      value: dashboardData.stats.totalOrders,
+      change: '+12%',
+      icon: ShoppingCart,
+      color: 'bg-primary-500',
+      trend: 'up'
+    },
+    {
+      label: 'Total Customers',
+      value: dashboardData.stats.totalCustomers,
+      change: '+2.1%',
       icon: Users,
       color: 'bg-primary-500',
       trend: 'up'
     },
     {
-      label: 'New Hires (This Month)',
-      value: dashboardData.stats.newHires,
-      change: '+12%',
-      icon: UserPlus,
+      label: 'Total Revenue',
+      value: `$${dashboardData.stats.totalRevenue.toLocaleString()}`,
+      change: '+15%',
+      icon: DollarSign,
       color: 'bg-primary-500',
       trend: 'up'
-    },
-    {
-      label: 'Attendance Rate',
-      value: `${dashboardData.stats.attendanceRate}%`,
-      change: '+2.1%',
-      icon: CheckCircle,
-      color: 'bg-primary-500',
-      trend: 'up'
-    },
-    {
-      label: 'Pending Leaves',
-      value: dashboardData.stats.pendingLeaves,
-      change: '-8%',
-      icon: Clock,
-      color: 'bg-primary-500',
-      trend: 'down'
     }
   ];
 
@@ -194,8 +270,8 @@ const DashboardHome: React.FC = () => {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">HR Dashboard</h1>
-              <p className="text-sm text-gray-600 mt-1">Welcome back! Here's your team overview.</p>
+              <h1 className="text-xl font-semibold text-gray-900">NovaGems Dashboard</h1>
+              <p className="text-sm text-gray-600 mt-1">Welcome back! Here's your e-commerce overview.</p>
             </div>
             <div className="flex items-center space-x-2">
               <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
@@ -244,11 +320,11 @@ const DashboardHome: React.FC = () => {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Hires */}
+          {/* Recent Orders */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-gray-900">Recent Hires</h3>
+                <h3 className="text-base font-semibold text-gray-900">Recent Orders</h3>
                 <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                   <Filter className="w-4 h-4" />
                 </button>
@@ -256,72 +332,63 @@ const DashboardHome: React.FC = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {dashboardData.recentHires.map((hire) => (
-                  <div key={hire.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                {recentOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                        <UserPlus className="w-5 h-5 text-primary-600" />
+                        <ShoppingCart className="w-5 h-5 text-primary-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">{hire.name}</p>
-                        <p className="text-sm text-gray-500">{hire.position}</p>
-                        <p className="text-sm text-gray-400">{hire.department}</p>
+                        <p className="font-semibold text-gray-900">{order.customerName}</p>
+                        <p className="text-sm text-gray-500">${order.amount.toLocaleString()}</p>
+                        <p className="text-sm text-gray-400">{order.status}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">Start Date</p>
-                      <p className="font-medium text-gray-900">{new Date(hire.startDate).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-600">Date</p>
+                      <p className="font-medium text-gray-900">{new Date(order.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <button className="w-full text-primary-600 hover:text-primary-700 font-medium text-sm py-2">
-                  View All Employees →
+                  View All Orders →
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Leave Requests */}
+          {/* Pending Contacts */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-gray-900">Leave Requests</h3>
+                <h3 className="text-base font-semibold text-gray-900">Recent Contact Messages</h3>
                 <div className="flex items-center space-x-1 bg-yellow-100 px-2 py-1 rounded-lg">
-                  <Clock className="w-4 h-4 text-yellow-600" />
+                  <Mail className="w-4 h-4 text-yellow-600" />
                   <span className="text-sm font-medium text-yellow-700">
-                    {dashboardData.leaveRequests.filter(req => req.status === 'pending').length} Pending
+                    {dashboardData.contacts.length} Total
                   </span>
                 </div>
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {dashboardData.leaveRequests.map((request) => (
-                  <div key={request.id} className="p-4 bg-gray-50 rounded-lg">
+                {pendingContacts.map((contact) => (
+                  <div key={contact.id} className="p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-                          <Calendar className="w-4 h-4 text-primary-600" />
+                          <Mail className="w-4 h-4 text-primary-600" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">{request.employee}</p>
-                          <p className="text-sm text-gray-500">{request.type} • {request.days} days</p>
+                          <p className="font-semibold text-gray-900">{contact.firstName} {contact.lastName}</p>
+                          <p className="text-sm text-gray-500">{contact.email}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className={`text-sm px-2 py-1 rounded-lg ${
-                          request.status === 'pending' 
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : request.status === 'approved'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                        </span>
                         <span className="text-sm text-gray-500 mt-1">
-                          {new Date(request.startDate).toLocaleDateString()}
+                          {new Date(contact.createdAt ?? '').toLocaleDateString()}
                         </span>
                       </div>
                     </div>
@@ -330,7 +397,7 @@ const DashboardHome: React.FC = () => {
               </div>
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <button className="w-full text-primary-600 hover:text-primary-700 font-medium text-sm py-2">
-                  View All Requests →
+                  View All Messages →
                 </button>
               </div>
             </div>
@@ -339,11 +406,11 @@ const DashboardHome: React.FC = () => {
 
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Department Overview */}
+          {/* Category Overview */}
           <div className="lg:col-span-2 bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-gray-900">Department Overview</h3>
+                <h3 className="text-base font-semibold text-gray-900">Category Overview</h3>
                 <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
                   View Details
                 </button>
@@ -351,27 +418,20 @@ const DashboardHome: React.FC = () => {
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { name: 'Engineering', employees: 45, growth: '+8%' },
-                  { name: 'Sales', employees: 32, growth: '+12%' },
-                  { name: 'Marketing', employees: 18, growth: '+5%' },
-                  { name: 'Human Resources', employees: 12, growth: '+2%' },
-                  { name: 'Finance', employees: 15, growth: '+3%' },
-                  { name: 'Operations', employees: 20, growth: '+7%' }
-                ].map((dept, index) => (
-                  <div key={index} className="p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-md transition-all duration-200">
+                {dashboardData.categories.map((cat) => (
+                  <div key={cat.id} className="p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-md transition-all duration-200">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-                          <Building2 className="w-4 h-4 text-primary-600" />
+                          <Tag className="w-4 h-4 text-primary-600" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">{dept.name}</p>
-                          <p className="text-sm text-gray-500">{dept.employees} employees</p>
+                          <p className="font-semibold text-gray-900">{cat.name}</p>
+                          <p className="text-sm text-gray-500">{cat.subCategory ?? 'No subcategory'}</p>
                         </div>
                       </div>
                       <span className="text-green-600 text-sm font-medium">
-                        {dept.growth}
+                        {cat.status ?? 'Active'}
                       </span>
                     </div>
                   </div>
@@ -380,31 +440,30 @@ const DashboardHome: React.FC = () => {
             </div>
           </div>
 
-          {/* Upcoming Birthdays */}
+          {/* Recent Blogs */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-base font-semibold text-gray-900">Upcoming Birthdays</h3>
+              <h3 className="text-base font-semibold text-gray-900">Recent Blogs</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {dashboardData.upcomingBirthdays.map((birthday) => (
-                  <div key={birthday.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                {recentBlogs.map((blog) => (
+                  <div key={blog.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-                      <Award className="w-4 h-4 text-primary-600" />
+                      <FileText className="w-4 h-4 text-primary-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">{birthday.name}</p>
-                      <p className="text-sm text-gray-500">{birthday.department}</p>
+                      <p className="font-medium text-gray-900 truncate">{blog.title}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">{new Date(birthday.date).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-600">{new Date(blog.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <button className="w-full text-primary-600 hover:text-primary-700 font-medium text-sm py-2">
-                  View Calendar →
+                  View All Blogs →
                 </button>
               </div>
             </div>

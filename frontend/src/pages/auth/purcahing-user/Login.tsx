@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ChevronLeft } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import usePurchasingUserAuth from '../../../context/PurchasingUserAuthContext';
 import Swal from 'sweetalert2';
+import { nav } from 'framer-motion/client';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -137,8 +138,15 @@ const LoginPage = () => {
       {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white overflow-y-auto">
         <div className="w-full max-w-md py-8">
+
           <div className="mb-8">
+            <div className="flex  flex-col gap-5 justify-between">
+
+            <span 
+            onClick={()=>navigate('/products')}
+            className='flex cursor-pointer items-center gap-1 '><ChevronLeft size={20} className='font-medium' /> Go back</span>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
+            </div>
             <p className="text-gray-600">Enter your credentials to access your account</p>
           </div>
 

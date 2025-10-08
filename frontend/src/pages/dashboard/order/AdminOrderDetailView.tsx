@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useOutletContext } from 'react-router-dom';
 import {
   Package,
@@ -12,10 +12,14 @@ import {
   Clock,
   AlertCircle,
   Hash,
+  RefreshCw,
+  Download,
 } from 'lucide-react';
 import orderService, { type Order } from '../../../services/orderService';
 import { type OutletContextType } from '../../../router';
 import { API_URL } from '../../../api/api';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface OperationStatus {
   type: 'success' | 'error' | 'info';
@@ -29,6 +33,8 @@ export default function AdminOrderDetailView() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [operationStatus, setOperationStatus] = useState<OperationStatus | null>(null);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState<boolean>(false);
+    const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (role !== 'admin') {
@@ -74,6 +80,39 @@ export default function AdminOrderDetailView() {
     }
   };
 
+    const getStatusInfo = (status?: string) => {
+      switch (status) {
+        case 'COMPLETED':
+          return {
+            color: 'bg-green-100 text-green-800 border-green-200',
+            icon: <CheckCircle className="w-5 h-5" />,
+            message: 'Your order has been completed successfully!',
+            bgColor: 'bg-green-50',
+          };
+        case 'PENDING':
+          return {
+            color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+            icon: <Clock className="w-5 h-5" />,
+            message: 'Your order is being processed',
+            bgColor: 'bg-yellow-50',
+          };
+        case 'CANCELLED':
+          return {
+            color: 'bg-red-100 text-red-800 border-red-200',
+            icon: <XCircle className="w-5 h-5" />,
+            message: 'This order has been cancelled',
+            bgColor: 'bg-red-50',
+          };
+        default:
+          return {
+            color: 'bg-gray-100 text-gray-800 border-gray-200',
+            icon: <Package className="w-5 h-5" />,
+            message: 'Order status unknown',
+            bgColor: 'bg-gray-50',
+          };
+      }
+    };
+
   const getStatusIcon = (status?: string) => {
     switch (status) {
       case 'COMPLETED':
@@ -107,26 +146,105 @@ export default function AdminOrderDetailView() {
     });
   };
 
-const calculateItemPrice = (item: Order['orderItems'][0]) => {
-  const sellingPrice = Number(item.product.price) || 0; // safer than parseFloat
-  const discountPercent = Number(item.product?.discount) || 0;
+  const calculateItemPrice = (item: Order['orderItems'][0]) => {
+    const sellingPrice = Number(item.product.price) || 0;
+    const discountPercent = Number(item.product?.discount) || 0;
 
-  // Calculate discount amount
-  const discountAmount = (discountPercent / 100) * sellingPrice;
+    const discountAmount = (discountPercent / 100) * sellingPrice;
+    const discountedPrice = sellingPrice - discountAmount;
+    const totalPrice = discountedPrice * (item.quantity || 1);
 
-  // Apply discount
-  const discountedPrice = sellingPrice - discountAmount;
-
-  // Total for all quantities
-  const totalPrice = discountedPrice * (item.quantity || 1);
-
-  return {
-    discountedPrice,
-    discountAmount,
-    totalPrice,
+    return {
+      discountedPrice,
+      discountAmount,
+      totalPrice,
+    };
   };
-};
 
+   const handleDownload = async () => {
+      if (!contentRef.current || !orderData) return;
+      
+      setIsGeneratingPDF(true);
+      setOperationStatus({ type: 'info', message: 'Generating PDF...' });
+  
+      try {
+        // Clone the content to manipulate it
+        const originalContent = contentRef.current;
+        const clonedContent = originalContent.cloneNode(true) as HTMLElement;
+        
+        // Hide the download button in the cloned content
+        const downloadButtons = clonedContent.querySelectorAll('button');
+        downloadButtons.forEach(btn => {
+          if (btn.innerHTML.includes('Download') || btn.innerHTML.includes('download')) {
+            btn.style.display = 'none';
+          }
+        });
+  
+        // Append cloned content temporarily to body
+        clonedContent.style.position = 'absolute';
+        clonedContent.style.left = '-9999px';
+        clonedContent.style.width = originalContent.offsetWidth + 'px';
+        document.body.appendChild(clonedContent);
+  
+        // Generate canvas from the cloned content with higher quality
+        const canvas = await html2canvas(clonedContent, {
+          scale: 3, // Increased scale for better quality
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#f9fafb',
+          windowWidth: 1200, // Set a good width for rendering
+        });
+  
+        // Remove cloned content
+        document.body.removeChild(clonedContent);
+  
+        // Calculate PDF dimensions (A4 landscape for more space)
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+        // Add margins for better appearance
+        const margin = 10; // 10mm margin on all sides
+        const availableWidth = pdfWidth - (2 * margin);
+        const availableHeight = pdfHeight - (2 * margin);
+        
+        const imgData = canvas.toDataURL('image/png', 1.0); // Maximum quality
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(availableWidth / (imgWidth * 0.264583), availableHeight / (imgHeight * 0.264583));
+        
+        const scaledWidth = imgWidth * 0.264583 * ratio;
+        const scaledHeight = imgHeight * 0.264583 * ratio;
+        
+        let heightLeft = scaledHeight;
+        let position = 0;
+  
+        // Add first page with margin
+        pdf.addImage(imgData, 'PNG', margin, margin + position, scaledWidth, scaledHeight);
+        heightLeft -= availableHeight;
+  
+        // Add additional pages if content is longer than one page
+        while (heightLeft > 0) {
+          position = -(availableHeight - margin) * Math.ceil((scaledHeight - heightLeft) / availableHeight);
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', margin, position + margin, scaledWidth, scaledHeight);
+          heightLeft -= availableHeight;
+        }
+  
+        // Save the PDF
+        pdf.save(`Order_${orderData.id}_${new Date().toISOString().split('T')[0]}.pdf`);
+        
+        setOperationStatus({ type: 'success', message: 'PDF downloaded successfully!' });
+        setTimeout(() => setOperationStatus(null), 3000);
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        setOperationStatus({ type: 'error', message: 'Failed to generate PDF' });
+        setTimeout(() => setOperationStatus(null), 3000);
+      } finally {
+        setIsGeneratingPDF(false);
+      }
+    };
+  
 
   const calculateTotalOrderPrice = () => {
     if (!orderData?.orderItems) return 0;
@@ -134,6 +252,31 @@ const calculateItemPrice = (item: Order['orderItems'][0]) => {
       const { totalPrice } = calculateItemPrice(item);
       return total + totalPrice;
     }, 0);
+  };
+
+  // Group payments by retry chain
+  const organizePaymentsByRetry = (payments: any[]) => {
+    if (!payments || payments.length === 0) return [];
+
+    // Find root payments (those without retryOfPaymentId)
+    const rootPayments = payments.filter(p => !p.retryOfPaymentId);
+    
+    // Build chains for each root payment
+    return rootPayments.map(root => {
+      const chain = [root];
+      
+      // Find all retries recursively
+      const findRetries = (parentId: string) => {
+        const retries = payments.filter(p => p.retryOfPaymentId === parentId);
+        retries.forEach(retry => {
+          chain.push(retry);
+          findRetries(retry.id);
+        });
+      };
+      
+      findRetries(root.id);
+      return chain;
+    });
   };
 
   if (loading) {
@@ -159,9 +302,40 @@ const calculateItemPrice = (item: Order['orderItems'][0]) => {
     );
   }
 
+  const statusInfo = getStatusInfo(orderData.status);
+  const paymentChains = organizePaymentsByRetry(orderData.payments || []);
   return (
     <div className="min-h-screen bg-gray-50 p-6 text-sm">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6" ref={contentRef}>
+         {/* Status Banner */}
+                <div className={`${statusInfo.bgColor} rounded-lg p-6 border-2 ${statusInfo.color.split(' ')[2]}`}>
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-full ${statusInfo.color}`}>
+                      {statusInfo.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h1 className="text-2xl font-bold text-gray-900">{statusInfo.message}</h1>
+                      <p className="text-gray-600 mt-1">Order placed on {formatDate(orderData.createdAt)}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleDownload}
+                        disabled={isGeneratingPDF}
+                        className={`p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 ${
+                          isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        title="Download Receipt"
+                      >
+                        {isGeneratingPDF ? (
+                          <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <Download className="w-5 h-5 text-gray-700" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+        
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -284,79 +458,146 @@ const calculateItemPrice = (item: Order['orderItems'][0]) => {
           </div>
         )}
 
-        {/* Payment Information */}
-        {orderData.payment && (
-          <div className="bg-white rounded-lg shadow-sm p-6 w-full border border-gray-200">
+        {/* Payment Information - Updated for Multiple Payments */}
+        {orderData.payments && orderData.payments.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <CreditCard className="w-5 h-5" />
-              Payment Information
+              Payment History ({orderData.payments.length} {orderData.payments.length === 1 ? 'Payment' : 'Payments'})
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full place-item-center gap-4">
-              <div className="flex items-center gap-3">
-                <Hash className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Payment ID</p>
-                  <p className="font-medium text-gray-900">{orderData.payment.id || 'N/A'}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Transaction Ref</p>
-                  <p className="font-medium text-gray-900">{orderData.payment.txRef || 'N/A'}</p>
-                </div>
-              </div>
-              {orderData.payment.transactionId && (
-                <div className="flex items-center gap-3">
-                  <Hash className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Transaction ID</p>
-                    <p className="font-medium text-gray-900">{orderData.payment.transactionId}</p>
+            
+            <div className="space-y-6">
+              {paymentChains.map((chain, chainIndex) => (
+                <div key={chainIndex} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <CreditCard className="w-4 h-4 text-gray-600" />
+                    <h3 className="font-semibold text-gray-900">
+                      Payment Attempt #{chainIndex + 1}
+                      {chain.length > 1 && <span className="text-gray-500 font-normal ml-2">({chain.length} attempts)</span>}
+                    </h3>
+                  </div>
+
+                  <div className="space-y-3">
+                    {chain.map((payment, attemptIndex) => (
+                      <div
+                        key={payment.id}
+                        className={`bg-white rounded-lg p-4 border-2 ${
+                          payment.status === 'SUCCESSFUL' 
+                            ? 'border-green-300' 
+                            : payment.status === 'FAILED'
+                            ? 'border-red-300'
+                            : 'border-yellow-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            {attemptIndex > 0 && (
+                              <div className="flex items-center gap-1 text-orange-600 bg-orange-50 px-2 py-1 rounded text-xs font-medium">
+                                <RefreshCw className="w-3 h-3" />
+                                Retry #{attemptIndex}
+                              </div>
+                            )}
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(payment.status)}`}>
+                              {getStatusIcon(payment.status)}
+                              <span className="ml-1">{payment.status || 'N/A'}</span>
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500">{formatDate(payment.createdAt)}</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          <div className="flex items-start gap-2">
+                            <Hash className="w-4 h-4 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-xs text-gray-500">Payment ID</p>
+                              <p className="font-medium text-gray-900 text-xs break-all">{payment.id}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <CreditCard className="w-4 h-4 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-xs text-gray-500">Transaction Ref</p>
+                              <p className="font-medium text-gray-900 text-xs">{payment.txRef || 'N/A'}</p>
+                            </div>
+                          </div>
+
+                          {payment.transactionId && (
+                            <div className="flex items-start gap-2">
+                              <Hash className="w-4 h-4 text-gray-400 mt-0.5" />
+                              <div>
+                                <p className="text-xs text-gray-500">Transaction ID</p>
+                                <p className="font-medium text-gray-900 text-xs">{payment.transactionId}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex items-start gap-2">
+                            <CreditCard className="w-4 h-4 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-xs text-gray-500">Payment Method</p>
+                              <p className="font-medium text-gray-900 text-xs capitalize">{payment.paymentMethod || 'N/A'}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <CreditCard className="w-4 h-4 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-xs text-gray-500">Amount</p>
+                              <p className="font-medium text-gray-900 text-xs">{formatCurrency(payment.amount || 0, payment.currency)}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <Calendar className="w-4 h-4 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-xs text-gray-500">Last Updated</p>
+                              <p className="font-medium text-gray-900 text-xs">{formatDate(payment.updatedAt)}</p>
+                            </div>
+                          </div>
+
+                          {payment.retryOfPaymentId && (
+                            <div className="flex items-start gap-2 col-span-full">
+                              <RefreshCw className="w-4 h-4 text-orange-400 mt-0.5" />
+                              <div>
+                                <p className="text-xs text-gray-500">Retry Of Payment</p>
+                                <p className="font-medium text-orange-600 text-xs break-all">{payment.retryOfPaymentId}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              )}
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-gray-400" />
+              ))}
+            </div>
+
+            {/* Payment Summary */}
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="font-semibold text-blue-900 mb-2 text-sm">Payment Summary</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                 <div>
-                  <p className="text-sm text-gray-500">Payment Method</p>
-                  <p className="font-medium text-gray-900 capitalize">{orderData.payment.paymentMethod || 'N/A'}</p>
+                  <p className="text-blue-600">Total Payments</p>
+                  <p className="font-bold text-blue-900">{orderData.payments.length}</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Payment Status</p>
-                  <span className={`inline-flex px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(orderData.payment.status)}`}>
-                    {orderData.payment.status || 'N/A'}
-                  </span>
+                  <p className="text-green-600">Successful</p>
+                  <p className="font-bold text-green-900">
+                    {orderData.payments.filter(p => p.status === 'SUCCESSFUL').length}
+                  </p>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Payment Amount</p>
-                  <p className="font-medium text-gray-900">{formatCurrency(orderData.payment.amount || 0, orderData.payment.currency)}</p>
+                  <p className="text-red-600">Failed</p>
+                  <p className="font-bold text-red-900">
+                    {orderData.payments.filter(p => p.status === 'FAILED').length}
+                  </p>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Payment Currency</p>
-                  <p className="font-medium text-gray-900">{orderData.payment.currency || 'N/A'}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Payment Created</p>
-                  <p className="font-medium text-gray-900">{formatDate(orderData.payment.createdAt)}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Payment Updated</p>
-                  <p className="font-medium text-gray-900">{formatDate(orderData.payment.updatedAt)}</p>
+                  <p className="text-yellow-600">Pending</p>
+                  <p className="font-bold text-yellow-900">
+                    {orderData.payments.filter(p => p.status === 'PENDING').length}
+                  </p>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 // src/services/orderService.ts
-import api from '../api/api'; // your axios instance
+import api from '../api/api'; // your configured axios instance
 
 export interface OrderItem {
   productId: string;
@@ -40,7 +40,7 @@ export interface OrderQuery {
 }
 
 const orderService = {
-  // ✅ Checkout
+  // ✅ Checkout (create order + payment link)
   async checkout(data: CreateOrderData): Promise<{ order: Order; paymentLink: string }> {
     try {
       const response = await api.post('/orders/checkout', data);
@@ -62,7 +62,7 @@ const orderService = {
     }
   },
 
-  // ✅ Fetch all orders with optional query filters
+  // ✅ Fetch all orders
   async getAllOrders(query?: OrderQuery): Promise<Order[]> {
     try {
       const response = await api.get('/orders', { params: query });
@@ -84,13 +84,24 @@ const orderService = {
     }
   },
 
-  // Optional: Update order status
+  // ✅ Update order status
   async updateStatus(orderId: string, status: OrderStatus): Promise<Order> {
     try {
       const response = await api.put(`/orders/${orderId}/status`, { status });
       return response.data;
     } catch (error: any) {
       console.error(`Error updating order ${orderId} status:`, error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  // ✅ 🔁 Retry Payment for Failed Orders
+  async retryPayment(orderId: string): Promise<{ message: string; retryPaymentId: string; link: string }> {
+    try {
+      const response = await api.post(`/payments/retry/${orderId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error(`Error retrying payment for order ${orderId}:`, error.response?.data || error.message);
       throw error;
     }
   },

@@ -221,7 +221,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
         <div key={item.id} className="space-y-1">
           <button
             onClick={() => toggleDropdown(item.id)}
-            className={`flex items-center justify-between w-full px-3 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors ${hasActiveChild ? "bg-green-50 text-green-600" : ""}`}
+            className={`flex items-center justify-between w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${hasActiveChild ? "bg-primary-50 text-primary-600" : ""}`}
           >
             <div className="flex items-center space-x-2">
               <Icon className="w-4 h-4" />
@@ -235,7 +235,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
                 <button
                   key={child.id}
                   onClick={() => handleNavClick(child.path!)}
-                  className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors ${location.pathname === child.path ? "bg-green-50 text-green-600" : ""}`}
+                  className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${location.pathname === child.path ? "bg-primary-50 text-primary-600" : ""}`}
                 >
                   <child.icon className="w-4 h-4 mr-2" />
                   {child.label}
@@ -251,7 +251,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
       <button
         key={item.id}
         onClick={() => handleNavClick(item.path!)}
-        className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors ${isActive ? "bg-green-50 text-green-600" : ""}`}
+        className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${isActive ? "bg-primary-50 text-primary-600" : ""}`}
       >
         <Icon className="w-4 h-4 mr-2" />
         {item.label}
@@ -266,7 +266,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
           {/* Left Section */}
           <div className="flex items-center space-x-3">
             <div
-              className="w-7 h-7 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg lg:hidden flex items-center justify-center cursor-pointer hover:from-green-600 hover:to-teal-600 transition-colors"
+              className="w-7 h-7 bg-gradient-to-r from-primary-500 to-teal-500 rounded-lg lg:hidden flex items-center justify-center cursor-pointer hover:from-primary-600 hover:to-teal-600 transition-colors"
               onClick={onToggle}
             >
               <Menu className="w-4 h-4 text-white" />
@@ -315,8 +315,8 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
                       <button
                         key={lang.code}
                         onClick={() => handleLanguageSelect(lang.code)}
-                        className={`flex items-center w-full px-3 py-2 text-sm hover:bg-green-50 transition-colors ${
-                          selectedLanguage === lang.code ? "bg-green-50 text-green-600" : "text-gray-700"
+                        className={`flex items-center w-full px-3 py-2 text-sm hover:bg-primary-50 transition-colors ${
+                          selectedLanguage === lang.code ? "bg-primary-50 text-primary-600" : "text-gray-700"
                         }`}
                       >
                         <span className={`fi fi-${lang.flag} mr-2`}></span>
@@ -331,8 +331,8 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
             {/* Notifications */}
             <button className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative group">
               <Bell className="w-4 h-4 animate-pulse group-hover:animate-bounce" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping"></span>
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-600 rounded-full text-xs text-white flex items-center justify-center"></span>
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full animate-ping"></span>
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-600 rounded-full text-xs text-white flex items-center justify-center"></span>
             </button>
 
             {/* Fullscreen Toggle */}
@@ -353,8 +353,8 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center space-x-2 p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <div className="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center overflow-hidden">
-                  <User className="w-4 h-4 text-green-600" />
+                <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center overflow-hidden">
+                  <User className="w-4 h-4 text-primary-600" />
                 </div>
                 <div className="text-left hidden md:block">
                   <div className="text-xs font-medium text-gray-700">
@@ -370,7 +370,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
                   <div className="py-1">
-                    <div className="px-3 py-2 border-b border-gray-100 bg-green-50">
+                    <div className="px-3 py-2 border-b border-gray-100 bg-primary-50">
                       <div className="text-sm font-medium text-gray-900">
                         {getDisplayName()}
                       </div>
@@ -383,7 +383,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
                         navigate(`/${role}/dashboard/profile`);
                         setIsProfileOpen(false);
                       }}
-                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors"
+                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors"
                     >
                       <User className="w-4 h-4 mr-2" />
                       My Profile

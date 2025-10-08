@@ -8,8 +8,10 @@ import {
   ChevronDown,
   ChevronUp,
   Newspaper,
-  TestTube,
-  Clipboard,
+  MessageSquareQuote,
+  ShoppingCart,
+  Users,
+  Package,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
@@ -104,21 +106,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     { 
       id: "Testimonial Management", 
       label: "Testimonial Management", 
-      icon: TestTube, 
+      icon: MessageSquareQuote, 
       path: `/${role}/dashboard/testimonial-management`,
       allowedRoles: ["admin"] // Both can access
     },
     { 
       id: "Order Management", 
       label: "Order Management", 
-      icon: TestTube, 
+      icon: ShoppingCart, 
       path: `/${role}/dashboard/order-management`,
+      allowedRoles: ["admin"] // Both can access
+    },
+    { 
+      id: "User Management", 
+      label: "User Management", 
+      icon: Users, 
+      path: `/${role}/dashboard/user-management`,
       allowedRoles: ["admin"] // Both can access
     },
     { 
       id: "My Order Management", 
       label: "My Orders", 
-      icon: Clipboard, 
+      icon: Package, 
       path: `/${role}/dashboard/my-orders`,
       allowedRoles: ["user"] // Both can access
     },

@@ -146,13 +146,30 @@ const CustomerOrderDashboard: React.FC = () => {
     }).format(amount);
   };
 
-  const getPaymentStatus = (order: Order): string => {
-    return order.payment?.status || "N/A";
-  };
-
-  const getPaymentAmount = (order: Order): string => {
-    return order.payment?.amount ? formatCurrency(order.payment.amount, order.currency) : "N/A";
-  };
+ const getPaymentStatus = (order: Order): string => {
+  if (!order.payments || order.payments.length === 0) return "N/A";
+  
+  // Check if any payment is successful
+  const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+  if (successfulPayment) return "SUCCESSFUL";
+  
+  // Check if any payment is pending
+  const pendingPayment = order.payments.find(p => p.status === "PENDING");
+  if (pendingPayment) return "PENDING";
+  
+  // All payments failed
+  return "FAILED";
+};
+const getPaymentAmount = (order: Order): string => {
+  if (!order.payments || order.payments.length === 0) return "N/A";
+  
+  // Find the successful payment or the latest payment
+  const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+  const latestPayment = order.payments[order.payments.length - 1];
+  const paymentToShow = successfulPayment || latestPayment;
+  
+  return formatCurrency(paymentToShow.amount, order.currency);
+};
 
   const totalPages = Math.ceil(orders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
