@@ -9,6 +9,7 @@ import { API_URL } from '../../../api/api';
 import { type Product } from '../../../services/ProductService';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { formatPrice } from '../../../utils/dateUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -100,10 +101,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-primary-600">${currentPrice.toFixed(2)}</span>
+            <span className="text-lg font-bold text-primary-600">{formatPrice(currentPrice)}</span>
             {product.discount && product.discount > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 line-through">${product.price.toFixed(2)}</span>
+                <span className="text-sm text-gray-500 line-through">${formatPrice(product.price)}</span>
                 <span className="text-sm text-pink-500 font-medium">{product.discount}% off</span>
               </div>
             )}

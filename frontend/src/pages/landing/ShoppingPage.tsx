@@ -4,26 +4,18 @@ import productService, { type Product } from '../../services/ProductService';
 import categoryService, { type Category } from '../../services/categoryService';
 import { API_URL } from '../../api/api';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/landing/shop/ProductCard';
 import FilterBar from '../../components/landing/shop/FilterBar';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ShoppingPage: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [newProducts, setNewProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [priceRange, setPriceRange] = useState([0, 300]);
-  const [minPriceInput, setMinPriceInput] = useState('0');
-  const [maxPriceInput, setMaxPriceInput] = useState('300');
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(9);
-  const [viewMode, setViewMode] = useState('grid');
-  const [sortBy, setSortBy] = useState('Featured');
-  const [searchQuery, setSearchQuery] = useState('');
+const [searchParams, setSearchParams] = useSearchParams();
+const [products, setProducts] = useState<Product[]>([]);
+const [newProducts, setNewProducts] = useState<Product[]>([]);
+const [categories, setCategories] = useState<Category[]>([]);
+
+
   const [loading, setLoading] = useState(true);
   const [newProductsLoading, setNewProductsLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(true);
@@ -36,6 +28,31 @@ const ShoppingPage: React.FC = () => {
     limit: number;
     totalPages: number;
   }>({ total: 0, page: 1, limit: 9, totalPages: 1 });
+
+
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(
+  searchParams.get('category') ? parseInt(searchParams.get('category')!) : null
+);
+const [minPriceInput, setMinPriceInput] = useState(searchParams.get('minPrice') || '0');
+const [maxPriceInput, setMaxPriceInput] = useState(searchParams.get('maxPrice') || '300');
+const [selectedColors, setSelectedColors] = useState<string[]>(
+  searchParams.get('colors') ? searchParams.get('colors')!.split(',') : []
+);
+const [selectedConditions, setSelectedConditions] = useState<string[]>(
+  searchParams.get('conditions') ? searchParams.get('conditions')!.split(',') : []
+);
+const [currentPage, setCurrentPage] = useState(
+  searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1
+);
+const [itemsPerPage, setItemsPerPage] = useState(
+  searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 9
+);
+const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Featured');
+const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+const [priceRange, setPriceRange] = useState([
+  parseFloat(minPriceInput) || 0,
+  parseFloat(maxPriceInput) || 300
+]);
 
   const navigate = useNavigate();
 
@@ -67,6 +84,23 @@ const ShoppingPage: React.FC = () => {
 
     fetchCategories();
   }, []);
+
+  // Sync URL params with state
+useEffect(() => {
+  const params: any = {};
+  
+  if (searchQuery) params.search = searchQuery;
+  if (selectedCategory) params.category = selectedCategory.toString();
+  if (minPriceInput && minPriceInput !== '0') params.minPrice = minPriceInput;
+  if (maxPriceInput && maxPriceInput !== '300') params.maxPrice = maxPriceInput;
+  if (selectedColors.length > 0) params.colors = selectedColors.join(',');
+  if (selectedConditions.length > 0) params.conditions = selectedConditions.join(',');
+  if (currentPage > 1) params.page = currentPage.toString();
+  if (itemsPerPage !== 9) params.limit = itemsPerPage.toString();
+  if (sortBy !== 'Featured') params.sort = sortBy;
+
+  setSearchParams(params, { replace: true });
+}, [searchQuery, selectedCategory, minPriceInput, maxPriceInput, selectedColors, selectedConditions, currentPage, itemsPerPage, sortBy, setSearchParams]);
 
   // Fetch new products on mount
   useEffect(() => {

@@ -80,11 +80,11 @@ const myAccountLinks = [
 
 const supportLinks = [
   { name: 'Help Center', path: '/help-center' },
-  { name: 'Customer Service', path: '/customer-service' },
-  { name: 'Live Chat', path: '/contact' },
+  
+  
   { name: 'FAQ', path: '/faq' },
   { name: 'Shipping Info', path: '/shipping-info' },
-  { name: 'Size Guide', path: '/size-guide' },
+
   { name: 'Privacy Policy', path: '/privacy-policy' },
   { name: 'Terms & Condition', path: '/terms-condition' },
 ];
@@ -94,7 +94,8 @@ const companyLinks = [
   { name: 'Gallery', path: '/gallery' },
   { name: 'News & Paper', path: '/blogs' },
   { name: 'Products', path: '/product' },
-     { name: 'Contact', href: '/contact',}
+     { name: 'Contact', href: '/contact',},
+     { name: 'Customer Service', path: '/customer-service' },
   // { name: 'Investor Relations', path: '/investor-relations' },
   // { name: 'Corporate Social Responsibility', path: '/corporate-social-responsibility' },
   // { name: 'Sustainability', path: '/sustainability' }

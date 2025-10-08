@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import Logo from '../../assets/logo.png'
+import SearchBar from './SearchBar';
 
 type NavLink = {
   name: string;
@@ -178,23 +179,7 @@ const Navbar: React.FC = () => {
 
               {/* Search Bar */}
               <div className="flex-1 max-w-2xl mx-8 hidden md:block">
-                <div className="relative flex">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for items..."
-                    className="w-full px-4 py-1 border-2 border-gray-200 rounded-l-lg focus:outline-none focus:border-primary-500 transition-colors"
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                  <button
-                    onClick={handleSearch}
-                    className="bg-primary-600 text-white px-6 py-2 rounded-r-lg hover:bg-primary-700 transition-colors duration-300 flex items-center space-x-2"
-                  >
-                    <Search size={20} />
-                    <span className="hidden lg:block">Search</span>
-                  </button>
-                </div>
+               <SearchBar />
               </div>
 
               {/* Cart and Wishlist */}
@@ -228,21 +213,7 @@ const Navbar: React.FC = () => {
 
             {/* Mobile Search */}
             <div className="md:hidden mt-4">
-              <div className="relative flex">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for items..."
-                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-l-lg focus:outline-none focus:border-primary-500"
-                />
-                <button
-                  onClick={handleSearch}
-                  className="bg-primary-600 text-white px-4 py-2 rounded-r-lg hover:bg-primary-700 transition-colors"
-                >
-                  <Search size={16} />
-                </button>
-              </div>
+              <SearchBar isMobile />
             </div>
           </div>
         </div>

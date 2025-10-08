@@ -28,6 +28,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import FilterBar from './FilterBar';
 import CheckoutModal from './CheckOutModal';
+import { formatCurrency, formatPrice } from '../../../utils/dateUtils';
 
 const ShopViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -469,7 +470,7 @@ const ShopViewPage: React.FC = () => {
         animate={{ opacity: 1 }}
         className="min-h-screen bg-gray-50"
       >
-        <div className="w-11/12 mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             <motion.aside 
               initial={{ x: -20, opacity: 0 }}
@@ -554,7 +555,7 @@ const ShopViewPage: React.FC = () => {
                           <h4 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors truncate">
                             {productItem.name}
                           </h4>
-                          <p className="text-sm text-primary-600 font-semibold">${productItem.price.toFixed(2)}</p>
+                          <p className="text-sm text-primary-600 font-semibold">{formatPrice(productItem.price)}</p>
                           <div className="flex mt-1">
                             {[...Array(5)].map((_, i) => (
                               <Star 
@@ -652,10 +653,10 @@ const ShopViewPage: React.FC = () => {
                       </div>
 
                       <div className="flex items-baseline gap-2 mb-6">
-                        <span className="text-3xl font-bold text-primary-600">${discountedPrice?.toFixed(2)}</span>
+                        <span className="text-3xl font-bold text-primary-600">{formatPrice(discountedPrice!)}</span>
                         {product.discount && product.discount > 0 && (
                           <>
-                            <span className="text-xl text-gray-500 line-through">${product.price.toFixed(2)}</span>
+                            <span className="text-xl text-gray-500 line-through">{formatPrice(product.price)}</span>
                             <span className="text-sm text-red-600 font-medium">{product.discount}% OFF</span>
                           </>
                         )}
@@ -742,7 +743,7 @@ const ShopViewPage: React.FC = () => {
                         onClick={handleBuyNow}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-green-500 to-primary-600 text-white px-6 py-3 rounded-md hover:from-green-600 hover:to-primary-700 transition-all flex items-center justify-center gap-2 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-md hover:from-primary-600 hover:to-primary-700 transition-all flex items-center justify-center gap-2 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!product.availability || product.quantity < quantity}
                         aria-label="Buy now"
                       >

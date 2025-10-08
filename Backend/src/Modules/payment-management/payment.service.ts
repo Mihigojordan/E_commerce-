@@ -138,15 +138,20 @@ export class PaymentService {
 }
 
 
-  async verifyPaymentAndGetRedirect(txRef: string, transactionId: string): Promise<string> {
+  async verifyPaymentAndGetRedirect(txRef: string, transactionId: string,paymentStatus:string): Promise<string> {
     // 1️⃣ Verify with Flutterwave
+
+    if(paymentStatus == 'cancelled'){
+      return `${process.env.FRONTEND_BASE_URL}/products`;
+    }
+
     const res = await axios.get<any>(`${this.baseUrl}/transactions/${transactionId}/verify`, {
       headers: { Authorization: `Bearer ${this.secretKey}` },
     });
 
     const data = res.data.data;
     const status = data.status === 'successful' ? 'SUCCESSFUL' : 'FAILED';
-    console.log('data : +> ::: ', data);
+  
 
     const paymentMethod = data.payment_type || data.payment_type || 'unknown'; // Flutterwave field for method
 
