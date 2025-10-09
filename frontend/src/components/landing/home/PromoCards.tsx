@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import watches from '../../../assets/images/banner/banner7.jpg';
+import watches from '../../../assets/images/banner/jewery7.jpg';
 import earrings from '../../../assets/images/banner/banner3.jpg';
 import handbags from '../../../assets/images/banner/banner4.jpg';
 
@@ -11,7 +11,7 @@ const PromoCards = () => {
     {
       id: 1,
       label: 'Smart Offer',
-      title: 'Save 20% on Woman Bag',
+      title: 'Save 20% on Woman Watches',
       textColor: 'text-purple-900',
       labelColor: 'text-purple-600',
       buttonColor: 'text-primary-600',
