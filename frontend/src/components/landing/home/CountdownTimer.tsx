@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
-import banner2 from '../../../assets/images/banner/banner1.jpeg'
-import banner3 from '../../../assets/images/banner/banner5.jpg'
+import banner2 from '../../../assets/images/banner/jewery5.jpg'
+import banner3 from '../../../assets/images/banner/jewery6.jpg'
 
 const PromoCard = ({ bgColor, badge, title, subtitle, price, originalPrice, days, hours, mins, secs, bgImage }) => {
   return (
@@ -128,9 +128,9 @@ const CountdownTimer = () => {
         
         <PromoCard
           bgColor="bg-gradient-to-br from-cyan-100 to-blue-100"
-          badge="Men Clothing"
+          badge="Women Necklace"
           title="Try something new on vacation"
-          subtitle="Shirt & Bag"
+          subtitle="Rings & Necklaces"
           price="178.00"
           originalPrice="256.99"
           days={timer2.days}
