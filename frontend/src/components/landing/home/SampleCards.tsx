@@ -49,7 +49,7 @@ function SampleCards() {
   ];
 
   return (
-    <div className="flex justify-center space-x-4 p-2 flex-wrap py-6 ">
+    <div className="flex justify-between space-x-4 p-2 flex-wrap py-6 px-12 ">
       {cards.map((card, index) => (
         <div key={index} className="bg-white border border-gray-200 p-4 rounded-lg shadow-md w-[230px] h-[200px] text-center">
       

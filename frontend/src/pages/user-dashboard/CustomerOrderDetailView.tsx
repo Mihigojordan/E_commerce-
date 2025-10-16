@@ -598,7 +598,9 @@ export default function CustomerOrderDetailView() {
               <p className="text-sm text-gray-700 mb-3">
                 If you have any questions about your order, please don't hesitate to contact our customer support team.
               </p>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
+              <button
+              onClick={()=> navigate('/contact')}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
                 Contact Support
               </button>
             </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
-import banner2 from '../../../assets/images/banner/jewery5.jpg'
-import banner3 from '../../../assets/images/banner/jewery6.jpg'
+import banner2 from '../../../assets/highlights/IMGE1179.jpg'
+import banner3 from '../../../assets/highlights/IMGE1670.jpg'
+
 
 const PromoCard = ({ bgColor, badge, title, subtitle, price, originalPrice, days, hours, mins, secs, bgImage }) => {
   return (
@@ -9,7 +10,7 @@ const PromoCard = ({ bgColor, badge, title, subtitle, price, originalPrice, days
       className={`${bgColor} w-full rounded-lg overflow-hidden shadow-lg min-h-[400px] bg-cover bg-center bg-no-repeat relative`}
       style={{ backgroundImage: bgImage ? `url(${bgImage})` : 'none' }}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/40 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/10 to-transparent"></div>
       
       <div className="relative z-10 p-8 md:p-10 max-w-xl">
         <div className="flex items-center gap-2 mb-4">
@@ -110,7 +111,7 @@ const CountdownTimer = () => {
   }, []);
 
   return (
-      <div className=" w-full flex justify-center bg-gray-50 p-4 md:p-8">
+      <div className=" w-full flex justify-center bg-gray-50 ">
       <div className=" flex  flex-col lg:flex-row  justify-center gap-6 w-11/12 ">
         <PromoCard
           bgColor="bg-gradient-to-br from-gray-100 to-gray-200"

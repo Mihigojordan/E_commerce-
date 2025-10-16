@@ -1,38 +1,41 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import watches from '../../../assets/images/banner/jewery7.jpg';
-import earrings from '../../../assets/images/banner/banner3.jpg';
-import handbags from '../../../assets/images/banner/banner4.jpg';
+import watches from '../../../assets/highlights/IMGE1379.JPG';
 
+import earrings from '../../../assets/highlights/IMGE1271.JPG';
+import handbags from '../../../assets/highlights/IMGE1698.JPG';
+
+import { useNavigate } from 'react-router-dom';
 
 
 const PromoCards = () => {
+  const navigate = useNavigate();
   const promoData = [
     {
       id: 1,
       label: 'Smart Offer',
       title: 'Save 20% on Woman Watches',
-      textColor: 'text-purple-900',
+      textColor: 'text-purple-500',
       labelColor: 'text-purple-600',
-      buttonColor: 'text-primary-600',
+      buttonColor: 'text-purple-600',
       bgImage: watches // Add your background image path here
     },
     {
       id: 2,
       label: 'Sale off',
       title: 'Great Summer Collection',
-      textColor: 'text-blue-900',
+      textColor: 'text-blue-500',
       labelColor: 'text-blue-600',
-      buttonColor: 'text-primary-600',
+      buttonColor: 'text-blue-600',
       bgImage: earrings // Add your background image path here
     },
     {
       id: 3,
       label: 'New Arrivals',
       title: "Shop Today's Deals & Offers",
-      textColor: 'text-orange-900',
+      textColor: 'text-red-500',
       labelColor: 'text-orange-600',
-      buttonColor: 'text-primary-600',
+      buttonColor: 'text-orange-600',
       bgImage: handbags // Add your background image path here
     }
   ];
@@ -52,7 +55,7 @@ const PromoCards = () => {
                 backgroundColor: promo.bgImage ? 'transparent' : '#f3f4f6'
               }}
             >
-                          <div className="absolute inset-0 bg-gradient-to-r  from-primary-800/30 via-black/60 to-transparent"></div>
+                          <div className="absolute inset-0 bg-gradient-to-r  from-black/70 via-black/10 to-transparent"></div>
               <div className="relative z-10">
                 <p className={`${promo.labelColor} text-sm font-medium mb-2`}>
                   {promo.label}
@@ -60,7 +63,9 @@ const PromoCards = () => {
                 <h3 className={`${promo.textColor} text-2xl font-bold mb-6 leading-tight max-w-[200px]`}>
                   {promo.title}
                 </h3>
-                <button className={`${promo.buttonColor} font-semibold text-sm flex items-center gap-2 hover:gap-3 transition-all duration-300`}>
+                <button 
+                onClick={()=>navigate('/products')}
+                className={`${promo.buttonColor} font-semibold text-sm flex items-center gap-2 hover:gap-3 transition-all duration-300`}>
                   Shop Now
                   <ArrowRight className="w-4 h-4" />
                 </button>

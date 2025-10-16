@@ -9,9 +9,32 @@ import {
   MessageCircle,
   GalleryVertical
 } from "lucide-react";
+import image1 from '../../assets/highlights/IMGE1520.jpg';
+import image2 from '../../assets/highlights/IMGE1679.jpg';
+import image3 from '../../assets/highlights/IMGE1705.jpg';
+import image4 from '../../assets/highlights/IMGE1638.jpg';
+import image5 from '../../assets/highlights/IMGE1774.jpg';
+import image6 from '../../assets/highlights/IMGE1372.jpg';
+import image7 from '../../assets/highlights/IMGE1869.jpg';
+import image8 from '../../assets/highlights/IMGE1610.jpg';
+import image9 from '../../assets/highlights/IMGE1323.jpg';
+import image10 from '../../assets/highlights/IMGE1855.jpg';
+import image11 from '../../assets/highlights/IMGE1266.jpg';
+import image12 from '../../assets/highlights/IMGE1811.jpg';
+import image13 from '../../assets/highlights/IMGE1648.jpg';
+import image14 from '../../assets/highlights/IMGE1208.jpg';
+import image15 from '../../assets/highlights/IMGE1719.jpg';
+import image16 from '../../assets/highlights/IMGE1618.jpg';
+import image17 from '../../assets/highlights/IMGE1804.jpg';
+import image18 from '../../assets/highlights/IMGE1680.jpg';
+import image19 from '../../assets/highlights/IMGE1785.jpg';
+import image20 from '../../assets/highlights/IMGE1592.jpg';
+import image21 from '../../assets/highlights/IMGE1271.jpg';
+import image22 from '../../assets/highlights/IMGE1271.jpg';
+
 
 // Simulate environment variable - replace with your actual website URL
-const WEBSITE_URL = import.meta.VITE_WEBSITE_URL || "https://yourjewelrystore.com";
+const WEBSITE_URL = import.meta.VITE_WEBSITE_URL ;
 import HeaderBanner from '../../components/landing/HeaderBanner';
 
 export default function Gallery() {
@@ -46,121 +69,121 @@ export default function Gallery() {
     {
       id: 1,
       height: "h-64",
-      src: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=600&fit=crop",
+      src: image1,
       title: "Diamond Ring"
     },
     {
       id: 2,
       height: "h-80",
-      src: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=700&fit=crop",
+      src: image2,
       title: "Gold Necklace"
     },
     {
       id: 3,
       height: "h-56",
-      src: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=500&fit=crop",
+      src: image3,
       title: "Emerald Earrings"
     },
     {
       id: 4,
       height: "h-72",
-      src: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=650&fit=crop",
+      src: image4,
       title: "Ruby Bracelet"
     },
     {
       id: 5,
       height: "h-68",
-      src: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&h=600&fit=crop",
+      src: image5,
       title: "Sapphire Pendant"
     },
     {
       id: 6,
       height: "h-60",
-      src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=550&fit=crop",
+      src: image6,
       title: "Vintage Ring"
     },
     {
       id: 7,
       height: "h-76",
-      src: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=700&fit=crop",
+      src: image7,
       title: "Pearl Necklace"
     },
     {
       id: 8,
       height: "h-52",
-      src: "https://images.unsplash.com/photo-1617038260892-a3cdef6b8c38?w=400&h=450&fit=crop",
+      src: image8,
       title: "Diamond Earrings"
     },
     {
       id: 9,
       height: "h-64",
-      src: "https://images.unsplash.com/photo-1614701482443-fde3d9d3cef0?w=400&h=600&fit=crop",
+      src: image9,
       title: "Amethyst Ring"
     },
     {
       id: 10,
       height: "h-84",
-      src: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=750&fit=crop",
+      src: image10,
       title: "Luxury Bracelet"
     },
     {
       id: 11,
       height: "h-48",
-      src: "https://images.unsplash.com/photo-1588444837495-c6cfeb53fa11?w=400&h=400&fit=crop",
+      src: image11,
       title: "Rose Gold Ring"
     },
     {
       id: 12,
       height: "h-68",
-      src: "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=400&h=600&fit=crop",
+      src: image12,
       title: "Silver Chain"
     },
     {
       id: 13,
       height: "h-56",
-      src: "https://images.unsplash.com/photo-1594736797933-d0bd3e6ef6b7?w=400&h=500&fit=crop",
+      src:image13,
       title: "Crystal Pendant"
     },
     {
       id: 14,
       height: "h-72",
-      src: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=650&fit=crop",
+      src: image14,
       title: "Wedding Band"
     },
     {
       id: 15,
       height: "h-60",
-      src: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=550&fit=crop",
+      src: image15,
       title: "Gemstone Earrings"
     },
     {
       id: 16,
       height: "h-80",
-      src: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=700&fit=crop",
+      src: image16,
       title: "Statement Necklace"
     },
     {
       id: 17,
       height: "h-64",
-      src: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=600&fit=crop",
+      src: image17,
       title: "Tennis Bracelet"
     },
     {
       id: 18,
       height: "h-52",
-      src: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&h=450&fit=crop",
+      src: image18,
       title: "Charm Bracelet"
     },
     {
       id: 19,
       height: "h-76",
-      src: "https://images.unsplash.com/photo-1617038260892-a3cdef6b8c38?w=400&h=700&fit=crop",
+      src: image19,
       title: "Drop Earrings"
     },
     {
       id: 20,
       height: "h-68",
-      src: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=600&fit=crop",
+      src: image20,
       title: "Layered Necklace"
     }
   ];

@@ -62,8 +62,10 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       
       const response = await authService.login(data);
 
+     
+
         updateAuthState({
-          user: response.admin,
+          user: response,
           isAuthenticated: true,
         });
  

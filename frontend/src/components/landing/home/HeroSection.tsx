@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import image1 from  '../../../assets/highlights/IMGE1150.JPG';
+import image2 from  '../../../assets/highlights/IMGE1262.JPG';
+import image3 from  '../../../assets/highlights/IMGE1680.JPG';
+import image4 from  '../../../assets/highlights/IMGE1209.JPG';
+import image5 from  '../../../assets/highlights/IMGE1618.JPG';
 
 function LuxuryHeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -14,7 +19,7 @@ function LuxuryHeroSection() {
         "Discover our most coveted pieces, meticulously crafted for those who appreciate the finest things in life",
       buttonText: "Explore Collection",
       image:
-        "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80",
+        image1,
     },
     {
       title: "HERITAGE COLLECTION",
@@ -24,7 +29,7 @@ function LuxuryHeroSection() {
         "Each diamond tells a story of perfection, selected for exceptional clarity and fire",
       buttonText: "View Diamonds",
       image:
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80",
+       image2,
     },
     {
       title: "COUTURE JEWELRY",
@@ -33,8 +38,7 @@ function LuxuryHeroSection() {
       description:
         "Commission a masterpiece that reflects your unique vision and extraordinary taste",
       buttonText: "Begin Journey",
-      image:
-        "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80",
+      image: image3,
     },
   ];
 
@@ -43,15 +47,13 @@ function LuxuryHeroSection() {
       category: "SIGNATURE RINGS",
       title: "Exceptional Diamonds",
       subtitle: "Starting from $15,000",
-      image:
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=80",
+      image: image4,
     },
     {
       category: "HAUTE COUTURE",
       title: "Limited Edition",
       subtitle: "Exclusive Earrings",
-      image:
-        "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&q=80",
+      image: image5,
     },
   ];
 
@@ -63,7 +65,7 @@ function LuxuryHeroSection() {
   }, [heroSlides.length]);
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 relative overflow-hidden  flex items-center">
+    <div className="bg-white relative overflow-hidden  flex items-center">
       {/* Enhanced Background Pattern with Shimmer */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div

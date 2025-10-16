@@ -22,8 +22,15 @@ const RegisterPage = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { register } = usePurchasingUserAuth();
+  const { register,isAuthenticated , isLoading:authLoading } = usePurchasingUserAuth();
   const navigate = useNavigate();
+
+    useEffect(() => {
+      if (isAuthenticated && !authLoading) {
+        const from =  "/user/dashboard";
+        navigate(from);
+      }
+    }, [isAuthenticated, authLoading, location, navigate]);
 
   const validateName = (value: string) => {
     if (!value.trim()) return 'Please enter your full name';

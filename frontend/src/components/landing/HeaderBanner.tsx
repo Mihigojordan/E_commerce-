@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import Banner from '../../assets/images/back-banner/back-banner-2.jpg';
+import Banner from '../../assets/highlights/IMGE1694.jpg';
 
 // Define interfaces and types
 interface BreadcrumbItem {
@@ -116,7 +116,7 @@ const EcommerceHeader: React.FC<EcommerceHeaderProps> = ({
 
   return (
     <header 
-      className={`relative overflow-hidden ${getHeightClasses()} ${getBackgroundClasses()}`}
+      className={`relative overflow-hidden bg-fixed ${getHeightClasses()} ${getBackgroundClasses()}`}
       style={backgroundImage && backgroundStyle === 'image' ? { 
         backgroundImage: `linear-gradient(to right,rgba(15,23,42,${overlayOpacity}),rgba(15,23,42,${overlayOpacity})),url(${backgroundImage})` 
       } : {}}

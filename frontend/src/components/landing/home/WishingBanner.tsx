@@ -1,13 +1,13 @@
 import React from 'react';
-import BannerImage from '../../../assets/images/back-banner/back-banner-3.jpg';
+import BannerImage from '../../../assets/highlights/IMGE1711.JPG';
 
 function WishingBanner() {
   return (
     <div
-      className="relative min-h-48 overflow-hidden bg-gradient-to-br from-pink-50 via-primary-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
+      className="relative min-h-48 bg-fixed overflow-hidden bg-gradient-to-br from-pink-50 via-primary-50 to-yellow-50 bg-cover bg-center w-[95%] m-auto border-none rounded-lg"
       style={{ backgroundImage: `url(${BannerImage})`, }}
     >
-            <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent"></div>
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         {/* Scattered dots */}
@@ -36,10 +36,10 @@ function WishingBanner() {
           {/* Left content */}
           <div className="space-y-6">
             <div className="space-y-4">
-              <p className="text-primary-600 font-medium text-lg tracking-wide">
+              <p className="text-primary-500 font-medium text-lg tracking-wide">
     Shop Today’s Deals
               </p>
-              <h1 className="text-4xl lg:text-2xl xl:text-3xl font-bold text-gray-900 leading-tight">
+              <h1 className="text-4xl lg:text-2xl xl:text-3xl font-bold text-gray-100 leading-tight">
          Happy Mother's Day. Big Sale Up to 40%
                 <br />
             </h1>
