@@ -75,16 +75,16 @@ const AboutPage = () => {
       />
 
       {/* Main About Section with Gradient */}
-      <div className="py-10 bg-gradient-to-br from-teal-50 via-white to-cyan-50">
+      <div className="py-10 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
         <div className="max-w-8xl mx-auto px-6 lg:px-14">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pb-12">
             <div>
-              <div className="text-teal-600 text-sm font-semibold tracking-wide uppercase mb-5">
+              <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-5">
                 OUR COMPANY
               </div>
               <h1 className="text-4xl lg:text-4xl font-bold text-gray-900 leading-loose mb-8">
                 We are Building The Ultimate 
-                <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent"> Ecommerce Platform</span> For Seamless Shopping
+                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Ecommerce Platform</span> For Seamless Shopping
               </h1>
               <div className="space-y-6 text-md text-gray-600 leading-loose">
                 <p>
@@ -120,7 +120,7 @@ const AboutPage = () => {
         <div className="max-w-8xl mx-auto px-6 lg:px-14">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Our <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Mission & Vision</span>
+              Our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Mission & Vision</span>
             </h2>
             <p className="text-md text-gray-600 max-w-3xl mx-auto">
               Driving the future of ecommerce with innovation, integrity, and customer-first approach.
@@ -128,8 +128,8 @@ const AboutPage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-8 rounded-3xl shadow-lg">
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-500 p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6">
+            <div className="bg-gradient-to-br from-primary-50 to-secondary-50 p-8 rounded-3xl shadow-lg">
+              <div className="bg-gradient-to-br from-primary-500 to-secondary-500 p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6">
                 <Target className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
@@ -153,7 +153,7 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div key={index} className="text-center group hover:scale-105 transition-transform duration-300">
-                <div className="bg-gradient-to-br from-teal-500 to-cyan-500 p-4 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <div className="bg-gradient-to-br from-primary-500 to-secondary-500 p-4 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h4>
@@ -165,7 +165,7 @@ const AboutPage = () => {
       </div>
 
       {/* Story Section */}
-      <div className="py-16 bg-gradient-to-br from-gray-50 to-teal-50">
+      <div className="py-16 bg-gradient-to-br from-gray-50 to-primary-50">
         <div className="max-w-8xl mx-auto px-6 lg:px-14 ">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
@@ -176,11 +176,11 @@ const AboutPage = () => {
               />
             </div>
             <div className="order-1 lg:order-2">
-              <div className="text-teal-600 text-sm font-semibold tracking-wide uppercase mb-5">
+              <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-5">
                 OUR STORY
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-8">
-                From Startup to <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Global Leader</span>
+                From Startup to <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Global Leader</span>
               </h2>
               <div className="space-y-6 text-md text-gray-600">
                 <p>
@@ -207,7 +207,7 @@ const AboutPage = () => {
       {/* Floating Action Button */}
       <button 
         onClick={scrollToTop}
-        className="fixed bottom-8 right-8 bg-gradient-to-r from-teal-500 to-cyan-500 text-white p-4 rounded-2xl shadow-2xl hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50"
+        className="fixed bottom-8 right-8 bg-gradient-to-r from-primary-500 to-secondary-500 text-white p-4 rounded-2xl shadow-2xl hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50"
       >
         <ArrowUp className="w-6 h-6" />
       </button>

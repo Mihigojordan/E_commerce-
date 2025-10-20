@@ -60,7 +60,7 @@ const PaymentStatusPage: React.FC = () => {
 
   if (status === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-emerald-50 to-primary-50">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-secondary-50 to-primary-50">
         <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           {/* Success Animation Container */}
           <div className="text-center mb-8">
@@ -77,7 +77,7 @@ const PaymentStatusPage: React.FC = () => {
 
           {/* Order Details Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-primary-500 to-emerald-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-primary-500 to-secondary-600 px-6 py-4">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                 <Package className="w-5 h-5" />
                 Order Details

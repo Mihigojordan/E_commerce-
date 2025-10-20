@@ -105,13 +105,13 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 via-teal-500 to-blue-600 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-500 via-teal-500 to-green-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
           <div className="max-w-md">
             <h1 className="text-5xl font-bold mb-6">Welcome Back!</h1>
             <p className="text-xl opacity-90">
-              Sign in to continue your journey with NovaGems. Access your account and explore our exclusive jewelry collection.
+              Sign in to continue your journey with Peace Bijouterie. Access your account and explore our exclusive jewelry collection.
             </p>
             <div className="mt-12 space-y-4">
               <div className="flex items-center space-x-3">

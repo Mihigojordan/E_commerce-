@@ -71,7 +71,7 @@ const NewArrivalProduct: React.FC = () => {
       return { text: `-${product.discount}%`, color: 'bg-pink-500' };
     }
     if (new Date(product.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)) {
-      return { text: 'New', color: 'bg-teal-500' };
+      return { text: 'New', color: 'bg-primary-500' };
     }
     if (product.review && product.review >= 4.5) {
       return { text: 'Best Seller', color: 'bg-orange-400' };
@@ -81,22 +81,22 @@ const NewArrivalProduct: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-full py-12 px-4 bg-gradient-to-br from-slate-50 via-teal-50/30 to-slate-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      <div className="w-full py-12 px-4 bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="w-full py-12 px-4 bg-gradient-to-br from-slate-50 via-teal-50/30 to-slate-100 flex items-center justify-center">
+      <div className="w-full py-12 px-4 bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 flex items-center justify-center">
         <div className="text-red-600">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full py-12 px-4 bg-gradient-to-br min-h-[50vh] from-slate-50 via-teal-50/30 to-slate-100 relative overflow-hidden">
+    <div className="w-full py-12 px-4 bg-gradient-to-br min-h-[50vh] from-slate-50 via-primary-50/30 to-slate-100 relative overflow-hidden">
       {/* Enhanced Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
@@ -108,7 +108,7 @@ const NewArrivalProduct: React.FC = () => {
       </div>
 
       {/* Animated gradient orbs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
 
       <div className="w-11/12 mx-auto relative z-10">
@@ -116,7 +116,7 @@ const NewArrivalProduct: React.FC = () => {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <h2 className="text-2xl font-bold">
-              <span className="text-teal-600">New</span> Arrivals
+              <span className="text-primary-600">New</span> Arrivals
             </h2>
             <div className="flex gap-2 bg-slate-900/40 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-700/50">
               {tabs.map((tab) => (
@@ -125,8 +125,8 @@ const NewArrivalProduct: React.FC = () => {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-2 rounded-full font-medium text-sm tracking-wide transition-all duration-300 ${
                     activeTab === tab
-                      ? 'bg-gradient-to-r from-teal-500 to-teal-400 text-white shadow-lg shadow-teal-500/30'
-                      : 'text-slate-100 hover:bg-teal-300/50 hover:text-teal-800'
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-400 text-white shadow-lg shadow-primary-500/30'
+                      : 'text-slate-100 hover:bg-primary-300/50 hover:text-primary-800'
                   }`}
                 >
                   {tab}
@@ -138,7 +138,7 @@ const NewArrivalProduct: React.FC = () => {
             onClick={() => navigate('/products')}
             whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(38, 166, 154, 0.3)' }}
             whileTap={{ scale: 0.98 }}
-            className="group flex items-center gap-2 text-teal-600 font-medium tracking-widest text-sm uppercase hover:text-teal-700 transition-all duration-300"
+            className="group flex items-center gap-2 text-primary-600 font-medium tracking-widest text-sm uppercase hover:text-primary-700 transition-all duration-300"
           >
             <span>View More</span>
             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -149,7 +149,7 @@ const NewArrivalProduct: React.FC = () => {
         {products.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-2xl font-medium text-slate-900 mb-2">No New Arrivals Available</p>
-            <p className="text-sm text-teal-700 tracking-wide">Check back later for new products.</p>
+            <p className="text-sm text-primary-700 tracking-wide">Check back later for new products.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -170,7 +170,7 @@ const NewArrivalProduct: React.FC = () => {
                     className="group relative bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
                   >
                     {/* Premium hover gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal-50/50 via-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     {/* Shimmer effect on hover */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
@@ -178,7 +178,7 @@ const NewArrivalProduct: React.FC = () => {
                     </div>
 
                     {/* Product Image */}
-                    <div className="relative bg-gray-100 p-6 h-48 flex items-center justify-center ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-teal-300 transition-all duration-300">
+                    <div className="relative bg-gray-100 p-6 h-48 flex items-center justify-center ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-primary-300 transition-all duration-300">
                       {badge && (
                         <span className={`absolute top-3 left-3 ${badge.color} text-white text-xs font-bold px-2 py-1 rounded-full border border-${badge.color.replace('bg-', '')}-300/50 shadow-sm`}>
                           {badge.text}
@@ -197,7 +197,7 @@ const NewArrivalProduct: React.FC = () => {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="text-center text-teal-600 font-medium">
+                        <div className="text-center text-primary-600 font-medium">
                           <p className="text-sm">No Image</p>
                         </div>
                       )}
@@ -206,17 +206,17 @@ const NewArrivalProduct: React.FC = () => {
 
                     {/* Product Details */}
                     <div className="p-4 relative z-10">
-                      <p className="text-xs text-teal-600 font-medium tracking-[2px] mb-2">{product.brand || 'Unknown Brand'}</p>
+                      <p className="text-xs text-primary-600 font-medium tracking-[2px] mb-2">{product.brand || 'Unknown Brand'}</p>
                       <h3
                         onClick={() => navigate(`/products/${product.id}`)}
-                        className="text-sm font-medium text-slate-900 mb-2 hover:text-teal-800 transition-colors duration-300 cursor-pointer line-clamp-2 min-h-[2.5rem]"
+                        className="text-sm font-medium text-slate-900 mb-2 hover:text-primary-800 transition-colors duration-300 cursor-pointer line-clamp-2 min-h-[2.5rem]"
                       >
                         {product.name}
                       </h3>
                       {renderStars(product.review)}
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-teal-600 font-bold text-lg">
+                          <span className="text-primary-600 font-bold text-lg">
                             ${discountedPrice.toFixed(2)}
                           </span>
                           {product.discount && product.discount > 0 && (
@@ -228,7 +228,7 @@ const NewArrivalProduct: React.FC = () => {
                         <motion.button
                           whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(38, 166, 154, 0.3)' }}
                           whileTap={{ scale: 0.98 }}
-                          className="w-8 h-8 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white hover:from-teal-500 hover:to-teal-400 transition-all duration-300 flex items-center justify-center shadow-lg shadow-teal-500/30"
+                          className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all duration-300 flex items-center justify-center shadow-lg shadow-primary-500/30"
                         >
                           <ShoppingBag className="w-4 h-4" />
                         </motion.button>
@@ -236,7 +236,7 @@ const NewArrivalProduct: React.FC = () => {
                     </div>
 
                     {/* Decorative corner accent */}
-                    <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-teal-400/0 group-hover:border-teal-400/30 rounded-tr-2xl transition-all duration-500" />
+                    <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-primary-400/0 group-hover:border-primary-400/30 rounded-tr-2xl transition-all duration-500" />
                   </motion.div>
                 );
               })}

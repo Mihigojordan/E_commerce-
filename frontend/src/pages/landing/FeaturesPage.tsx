@@ -176,7 +176,7 @@ export default function HRFeaturesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50">
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0  overflow-hidden">
         <div className="absolute top-10 right-10 w-32 h-32 bg-primary-100 rounded-full opacity-20"></div>
         <div className="absolute bottom-20 left-10 w-24 h-24 bg-primary-200 rounded-full opacity-30"></div>
         <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-primary-300 rounded-full opacity-15"></div>

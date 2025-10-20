@@ -7,7 +7,7 @@ const ShippingInfo: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <HeaderBanner
-        title="NovaGems Shipping Information"
+        title="Peace Bijouterie Shipping Information"
         subtitle="Home / Shipping Information"
         backgroundStyle="image"
       />
@@ -23,7 +23,7 @@ const ShippingInfo: React.FC = () => {
             </h2>
           </div>
           <p className="text-gray-600">
-            At <strong>NovaGems</strong>, we aim to deliver your jewelry safely, quickly, and with care.
+            At <strong>Peace Bijouterie</strong>, we aim to deliver your jewelry safely, quickly, and with care.
           </p>
         </section>
 
@@ -107,7 +107,7 @@ const ShippingInfo: React.FC = () => {
             </li>
             <li className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-primary-600" />
-              <span><strong>Email</strong>: <a href="mailto:support@novagems.rw" className="text-primary-600 hover:underline">support@novagems.rw</a></span>
+              <span><strong>Email</strong>: <a href="mailto:support@peacebijouterie.rw" className="text-primary-600 hover:underline">support@peacebijouterie.rw</a></span>
             </li>
             <li className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-primary-600" />
@@ -128,7 +128,7 @@ const ShippingInfo: React.FC = () => {
       {/* Footer */}
       <footer className="bg-primary-600 text-white py-6">
         <div className="container mx-auto px-4 text-center">
-          <p>✨ Thank you for choosing NovaGems – Your sparkle, our passion!</p>
+          <p>✨ Thank you for choosing Peace Bijouterie – Your sparkle, our passion!</p>
         </div>
       </footer>
     </div>

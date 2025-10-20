@@ -47,11 +47,11 @@ const Testimonials = () => {
     <div className="py-24 bg-white">
       <div className="max-w-8xl mx-auto px-14 lg:px-14">
         <div className="text-center mb-16">
-          <div className="text-teal-600 text-sm font-semibold tracking-wide uppercase mb-4">
+          <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-4">
             TESTIMONIALS
           </div>
           <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto">
-            Take a look what our <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+            Take a look what our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">clients say</span> about us
           </h2>
           <p className="text-md text-gray-600 max-w-3xl mx-auto text-md">
             Hear from our satisfied partners on how our ecommerce platform has boosted their online presence and transformed their business growth.
@@ -78,17 +78,17 @@ const Testimonials = () => {
                       {testimonials.slice(slideIndex * 3, slideIndex * 3 + 3).map((testimonial) => (
                         <div 
                           key={testimonial.id}
-                          className="bg-gradient-to-br from-gray-50 to-teal-50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          className="bg-gradient-to-br from-gray-50 to-primary-50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         >
                           <div className="flex items-center mb-6">
                             <img 
                               src={testimonial.profileImage || 'https://placehold.co/100x100?text=User'} 
                               alt={testimonial.fullName}
-                              className="w-16 h-16 rounded-full object-cover mr-4 ring-4 ring-teal-100"
+                              className="w-16 h-16 rounded-full object-cover mr-4 ring-4 ring-primary-100"
                             />
                             <div>
                               <h4 className="font-bold text-gray-900 text-md">{testimonial.fullName}</h4>
-                              <p className="text-teal-600 font-medium text-sm">{testimonial.position}</p>
+                              <p className="text-primary-600 font-medium text-sm">{testimonial.position}</p>
                             </div>
                           </div>
                           <p className="text-gray-600 leading-relaxed text-sm">
@@ -110,15 +110,15 @@ const Testimonials = () => {
             {/* Testimonials Navigation */}
             <button 
               onClick={prevTestimonialSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-teal-50 transition-colors border-2 border-teal-100"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-primary-50 transition-colors border-2 border-primary-100"
             >
-              <ChevronLeft className="w-6 h-6 text-teal-600" />
+              <ChevronLeft className="w-6 h-6 text-primary-600" />
             </button>
             <button 
               onClick={nextTestimonialSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-teal-50 transition-colors border-2 border-teal-100"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-xl rounded-full p-4 hover:bg-primary-50 transition-colors border-2 border-primary-100"
             >
-              <ChevronRight className="w-6 h-6 text-teal-600" />
+              <ChevronRight className="w-6 h-6 text-primary-600" />
             </button>
 
             {/* Testimonials Dots Indicator */}
@@ -129,7 +129,7 @@ const Testimonials = () => {
                   onClick={() => setCurrentTestimonialSlide(index)}
                   className={`w-4 h-4 rounded-full transition-all duration-300 ${
                     currentTestimonialSlide === index 
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 scale-125' 
+                      ? 'bg-gradient-to-r from-primary-500 to-secondary-500 scale-125' 
                       : 'bg-gray-300 hover:bg-gray-400'
                   }`}
                 />

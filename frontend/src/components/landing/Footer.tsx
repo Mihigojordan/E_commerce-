@@ -80,11 +80,8 @@ const myAccountLinks = [
 
 const supportLinks = [
   { name: 'Help Center', path: '/help-center' },
-  
-  
   { name: 'FAQ', path: '/faq' },
   { name: 'Shipping Info', path: '/shipping-info' },
-
   { name: 'Privacy Policy', path: '/privacy-policy' },
   { name: 'Terms & Condition', path: '/terms-condition' },
 ];
@@ -200,7 +197,7 @@ const companyLinks = [
               viewport={{ once: true }}
             >
             <div className="flex items-center space-x-3 mb-6">
-     <img src={Logo} alt="" className='h-16 w-48 object-cover' />
+     <img src={Logo} alt="" className='h-24 scale-125' />
 </div>
 
 <p className="text-gray-600 mb-6 ml-2 leading-relaxed">

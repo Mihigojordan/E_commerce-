@@ -19,21 +19,21 @@ const BlogSection: React.FC = () => {
       id: 1,
       label: 'Accessories',
       title: 'Save 17% on Autumn Hat',
-      buttonColor: 'text-teal-600',
+      buttonColor: 'text-primary-600',
       bgImage: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=700&h=800&fit=crop'
     },
     {
       id: 2,
       label: 'Big Offer',
       title: "Save 20% on Women's socks",
-      buttonColor: 'text-teal-600',
+      buttonColor: 'text-primary-600',
       bgImage: banner2
     },
     {
       id: 3,
       label: 'Smart Offer',
       title: 'Save 20% on Eardrop',
-      buttonColor: 'text-teal-600',
+      buttonColor: 'text-primary-600',
       bgImage: banner3
     }
   ];
@@ -66,7 +66,7 @@ const BlogSection: React.FC = () => {
   };
 
   const getCategoryColor = (title: string) => {
-    const colors = ['text-teal-600', 'text-blue-600', 'text-pink-600', 'text-orange-600'];
+    const colors = ['text-primary-600', 'text-blue-600', 'text-pink-600', 'text-orange-600'];
     let hash = 0;
     for (let i = 0; i < title.length; i++) {
       hash = title.charCodeAt(i) + ((hash << 5) - hash);
@@ -77,7 +77,7 @@ const BlogSection: React.FC = () => {
   if (loading) {
     return (
       <div className="w-full py-12 px-4 bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
   }
@@ -97,7 +97,7 @@ const BlogSection: React.FC = () => {
           {/* Left Section - Blog Posts */}
           <div className="xl:col-span-1">
             <h2 className="text-3xl font-bold mb-8">
-              <span className="text-teal-600">From</span>{' '}
+              <span className="text-primary-600">From</span>{' '}
               <span className="text-gray-800">blog</span>
             </h2>
 
@@ -130,7 +130,7 @@ const BlogSection: React.FC = () => {
                       <p className={`${getCategoryColor(post.title)} text-sm font-medium mb-2`}>
                         Blog
                       </p>
-                      <h3 className="text-gray-900 font-semibold text-base mb-3 leading-snug line-clamp-3 group-hover:text-teal-600 transition-colors duration-300">
+                      <h3 className="text-gray-900 font-semibold text-base mb-3 leading-snug line-clamp-3 group-hover:text-primary-600 transition-colors duration-300">
                         {post.title}
                       </h3>
                       <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
@@ -140,7 +140,7 @@ const BlogSection: React.FC = () => {
                       </div>
                       <button 
                      
-                      className="text-teal-600 font-semibold text-sm hover:gap-2 flex items-center gap-1 transition-all duration-300">
+                      className="text-primary-600 font-semibold text-sm hover:gap-2 flex items-center gap-1 transition-all duration-300">
                         Read More
                         <ArrowRight className="w-4 h-4" />
                       </button>

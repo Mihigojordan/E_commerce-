@@ -12,6 +12,8 @@ import {
   ShoppingCart,
   Users,
   Package,
+  PhoneCall,
+  UserPlus2Icon,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import useAdminAuth from "../../context/AuthContext";
@@ -125,12 +127,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
       allowedRoles: ["admin"] // Both can access
     },
     { 
+      id: "Contact Management", 
+      label: "Contacts Management", 
+      icon: PhoneCall, 
+      path: `/${role}/dashboard/contact-message`,
+      allowedRoles: ["admin"] // Both can access
+    },
+    { 
+      id: "subsrcibe Management", 
+      label: "Subscriber Management", 
+      icon: UserPlus2Icon, 
+      path: `/${role}/dashboard/subscribe-message`,
+      allowedRoles: ["admin"] // Both can access
+    },
+    { 
       id: "My Order Management", 
       label: "My Orders", 
       icon: Package, 
       path: `/${role}/dashboard/my-orders`,
       allowedRoles: ["user"] // Both can access
     },
+
   ];
 
   // Filter navigation items based on user role

@@ -179,10 +179,10 @@ const RouterErrorBoundary: FC = () => {
                 If this problem persists, please contact our customer support team.
               </p>
               <a
-                href="mailto:support@novagems.rw"
+                href="mailto:support@peacebijouterie.rw"
                 className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm"
               >
-                support@novagems.rw
+                support@peacebijouterie.rw
               </a>
             </div>
           </div>

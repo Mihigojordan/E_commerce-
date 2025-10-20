@@ -7,7 +7,7 @@ const SizeGuide: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <HeaderBanner
-        title="NovaGems Size Guide"
+        title="Peace Bijouterie Size Guide"
         subtitle="Home / Size Guide"
         backgroundStyle="image"
       />
@@ -17,7 +17,7 @@ const SizeGuide: React.FC = () => {
         {/* Introduction */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
-            <Ruler className="w-6 h-6 text-teal-600" />
+            <Ruler className="w-6 h-6 text-primary-600" />
             <h2 className="text-2xl font-semibold text-gray-800">Size Guide</h2>
           </div>
           <p className="text-gray-600">
@@ -28,7 +28,7 @@ const SizeGuide: React.FC = () => {
         {/* Ring Size Guide */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
             </svg>
@@ -47,7 +47,7 @@ const SizeGuide: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse border border-gray-200">
                 <thead>
-                  <tr className="bg-teal-50">
+                  <tr className="bg-primary-50">
                     <th className="border border-gray-200 p-2 text-left text-gray-700">Finger Circumference (mm)</th>
                     <th className="border border-gray-200 p-2 text-left text-gray-700">Ring Size (US)</th>
                     <th className="border border-gray-200 p-2 text-left text-gray-700">Ring Size (Rwanda/EU)</th>
@@ -96,7 +96,7 @@ const SizeGuide: React.FC = () => {
         {/* Necklace Length Guide */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <h2 className="text-2xl font-semibold text-gray-800">Necklace Length Guide</h2>
@@ -115,7 +115,7 @@ const SizeGuide: React.FC = () => {
         {/* Bracelet Size Guide */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
             <h2 className="text-2xl font-semibold text-gray-800">Bracelet Size Guide</h2>
@@ -137,8 +137,8 @@ const SizeGuide: React.FC = () => {
         {/* Assistance */}
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
-            <Heart className="w-6 h-6 text-teal-600" />
-            <h2 className="text-2xl font-semibold text-gray-800">NovaGems Assistance</h2>
+            <Heart className="w-6 h-6 text-primary-600" />
+            <h2 className="text-2xl font-semibold text-gray-800">Peace Bijouterie Assistance</h2>
           </div>
           <p className="text-gray-600 mb-4">Not sure about your size?</p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
@@ -148,7 +148,7 @@ const SizeGuide: React.FC = () => {
           <div className="mt-6">
             <a
               href="/contact"
-              className="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors"
+              className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
             >
               Contact Support
             </a>
@@ -157,9 +157,9 @@ const SizeGuide: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-teal-600 text-white py-6">
+      <footer className="bg-primary-600 text-white py-6">
         <div className="container mx-auto px-4 text-center">
-          <p>✨ Thank you for choosing NovaGems – Your sparkle, our passion!</p>
+          <p>✨ Thank you for choosing Peace Bijouterie – Your sparkle, our passion!</p>
         </div>
       </footer>
     </div>

@@ -127,7 +127,7 @@ const JobBoard: React.FC = () => {
   const getExperienceLevelColor = (level: string): string => {
     switch (level.toLowerCase()) {
       case 'entry':
-        return 'bg-emerald-100 text-emerald-800';
+        return 'bg-secondary-100 text-secondary-800';
       case 'mid':
         return 'bg-amber-100 text-amber-800';
       case 'senior':

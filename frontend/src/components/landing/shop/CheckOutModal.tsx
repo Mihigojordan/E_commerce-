@@ -386,29 +386,29 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 1 ? 'bg-teal-600 text-white' : 'bg-gray-300'
+                step >= 1 ? 'bg-primary-600 text-white' : 'bg-gray-300'
               }`}>
                 <ShoppingCart className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium">Validate {isSingleProductMode ? 'Product' : 'Cart'}</span>
             </div>
             <div className="flex-1 h-1 bg-gray-300 mx-4">
-              <div className={`h-full transition-all ${step >= 2 ? 'bg-teal-600 w-full' : 'w-0'}`} />
+              <div className={`h-full transition-all ${step >= 2 ? 'bg-primary-600 w-full' : 'w-0'}`} />
             </div>
             <div className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 2 ? 'bg-teal-600 text-white' : 'bg-gray-300'
+                step >= 2 ? 'bg-primary-600 text-white' : 'bg-gray-300'
               }`}>
                 <User className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium">Customer Info</span>
             </div>
             <div className="flex-1 h-1 bg-gray-300 mx-4">
-              <div className={`h-full transition-all ${step >= 3 ? 'bg-teal-600 w-full' : 'w-0'}`} />
+              <div className={`h-full transition-all ${step >= 3 ? 'bg-primary-600 w-full' : 'w-0'}`} />
             </div>
             <div className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 3 ? 'bg-teal-600 text-white' : 'bg-gray-300'
+                step >= 3 ? 'bg-primary-600 text-white' : 'bg-gray-300'
               }`}>
                 <FileCheck className="w-4 h-4" />
               </div>
@@ -424,7 +424,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
             <div className="space-y-4">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+                  <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
                   <span className="ml-3 text-gray-600">
                     Validating {isSingleProductMode ? 'product' : 'cart items'}...
                   </span>
@@ -572,7 +572,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="John Doe"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -586,7 +586,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   placeholder="john@example.com"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -600,7 +600,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   placeholder="+250 XXX XXX XXX"
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -617,8 +617,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
                 </div>
               )}
 
-              <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
-                <h3 className="font-medium text-teal-900 mb-3">Customer Information</h3>
+              <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                <h3 className="font-medium text-primary-900 mb-3">Customer Information</h3>
                 <div className="space-y-2 text-sm">
                   <p><span className="font-medium">Name:</span> {customerName}</p>
                   <p><span className="font-medium">Email:</span> {customerEmail}</p>
@@ -677,7 +677,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
                   )}
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total Amount:</span>
-                    <span className="text-teal-600">{calculateTotal().toLocaleString()} RWF</span>
+                    <span className="text-primary-600">{calculateTotal().toLocaleString()} RWF</span>
                   </div>
                 </div>
               </div>
@@ -717,7 +717,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
               submitting ||
               loading
             }
-            className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {step === 3 ? 'Submit & Proceed to Payment' : 'Next'}

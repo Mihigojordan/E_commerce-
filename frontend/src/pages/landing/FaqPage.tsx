@@ -32,7 +32,7 @@ const FAQ: React.FC = () => {
   // FAQ data
   const faqItems: FAQItem[] = [
     {
-      question: 'How do I place an order on NovaGems?',
+      question: 'How do I place an order on Peace Bijouterie?',
       answer:
         'Simply browse our collections, select your jewelry, choose size or customization (if available), add it to your cart, and proceed to checkout.',
     },
@@ -52,7 +52,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: 'Do you ship internationally?',
-      answer: 'Yes, NovaGems ships worldwide. Delivery takes 7–15 days depending on location.',
+      answer: 'Yes, Peace Bijouterieships worldwide. Delivery takes 7–15 days depending on location.',
     },
     {
       question: 'Can I track my package?',
@@ -77,7 +77,7 @@ const FAQ: React.FC = () => {
       answer: 'Refunds are processed within 5–10 business days after we receive the returned item.',
     },
     {
-      question: 'Is NovaGems jewelry authentic?',
+      question: 'Is Peace Bijouteriejewelry authentic?',
       answer:
         'Yes. All our products are crafted with genuine materials. Premium items come with a certificate of authenticity.',
     },
@@ -90,9 +90,9 @@ const FAQ: React.FC = () => {
       answer: 'You can use our online size guide or visit our Kigali shop for professional sizing.',
     },
     {
-      question: 'How can I contact NovaGems support?',
+      question: 'How can I contact Peace Bijouteriesupport?',
       answer:
-        'You can reach us via WhatsApp/Phone at +250 7XX XXX XXX, email at <a href="mailto:support@novagems.rw" class="text-primary-600 hover:underline">support@novagems.rw</a>, or Live Chat (Mon–Sat, 9AM–8PM).',
+        'You can reach us via WhatsApp/Phone at +250 7XX XXX XXX, email at <a href="mailto:support@peacebijouterie.rw" class="text-primary-600 hover:underline">support@peacebijouterie.rw</a>, or Live Chat (Mon–Sat, 9AM–8PM).',
     },
     {
       question: 'Can I earn rewards for shopping?',
@@ -104,8 +104,8 @@ const FAQ: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <HeaderBanner
-        title="NovaGems FAQs"
-        subtitle="Home / NovaGems FAQs"
+        title="Peace BijouterieFAQs"
+        subtitle="Home / Peace BijouterieFAQs"
         backgroundStyle="image"
       />
 
@@ -145,13 +145,13 @@ const FAQ: React.FC = () => {
         <section className="mb-12">
           <div className="flex items-center gap-2 mb-4">
             <Mail className="w-6 h-6 text-primary-600" />
-            <h2 className="text-2xl font-semibold text-gray-800">Contact NovaGems Support</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">Contact Peace BijouterieSupport</h2>
           </div>
           <p className="text-gray-600 mb-4">Didn’t find what you were looking for? Our team is happy to help!</p>
           <ul className="space-y-2 text-gray-600">
             <li className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-primary-600" />
-              <span><strong>Email</strong>: <a href="mailto:support@novagems.rw" className="text-primary-600 hover:underline">support@novagems.rw</a></span>
+              <span><strong>Email</strong>: <a href="mailto:support@peacebijouterie.rw" className="text-primary-600 hover:underline">support@peacebijouterie.rw</a></span>
             </li>
             <li className="flex items-center gap-2">
               <Phone className="w-5 h-5 text-primary-600" />
@@ -163,12 +163,12 @@ const FAQ: React.FC = () => {
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-primary-600" />
-              <span><strong>Visit Us</strong>: NovaGems Shop, Kigali City</span>
+              <span><strong>Visit Us</strong>: Peace BijouterieShop, Kigali City</span>
             </li>
           </ul>
           <div className="mt-6">
             <a
-              href="mailto:support@novagems.rw"
+              href="mailto:support@peacebijouterie.rw"
               className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
             >
               Contact Support
@@ -180,7 +180,7 @@ const FAQ: React.FC = () => {
       {/* Footer */}
       <footer className="bg-primary-600 text-white py-6">
         <div className="container mx-auto px-4 text-center">
-          <p>✨ Thank you for choosing NovaGems – Your sparkle, our passion!</p>
+          <p>✨ Thank you for choosing Peace Bijouterie– Your sparkle, our passion!</p>
         </div>
       </footer>
     </div>

@@ -172,7 +172,7 @@ const Navbar: React.FC = () => {
                 <div className="flex items-center space-x-3">
              
                   <div>
-                  <img src={Logo} alt="" className='h-14 w-48 object-cover' />
+                  <img src={Logo} alt="" className='h-24 scale-125' />
                   </div>
                 </div>
               </div>

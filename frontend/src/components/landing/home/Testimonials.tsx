@@ -33,14 +33,14 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
                   const parent = target.parentElement;
                   if (parent && !parent.querySelector('.fallback-initials')) {
                     const fallback = document.createElement('div');
-                    fallback.className = 'fallback-initials w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-cyan-500 text-white text-lg font-bold';
+                    fallback.className = 'fallback-initials w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-secondary-500 text-white text-lg font-bold';
                     fallback.textContent = testimonial.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
                     parent.appendChild(fallback);
                   }
                 }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-cyan-500 text-white text-lg font-bold">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-secondary-500 text-white text-lg font-bold">
                 {testimonial.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
               </div>
             )}
@@ -143,7 +143,7 @@ const TestimonialSection = () => {
               TESTIMONIALS
             </div>
             <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6">
-              Take a look what our <span className="bg-gradient-to-r from-primary-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+              Take a look what our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">clients say</span> about us
             </h2>
           </div>
           
@@ -155,7 +155,7 @@ const TestimonialSection = () => {
             <p className="text-gray-600 text-center mb-6 max-w-md">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-8 py-3 bg-gradient-to-r from-primary-600 to-cyan-600 text-white rounded-full hover:from-primary-700 hover:to-cyan-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="px-8 py-3 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full hover:from-primary-700 hover:to-secondary-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Try Again
             </button>
@@ -175,7 +175,7 @@ const TestimonialSection = () => {
               TESTIMONIALS
             </div>
             <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6">
-              Take a look what our <span className="bg-gradient-to-r from-primary-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+              Take a look what our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">clients say</span> about us
             </h2>
             <p className="text-md text-gray-600 max-w-3xl mx-auto">
               Hear from our satisfied partners on how our ecommerce platform has boosted their online presence and transformed their business growth.
@@ -205,7 +205,7 @@ const TestimonialSection = () => {
             TESTIMONIALS
           </div>
           <h2 className="text-4xl lg:text-4xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto">
-            Take a look what our <span className="bg-gradient-to-r from-primary-600 to-cyan-600 bg-clip-text text-transparent">clients say</span> about us
+            Take a look what our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">clients say</span> about us
           </h2>
           <p className="text-md text-gray-600 max-w-3xl mx-auto text-md">
             Hear from our satisfied partners on how our ecommerce platform has boosted their online presence and transformed their business growth.

@@ -159,7 +159,7 @@ const RegisterPage = () => {
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold mb-6">Join NovaGems Today!</h1>
+            <h1 className="text-5xl font-bold mb-6">Join Peace Bijouterie Today!</h1>
             <p className="text-xl opacity-90">
               Create your account and unlock a world of exclusive jewelry. Start your journey with us now.
             </p>

@@ -17,8 +17,8 @@ const HelpCenter: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <HeaderBanner
-        title="NovaGems Help Center"
-        subtitle="Home / NovaGems Help Center"
+        title="Peace Bijouterie Help Center"
+        subtitle="Home / Peace Bijouterie Help Center"
         backgroundStyle="image"
       />
       {/* Main Content */}
@@ -101,7 +101,7 @@ const HelpCenter: React.FC = () => {
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-700">Is payment secure?</h3>
-              <p className="text-gray-600">Yes, NovaGems uses <strong>SSL encryption</strong> and trusted payment gateways to keep your details safe.</p>
+              <p className="text-gray-600">Yes, Peace Bijouterie uses <strong>SSL encryption</strong> and trusted payment gateways to keep your details safe.</p>
             </div>
           </div>
         </section>
@@ -137,7 +137,7 @@ const HelpCenter: React.FC = () => {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-medium text-gray-700">Are your products authentic?</h3>
-              <p className="text-gray-600">Yes. NovaGems jewelry is made with <strong>genuine gemstones</strong> and <strong>quality metals</strong>. Certificates of authenticity are available for premium items.</p>
+              <p className="text-gray-600">Yes. Peace Bijouterie jewelry is made with <strong>genuine gemstones</strong> and <strong>quality metals</strong>. Certificates of authenticity are available for premium items.</p>
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-700">Do you offer custom designs?</h3>
@@ -180,12 +180,12 @@ const HelpCenter: React.FC = () => {
 
         {/* Contact Support */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact NovaGems Support</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact Peace Bijouterie Support</h2>
           <p className="text-gray-600 mb-4">Didn't find what you were looking for? Our team is happy to help!</p>
           <ul className="space-y-2 text-gray-600">
             <li className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-primary-600" />
-              <span><strong>Email</strong>: <a href="mailto:support@novagems.rw" className="text-primary-600 hover:underline">support@novagems.rw</a></span>
+              <span><strong>Email</strong>: <a href="mailto:support@peacebijouterie.rw" className="text-primary-600 hover:underline">support@peacebijouterie.rw</a></span>
             </li>
             <li className="flex items-center gap-2">
               <Phone className="w-5 h-5 text-primary-600" />
@@ -197,7 +197,7 @@ const HelpCenter: React.FC = () => {
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-primary-600" />
-              <span><strong>Visit Us</strong>: NovaGems Shop, Kigali City</span>
+              <span><strong>Visit Us</strong>: Peace Bijouterie Shop, Kigali City</span>
             </li>
           </ul>
         </section>
@@ -206,7 +206,7 @@ const HelpCenter: React.FC = () => {
       {/* Footer */}
       <footer className="bg-primary-600 text-white py-6">
         <div className="container mx-auto px-4 text-center">
-          <p>✨ Thank you for choosing NovaGems – Your sparkle, our passion!</p>
+          <p>✨ Thank you for choosing Peace Bijouterie – Your sparkle, our passion!</p>
         </div>
       </footer>
     </div>
