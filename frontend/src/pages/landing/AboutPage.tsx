@@ -1,33 +1,14 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Users, Trophy, Globe, ShoppingBag, ArrowUp, Award, Target, Zap, Shield } from 'lucide-react';
+import {  Trophy, ArrowUp, Award, Target, Zap, Shield } from 'lucide-react';
 import HeaderBanner from '../../components/landing/HeaderBanner';
-import Testimonials from '../../components/landing/Testmonial'; // Adjust import path as needed
 import TestimonialSection from '../../components/landing/home/Testimonials';
 
 const AboutPage = () => {
-  const [currentClientsSlide, setCurrentClientsSlide] = useState(0);
-
-  // Client logos
-  const clientLogos = [
-    { name: "Mockup", logo: "https://placehold.co/150x50?text=Mockup&bg=ffffff&fg=000000" },
-    { name: "The Backward", logo: "https://placehold.co/150x50?text=The+Backward&bg=ffffff&fg=000000" },
-    { name: "Shutter Speed", logo: "https://placehold.co/150x50?text=Shutter+Speed&bg=ffffff&fg=000000" },
-    { name: "Travel", logo: "https://placehold.co/150x50?text=Travel&bg=ffffff&fg=000000" },
-    { name: "The Retro Studio", logo: "https://placehold.co/150x50?text=The+Retro+Studio&bg=ffffff&fg=000000" },
-    { name: "A Design Hub", logo: "https://placehold.co/150x50?text=A+Design+Hub&bg=ffffff&fg=000000" },
-    { name: "Creative Co", logo: "https://placehold.co/150x50?text=Creative+Co&bg=ffffff&fg=000000" },
-    { name: "Brand Studio", logo: "https://placehold.co/150x50?text=Brand+Studio&bg=ffffff&fg=000000" },
-    { name: "Digital Hub", logo: "https://placehold.co/150x50?text=Digital+Hub&bg=ffffff&fg=000000" }
-  ];
-
-  // Statistics data
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const stats = [
-    { number: "10M+", label: "Happy Customers", icon: Users },
-    { number: "500K+", label: "Products Sold", icon: ShoppingBag },
-    { number: "99.9%", label: "Uptime", icon: Shield },
-    { number: "150+", label: "Countries Served", icon: Globe }
-  ];
+  const [, setCurrentClientsSlide] = useState(0);
+
+  
+
 
   // Features data
   const features = [
@@ -53,14 +34,7 @@ const AboutPage = () => {
     }
   ];
 
-  // Clients slideshow functions
-  const nextClientsSlide = () => {
-    setCurrentClientsSlide((prev) => (prev + 1) % Math.ceil(clientLogos.length / 6));
-  };
 
-  const prevClientsSlide = () => {
-    setCurrentClientsSlide((prev) => (prev - 1 + Math.ceil(clientLogos.length / 6)) % Math.ceil(clientLogos.length / 6));
-  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

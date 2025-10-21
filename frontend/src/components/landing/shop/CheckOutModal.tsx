@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, AlertTriangle, CheckCircle, Loader2, ShoppingCart, User, FileCheck } from 'lucide-react';
+import { X, AlertTriangle, Loader2, ShoppingCart, User, FileCheck } from 'lucide-react';
 import { useCart } from '../../../context/CartContext';
 import usePurchasingUserAuth from '../../../context/PurchasingUserAuthContext';
 import productService from '../../../services/ProductService';
-import orderService from '../../../services/orderService';
+import orderService, { type CreateOrderData } from '../../../services/orderService';
 import { API_URL } from '../../../api/api';
 
 interface ValidationIssue {
@@ -15,6 +15,8 @@ interface ValidationIssue {
 }
 
 interface SingleProduct {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cartQuantity: any;
   id: string;
   name: string;
   brand: string;
@@ -40,6 +42,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [validatedItems, setValidatedItems] = useState<any[]>([]);
   
   // Customer info
@@ -114,6 +117,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
         dbAvailability: product.availability,
         discount: product.discount || 0
       }]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to validate product. Please try again.');
       issues.push({
@@ -133,6 +137,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
     setLoading(true);
     setError(null);
     const issues: ValidationIssue[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const validated: any[] = [];
 
     try {
@@ -158,6 +163,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
             dbAvailability: product.availability,
             discount: product.discount || 0
           });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
           issues.push({
             productId: item.id,
@@ -171,6 +177,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
 
       setValidationIssues(issues);
       setValidatedItems(validated);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Failed to validate cart items. Please try again.');
     } finally {
@@ -299,23 +306,29 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
     setError(null);
 
     try {
-      const items = isSingleProductMode ? validatedItems : cart;
-      
-      const orderData = {
-        customerName,
-        customerEmail,
-        customerPhone,
-        currency: 'RWF',
-        items: items.map(item => ({
-          productId: item.id,
-          price: item.discount && item.discount > 0 
-            ? item.price * (1 - item.discount / 100)
-            : item.price,
-          quantity: item.cartQuantity
-        }))
-      };
+const itemsToOrder = isSingleProductMode ? validatedItems : cart;
 
-      const result = await orderService.checkout(orderData);
+const orderData: CreateOrderData = {
+  customerName,
+  customerEmail,
+  customerPhone,
+  currency: 'RWF',
+items: itemsToOrder.map((item: SingleProduct) => ({
+  product: item,
+  id: item.id,
+  productId: item.id,
+  price: item.discount && item.discount > 0
+    ? item.price * (1 - item.discount / 100)
+    : item.price,
+  quantity: item.cartQuantity
+}))
+
+
+
+};
+
+
+    const result = await orderService.checkout(orderData);
       
       // Clear cart only if we're not in single product mode
       if (!isSingleProductMode) {
@@ -328,6 +341,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, singlePr
         alert('Order created successfully!');
         onClose();
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create order. Please try again.');
     } finally {

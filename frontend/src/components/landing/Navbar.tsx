@@ -4,7 +4,7 @@ import {
   X, 
   User,
   Phone,
-  Search,
+
   ShoppingCart,
   Heart,
   MapPin,
@@ -40,6 +40,7 @@ const Navbar: React.FC = () => {
     flag: '🇺🇸'
   });
   const [showCountryDropdown, setShowCountryDropdown] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchQuery, setSearchQuery] = useState<string>('');
   const navigate = useNavigate()
   const {cart} = useCart()
@@ -70,6 +71,7 @@ const Navbar: React.FC = () => {
   };
 
   // Handle search
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSearch = () => {
     console.log(`Searching for: ${searchQuery}`);
   };

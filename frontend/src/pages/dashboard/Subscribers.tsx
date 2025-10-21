@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import {
   Trash2,
@@ -32,17 +33,28 @@ const SubscriberDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
 
-  const loadSubscribers = async () => {
-    setLoading(true);
-    try {
-      const data = await subscriberService.getAllSubscribers();
-      setSubscribers(data);
-    } catch (err) {
-      setOperationStatus({ type: "error", message: "Failed to load subscribers" });
-    } finally {
-      setLoading(false);
-    }
-  };
+const loadSubscribers = async () => {
+  setLoading(true);
+  try {
+    const data = await subscriberService.getAllSubscribers();
+
+    // Convert dates to strings
+  const formattedData = data.map(subscriber => ({
+  ...subscriber,
+  createdAt: subscriber.createdAt ? subscriber.createdAt.toISOString() : '',
+  updatedAt: subscriber.updatedAt ? subscriber.updatedAt.toISOString() : '', // convert Date | undefined to string
+}));
+
+setSubscribers(formattedData);
+
+
+    setSubscribers(formattedData);
+  } catch (err) {
+    setOperationStatus({ type: "error", message: "Failed to load subscribers" });
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadSubscribers();

@@ -7,30 +7,12 @@ import BlogsPage from '../pages/landing/BlogsPage';
 import BlogViewPage from '../components/landing/BlogViewPage';
 import AuthLayout from '../layout/AuthLayout';
 import AdminLogin from '../pages/auth/admin/Login';
-import logo from '../assets/images/aby_hr.png';
 import UnlockScreen from '../pages/auth/admin/UnlockScreen';
 import DashboardLayout from '../layout/DashboardLayout';
 import DashboardHome from '../pages/dashboard/DashboardHome';
 import ProtectPrivateAdminRoute from '../components/protectors/ProtectPrivateAdminRoute';
 import AdminProfile from '../pages/dashboard/AdminProfile';
-import EmployeeFormExample from '../components/dashboard/employee/EmployeeForm';
-import ContractDashboard from '../pages/dashboard/ContractManagement';
-import ViewEmployee from '../components/dashboard/employee/EmployeeViewMorePage';
-import SitesManagement from '../pages/dashboard/SitesManagement';
-import UpserJobPost from '../components/dashboard/recruitment/UpsertJobPost';
-import JobView from '../components/dashboard/recruitment/JobView';
-import JobBoard from '../pages/landing/JobBoard';
-import JobPostView from '../components/landing/JobViewPage';
-import JobApplicationForm from '../components/landing/ApplyJob';
-import ApplicantView from '../components/dashboard/recruitment/ApplicantView';
-import ClientManagement from '../pages/dashboard/ClientManagement';
-import MaterialManagement from '../pages/dashboard/MaterialManagement';
 import CategoryDashboard from '../pages/dashboard/CategoryManagement';
-import UnitDashboard from '../pages/dashboard/UnitManagement';
-import RoleManagement from '../pages/dashboard/RoleManagement';
-import MaterialRequisition from '../pages/dashboard/MaterialRequisition';
-import SiteAssignmentDashboard from '../pages/dashboard/SiteAssignmentDashboard';
-import MaterialRequisitionDetail from '../pages/dashboard/MaterialRequisitionDetail';
 import ProductFormExample from '../pages/dashboard/product/AddProduct';
 import ProductManagement from '../pages/dashboard/product/ProductManagement';
 import ProductViewPage from '../components/landing/shop/ShopViewPage';
@@ -71,10 +53,8 @@ import RetryPaymentPage from '../pages/landing/RetryPayment';
 import UserDashboardHome from '../pages/user-dashboard/DashboardHome';
 
 const ProductPage = lazy(() => import('../pages/landing/ShoppingPage'));
-const ServicesPage = lazy(() => import('../pages/landing/ServicePage'));
 const ContactPage = lazy(() => import('../pages/landing/ContactUs'));
 const AboutPage = lazy(() => import('../pages/landing/AboutPage'));
-const StockManagement = lazy(() => import('../pages/dashboard/StockManagement'));
 
 export type OutletContextType = {
   role: 'admin' | 'user';
@@ -94,6 +74,7 @@ const LoadingSpinner: FC = () => (
  * This displays errors caught by React Router's errorElement
  */
 const RouterErrorBoundary: FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const error = useRouteError() as any;
 
   const handleReload = () => {
@@ -586,38 +567,10 @@ const routes = createBrowserRouter([
                   </SuspenseWrapper>
                 ),
               },
-              {
-                path: 'employee-management/:id',
-                element: (
-                  <SuspenseWrapper>
-                    <ViewEmployee />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'employee-management/create',
-                element: (
-                  <SuspenseWrapper>
-                    <EmployeeFormExample />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'employee-management/update/:id',
-                element: (
-                  <SuspenseWrapper>
-                    <EmployeeFormExample />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'material-management',
-                element: (
-                  <SuspenseWrapper>
-                    <MaterialManagement />
-                  </SuspenseWrapper>
-                ),
-              },
+          
+          
+           
+           
               {
                 path: 'contact-message',
                 element: (
@@ -642,102 +595,7 @@ const routes = createBrowserRouter([
                   </SuspenseWrapper>
                 ),
               },
-              {
-                path: 'units-management',
-                element: (
-                  <SuspenseWrapper>
-                    <UnitDashboard />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'contract-management',
-                element: (
-                  <SuspenseWrapper>
-                    <ContractDashboard />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'site-management',
-                element: (
-                  <SuspenseWrapper>
-                    <SitesManagement />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'site-assign-management',
-                element: (
-                  <SuspenseWrapper>
-                    <SiteAssignmentDashboard />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'recruiting-management/create',
-                element: (
-                  <SuspenseWrapper>
-                    <UpserJobPost />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'recruiting-management/update/:id',
-                element: (
-                  <SuspenseWrapper>
-                    <UpserJobPost />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'recruiting-management/:id',
-                element: (
-                  <SuspenseWrapper>
-                    <JobView />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'recruiting-management/:jobId/applicants/:applicantId',
-                element: (
-                  <SuspenseWrapper>
-                    <ApplicantView />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'client-management',
-                element: (
-                  <SuspenseWrapper>
-                    <ClientManagement />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'role-management',
-                element: (
-                  <SuspenseWrapper>
-                    <RoleManagement />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'material-requisition',
-                element: (
-                  <SuspenseWrapper>
-                    <MaterialRequisition />
-                  </SuspenseWrapper>
-                ),
-              },
-              {
-                path: 'material-requisition/:id',
-                element: (
-                  <SuspenseWrapper>
-                    <MaterialRequisitionDetail />
-                  </SuspenseWrapper>
-                ),
-              },
+              
             ],
           },
         ],

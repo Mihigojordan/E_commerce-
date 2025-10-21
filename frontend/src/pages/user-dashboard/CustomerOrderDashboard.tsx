@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Search,
@@ -150,11 +152,11 @@ const CustomerOrderDashboard: React.FC = () => {
   if (!order.payments || order.payments.length === 0) return "N/A";
   
   // Check if any payment is successful
-  const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+  const successfulPayment = order.payments.find((p: { status: string; }) => p.status === "SUCCESSFUL");
   if (successfulPayment) return "SUCCESSFUL";
   
   // Check if any payment is pending
-  const pendingPayment = order.payments.find(p => p.status === "PENDING");
+  const pendingPayment = order.payments.find((p: { status: string; }) => p.status === "PENDING");
   if (pendingPayment) return "PENDING";
   
   // All payments failed
@@ -164,7 +166,7 @@ const getPaymentAmount = (order: Order): string => {
   if (!order.payments || order.payments.length === 0) return "N/A";
   
   // Find the successful payment or the latest payment
-  const successfulPayment = order.payments.find(p => p.status === "SUCCESSFUL");
+  const successfulPayment = order.payments.find((p: { status: string; }) => p.status === "SUCCESSFUL");
   const latestPayment = order.payments[order.payments.length - 1];
   const paymentToShow = successfulPayment || latestPayment;
   

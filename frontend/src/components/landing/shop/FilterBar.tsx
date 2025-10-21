@@ -10,8 +10,11 @@ interface FilterBarProps {
   setMaxPriceInput: (value: string) => void;
   selectedConditions: string[];
   setSelectedConditions: (conditions: string[]) => void;
+  selectedColors: string[]; // ✅ ADD THIS
+  setSelectedColors: (colors: string[]) => void; // ✅ ADD THIS
   setCurrentPage: (page: number) => void;
 }
+
 
 const conditions = [
   { name: 'New', count: 1506 },

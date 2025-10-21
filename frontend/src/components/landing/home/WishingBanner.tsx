@@ -1,5 +1,5 @@
 import React from 'react';
-import BannerImage from '../../../assets/highlights/IMGE1711.JPG';
+import BannerImage from '../../../assets/highlights/IMGE1171.JPG';
 
 function WishingBanner() {
   return (

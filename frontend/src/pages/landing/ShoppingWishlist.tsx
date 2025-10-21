@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Heart, 
   Trash2, 
-  ShoppingBag, 
+
   ArrowLeft,
   X,
   RotateCw,
@@ -16,6 +16,7 @@ import Swal from 'sweetalert2';
 import { type Product } from '../../services/ProductService';
 
 const WishlistPage: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { wishlist, removeFromWishlist, clearWishlist, isInWishlist } = useWishlist();
   const { addToCart } = useCart();
   const [localWishlist, setLocalWishlist] = useState<Product[]>(wishlist);
