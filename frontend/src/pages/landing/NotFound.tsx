@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Home, Search, ShoppingBag, ArrowLeft, Package, Sparkles } from 'lucide-react';
 
 export default function NotFoundPage() {

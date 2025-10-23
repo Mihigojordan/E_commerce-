@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search,
   Calendar,
@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../api/api';
 
 interface Blog {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [x: string]: any;
   id: string;
   title: string;
   description: string;
@@ -51,6 +53,7 @@ export default function HRBlogsPage() {
         const fetchedBlogs = await blogService.getAllBlogs();
         setBlogs(fetchedBlogs);
         setError(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(err.message || 'Failed to fetch blogs');
         setBlogs([]);

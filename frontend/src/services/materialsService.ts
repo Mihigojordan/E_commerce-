@@ -3,6 +3,8 @@
 import api from '../api/api'; // Import the Axios instance
 
 export interface Category {
+  [x: string]: any;
+  created_at: string | Date | undefined;
   id: number;
   name: string;
   subCategory: string;

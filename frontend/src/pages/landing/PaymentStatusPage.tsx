@@ -5,7 +5,7 @@ import {
   XCircle, 
   ShoppingBag, 
   Home,
-  ArrowRight,
+
   Package,
   Mail,
   Phone,

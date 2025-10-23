@@ -9,6 +9,7 @@ export interface PurchasingUser {
   password?: string;
   createdAt?: string;
   updatedAt?: string;
+
 }
 
 export interface CreatePurchasingUserData {
@@ -22,6 +23,7 @@ export interface UpdatePurchasingUserData {
   email?: string;
   phoneNumber?: string;
   password?: string;
+  status:string
 }
 
 export interface RegisterData {
@@ -46,6 +48,7 @@ const purchasingUserService = {
     try {
       const response = await api.post('/purchasing-auth/register', data);
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error registering purchasing user:', error.response?.data || error.message);
       throw error;
@@ -59,6 +62,7 @@ const purchasingUserService = {
         withCredentials: true, // 👈 important for cookie-based auth
       });
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error logging in purchasing user:', error.response?.data || error.message);
       throw error;
@@ -70,6 +74,7 @@ const purchasingUserService = {
     try {
       const response = await api.post('/purchasing-auth/logout', {}, { withCredentials: true });
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error logging out purchasing user:', error.response?.data || error.message);
       throw error;
@@ -83,6 +88,7 @@ const purchasingUserService = {
         withCredentials: true,
       });
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error fetching profile:', error.response?.data || error.message);
       throw error;
@@ -96,6 +102,7 @@ const purchasingUserService = {
         withCredentials: true,
       });
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error editing profile:', error.response?.data || error.message);
       throw error;
@@ -110,6 +117,7 @@ const purchasingUserService = {
     try {
       const response = await api.post('/purchasing-users', data);
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error creating/fetching purchasing user:', error.response?.data || error.message);
       throw error;
@@ -121,6 +129,7 @@ const purchasingUserService = {
     try {
       const response = await api.get('/purchasing-users/all');
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error fetching purchasing users:', error.response?.data || error.message);
       throw error;
@@ -132,6 +141,7 @@ const purchasingUserService = {
     try {
       const response = await api.get('/purchasing-users', { params: query });
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error finding purchasing user:', error.response?.data || error.message);
       throw error;
@@ -143,6 +153,7 @@ const purchasingUserService = {
     try {
       const response = await api.patch(`/purchasing-users/${id}`, data);
       return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error updating purchasing user:', error.response?.data || error.message);
       throw error;

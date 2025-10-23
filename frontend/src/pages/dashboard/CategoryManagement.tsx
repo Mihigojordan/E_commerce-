@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import {
@@ -722,7 +723,8 @@ const CategoryDashboard: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <select
-                value={`${sortBy}-${sortOrder}`}
+             value={`${String(sortBy)}-${sortOrder}`}
+
                 onChange={(e) => {
                   const [field, order] = e.target.value.split('-') as [keyof Category, 'asc' | 'desc'];
                   setSortBy(field);

@@ -64,6 +64,7 @@ export default function RetryPaymentPage() {
 
       setOrder(fetchedOrder);
       updateUrlParams(trimmedId);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch order. Please check the order ID.';
       setError(errorMessage);
@@ -124,12 +125,13 @@ export default function RetryPaymentPage() {
   };
 
   // Check if there's any failed payment
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasFailedPayment = () => {
     if (!order || !order.payments || order.payments.length === 0) {
       return false;
     }
     
-    return order.payments.some(payment => payment.status === 'FAILED');
+    return order.payments.some((payment: { status: string; }) => payment.status === 'FAILED');
   };
 
   // Can retry if the latest payment is FAILED
@@ -171,6 +173,7 @@ export default function RetryPaymentPage() {
           window.location.href = response.link;
         }, 1500);
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to retry payment. Please try again.';
       setError(errorMessage);

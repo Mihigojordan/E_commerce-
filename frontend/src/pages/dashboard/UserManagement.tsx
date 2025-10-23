@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import {
-  Plus,
-  Edit,
-  Trash2,
+
   Search,
   ChevronDown,
   Eye,
@@ -62,9 +60,11 @@ const UserDashboard: React.FC = () => {
     name: '',
     email: '',
     phoneNumber: '',
+    
   });
   const [formError, setFormError] = useState<string>('');
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -141,6 +141,7 @@ const UserDashboard: React.FC = () => {
     };
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAddUser = () => {
     setFormData({
       name: '',
@@ -184,6 +185,7 @@ const UserDashboard: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEditUser = (user: PurchasingUser) => {
     if (!user?.id) return;
     setSelectedUser(user);

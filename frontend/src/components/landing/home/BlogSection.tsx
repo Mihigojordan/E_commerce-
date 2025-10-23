@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { getAllBlogs, type Blog } from '../../../services/blogService';
 import { API_URL } from '../../../api/api';
-import banner1 from '../../../assets/images/banner-5.jpg';
-import banner2 from '../../../assets/images/banner/banner4.jpg';
-import banner3 from '../../../assets/images/back-banner/back-banner-1.jpg';
+
 import { useNavigate } from 'react-router-dom';
+import image4 from "../../../assets/highlights/IMGE1638.JPG";
+import image5 from "../../../assets/highlights/IMGE1774.JPG";
+import image6 from "../../../assets/highlights/IMGE1372.JPG";
 
 const BlogSection: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -19,22 +20,22 @@ const BlogSection: React.FC = () => {
       id: 1,
       label: 'Accessories',
       title: 'Save 17% on Autumn Hat',
-      buttonColor: 'text-primary-600',
-      bgImage: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=700&h=800&fit=crop'
+      buttonColor: 'text-primary-300',
+      bgImage: image4
     },
     {
       id: 2,
       label: 'Big Offer',
       title: "Save 20% on Women's socks",
-      buttonColor: 'text-primary-600',
-      bgImage: banner2
+      buttonColor: 'text-primary-300',
+      bgImage: image5
     },
     {
       id: 3,
       label: 'Smart Offer',
       title: 'Save 20% on Eardrop',
-      buttonColor: 'text-primary-600',
-      bgImage: banner3
+      buttonColor: 'text-primary-300',
+      bgImage: image6
     }
   ];
 
@@ -66,7 +67,7 @@ const BlogSection: React.FC = () => {
   };
 
   const getCategoryColor = (title: string) => {
-    const colors = ['text-primary-600', 'text-blue-600', 'text-pink-600', 'text-orange-600'];
+    const colors = ['text-primary-500', 'text-blue-600', 'text-pink-600', 'text-orange-600'];
     let hash = 0;
     for (let i = 0; i < title.length; i++) {
       hash = title.charCodeAt(i) + ((hash << 5) - hash);
@@ -166,12 +167,12 @@ const BlogSection: React.FC = () => {
                   backgroundColor: offer.bgImage ? 'transparent' : '#f3f4f6'
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/30 to-transparent"></div>
                 <div className="relative z-10">
-                  <p className="text-gray-400 text-sm font-medium mb-2">
+                  <p className="text-gray-300 text-sm font-medium mb-2">
                     {offer.label}
                   </p>
-                  <h3 className="text-gray-900 text-2xl font-bold mb-4 leading-tight max-w-[200px]">
+                  <h3 className="text-gray-100 text-2xl font-bold mb-4 leading-tight max-w-[200px]">
                     {offer.title}
                   </h3>
                   <button 

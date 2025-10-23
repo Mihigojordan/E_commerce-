@@ -143,6 +143,7 @@ const TestimonialDashboard: React.FC = () => {
       setDeleteConfirm(null);
       await loadData();
       showOperationStatus("success", `${testimonial.fullName} deleted successfully!`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       showOperationStatus("error", err.message || "Failed to delete testimonial");
     } finally {

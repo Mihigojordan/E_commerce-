@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Package, 
-  RefreshCw, 
-  CreditCard, 
-  Gem, 
-  Gift, 
-  User, 
+
   Mail, 
   Phone, 
   MessageCircle, 
