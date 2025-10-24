@@ -254,11 +254,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onToggle }) => {
     <>
       {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={onToggle} />}
       <div className={`fixed left-0 top-0 min-h-screen bg-white flex flex-col border-r border-primary-200 shadow-lg transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"} w-64 lg:w-70`}>
-        <div className="flex items-center justify-between p-4 border-b border-primary-200">
+        <div className="flex items-center justify-between p-4 border-b h-32 border-primary-200">
           <div className="flex items-center space-x-2">
             <div className="flex items-center justify-center w-[180px] h-8  rounded-lg">
               <div className="flex items-center space-x-0.5">
-                <img src={Logo} alt="" className="h-[160px] w-[220px]" />
+                <img src={Logo} alt="" className="w-32 h-32" />
               </div>
             </div>
             <div>

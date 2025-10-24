@@ -2,7 +2,8 @@ import React from 'react';
 import { 
   Heart, 
   Star, 
-  ShoppingCart, 
+  ShoppingCart,
+  MessageCircle, 
 } from 'lucide-react';
 import { useWishlist } from '../../../context/WishlistContext';
 import { API_URL } from '../../../api/api';
@@ -10,6 +11,8 @@ import { type Product } from '../../../services/ProductService';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { formatPrice } from '../../../utils/dateUtils';
+import { motion } from 'framer-motion';
+
 
 interface ProductCardProps {
   product: Product;
@@ -48,6 +51,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+    const shareToWhatsApp = (product) => {
+    const message = `Check out this beautiful ${product.name}! 💎✨\n\nSee more amazing jewelry at: ${import.meta.env.VITE_WEBSITE_URL}/products/${product.id}\n\nHow can I get more information about this piece?`;
+    const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
   const currentPrice = product.discount && product.discount > 0 
     ? product.price * (1 - product.discount / 100)
     : product.price;
@@ -60,13 +71,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {tag}
           </span>
         )}
-        <button
-          onClick={toggleWishlist}
-          className="absolute top-4 right-4 p-2 bg-white rounded-full hover:bg-gray-50 transition-all duration-200 z-10 shadow-md opacity-0 group-hover:opacity-100"
-          aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-        </button>
+       <div className="absolute top-4 right-4 flex gap-2 z-10">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              shareToWhatsApp(product);
+            }}
+            className="p-2 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300 shadow-md opacity-0 group-hover:opacity-100"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </motion.button>
+          
+          <button
+            onClick={toggleWishlist}
+            className="p-2 bg-white rounded-full hover:bg-gray-50 transition-all duration-200 shadow-md opacity-0 group-hover:opacity-100"
+            aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+          </button>
+        </div>
         <img 
           src={`${API_URL}${product.images[0]}` || 'https://via.placeholder.com/400'} 
           alt={product.name}

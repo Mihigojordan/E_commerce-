@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ShoppingBag, ChevronRight, ChevronLeft, MoreHorizontal } from 'lucide-react';
 import productService, { type Product } from '../../../services/ProductService';
 import { API_URL } from '../../../api/api';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../../context/CartContext';
+import ProductCard from '../shop/ProductCard';
 
 const ProductGrid: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -139,6 +140,20 @@ const ProductGrid: React.FC = () => {
     );
   };
 
+    const getTagColor = useCallback((tag: string) => {
+      if(tag === undefined) return 'bg-blue-500';
+      switch (tag.toLowerCase()) {
+        case 'hot': return 'bg-pink-500';
+        case 'new': return 'bg-primary-500';
+        case 'best sell': return 'bg-orange-500';
+        case 'sale': return 'bg-blue-500';
+        case '50%': return 'bg-pink-600';
+        case '25%': return 'bg-purple-500';
+        case '70%': return 'bg-orange-600';
+        default: return 'bg-blue-500';
+      }
+    }, []);
+
   const getBadge = (product: Product) => {
     if (product.discount && product.discount > 0) {
       return { text: `-${product.discount}%`, color: 'bg-pink-500' };
@@ -230,80 +245,7 @@ const ProductGrid: React.FC = () => {
                     : product.price;
 
                   return (
-                    <motion.div
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.6 }}
-                      className="group relative bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
-                    >
-                      {/* Premium hover gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                      {/* Shimmer effect on hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
-                        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                      </div>
-
-                      {/* Product Image */}
-                      <div className="relative bg-gray-100 p-6 h-72 flex items-center justify-center ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-primary-300 transition-all duration-300">
-                        {badge && (
-                          <span className={`absolute top-4 left-4 ${badge.color} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm`}>
-                            {badge.text}
-                          </span>
-                        )}
-                        {product.images && product.images.length > 0 ? (
-                          <img
-                            src={`${API_URL}${product.images[0]}`}
-                            alt={product.name}
-                            className="w-full h-full object-cover rounded-md group-hover:scale-110 transition-transform duration-700"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="text-center text-primary-600 font-medium">
-                            <p className="text-sm">Product Image</p>
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent z-10" />
-                      </div>
-
-                      {/* Product Details */}
-                      <div className="p-6 relative z-10">
-                        <p className="text-xs text-primary-600 font-medium tracking-[2px] mb-2">{product.brand}</p>
-                        <h3
-                          onClick={() => navigate(`/products/${product.id}`)}
-                          className="text-lg font-medium text-slate-900 mb-2 hover:text-primary-800 transition-colors duration-300 cursor-pointer"
-                        >
-                          {product.name}
-                        </h3>
-                        {renderStars(product.review)}
-                        <div className="flex items-center justify-between mt-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-primary-600 font-bold text-lg">
-                              ${discountedPrice.toFixed(2)}
-                            </span>
-                            {product.discount && product.discount > 0 && (
-                              <span className="text-slate-400 line-through text-sm">
-                                ${product.price.toFixed(2)}
-                              </span>
-                            )}
-                          </div>
-<motion.button
-  whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(217, 119, 6, 0.3)' }}
-  whileTap={{ scale: 0.98 }}
-  onClick={() => addToCart(product)} // ✅ Add product or increment if exists
-  className="w-10 h-10 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all duration-300 flex items-center justify-center shadow-lg shadow-primary-500/30"
->
-  <ShoppingBag className="w-5 h-5" />
-</motion.button>
-
-                        </div>
-                      </div>
-
-                      {/* Decorative corner accent */}
-                      <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-primary-400/0 group-hover:border-primary-400/30 rounded-tr-2xl transition-all duration-500" />
-                    </motion.div>
+                  <ProductCard key={product.id} product={product} tag={product.tags[0]} tagColor={getTagColor(product.tags[0])} />
                   );
                 })}
               </AnimatePresence>

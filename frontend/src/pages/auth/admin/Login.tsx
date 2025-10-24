@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Building2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import  useAuth from "../../../context/AuthContext";
+import logo from "../../../assets/logo.png";
 
 // Define interfaces
 interface FormData {
@@ -217,10 +218,7 @@ const AdminLogin: React.FC = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center mr-3">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">Peace Bijouterie</h2>
+              <img src={logo} className="  w-40   " alt="" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Sign In</h3>
             <p className="text-gray-600 text-sm">Please enter your details to sign in</p>
