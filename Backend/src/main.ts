@@ -23,7 +23,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+    origin: process.env.CORS_ORIGIN || 'https://peacebijouterie.rw',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -81,7 +81,7 @@ res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
         res.setHeader('Permissions-Policy', 'geolocation=(self), microphone=(), camera=()');
         res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('X-XSS-Protection', '1; mode=block');
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001'); // or your real frontend URL
+        res.setHeader('Access-Control-Allow-Origin', 'https://peacebijouterie.rw'); // or your real frontend URL
         res.setHeader('Access-Control-Allow-Credentials', 'true');
 
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
