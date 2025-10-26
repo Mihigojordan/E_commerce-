@@ -27,7 +27,7 @@ import { useWishlist } from '../../../context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import FilterBar from './FilterBar';
-import CheckoutModal from './CheckOutModal';
+import WhatsAppButton from '../../common/WhatsAppButton';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { formatCurrency, formatPrice } from '../../../utils/dateUtils';
 
@@ -752,6 +752,19 @@ const ShopViewPage: React.FC = () => {
                         <Zap className="h-5 w-5" />
                         Buy Now
                       </motion.button>
+                      
+                      {/* WhatsApp Button */}
+                      <div className="mt-3">
+                        <WhatsAppButton
+                          productName={product.name}
+                          productId={product.id}
+                          productPrice={currentPrice}
+                          size="md"
+                          variant="inline"
+                          showText={true}
+                          className="w-full justify-center"
+                        />
+                      </div>
                     </div>
 
                     <div className="pt-4 border-t">

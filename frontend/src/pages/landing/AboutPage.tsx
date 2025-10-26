@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  Trophy, ArrowUp, Award, Target, Zap, Shield } from 'lucide-react';
+import {  Trophy, ArrowUp, Award, Target, Gem, Crown } from 'lucide-react';
 import HeaderBanner from '../../components/landing/HeaderBanner';
 import TestimonialSection from '../../components/landing/home/Testimonials';
 
@@ -13,24 +13,24 @@ const AboutPage = () => {
   // Features data
   const features = [
     {
-      icon: Zap,
-      title: "Lightning Fast",
-      description: "Ultra-fast loading times and seamless performance across all devices and platforms."
+      icon: Gem,
+      title: "Authentic Gold & Diamonds",
+      description: "Every piece is certified authentic with guaranteed quality and purity standards."
     },
     {
-      icon: Shield,
-      title: "Secure & Reliable",
-      description: "Bank-level security with SSL encryption and PCI compliance for safe transactions."
+      icon: Crown,
+      title: "Handcrafted Excellence",
+      description: "Meticulously crafted jewelry pieces designed for elegance and lasting beauty."
     },
     {
       icon: Target,
-      title: "AI-Powered Analytics",
-      description: "Advanced analytics and insights to help you understand your customers better."
+      title: "Personalized Service",
+      description: "Dedicated assistance to help you find the perfect piece for every special moment."
     },
     {
       icon: Award,
-      title: "Award Winning",
-      description: "Recognized globally for excellence in ecommerce innovation and customer satisfaction."
+      title: "Trusted Since 2008",
+      description: "Over 15 years of excellence serving customers in Kigali with premium jewelry."
     }
   ];
 
@@ -54,18 +54,18 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pb-12">
             <div>
               <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-5">
-                OUR COMPANY
+                PEACE BIJOUTERI
               </div>
               <h1 className="text-4xl lg:text-4xl font-bold text-gray-900 leading-loose mb-8">
-                We are Building The Ultimate 
-                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Ecommerce Platform</span> For Seamless Shopping
+                Crafting Elegance Since 
+                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> 2008</span> - Your Trusted Jewelry Destination
               </h1>
               <div className="space-y-6 text-md text-gray-600 leading-loose">
                 <p>
-                  Our platform offers a vast selection of products from top brands, with fast delivery and secure payments. We've revolutionized the way people shop online with cutting-edge technology and user-centric design.
+                  Founded in 2008 by Nsengiyunva Vincent, Peace Bijouteri began as a small jewelry shop in the heart of Kigali, Rwanda. Built on passion, precision, and elegance, it quickly grew into one of the city's most trusted destinations for authentic gold, diamond, and luxury jewelry.
                 </p>
                 <p>
-                  We focus on providing an exceptional online shopping experience, from browsing to checkout, ensuring customer satisfaction every step of the way. Our AI-powered recommendation engine and seamless payment processing make shopping effortless and enjoyable.
+                  Every piece in our collection tells a story — crafted with care, designed for beauty, and made to last. From timeless gold rings to elegant diamond accessories, Peace Bijouteri offers customers the perfect balance of quality, originality, and sophistication.
                 </p>
               </div>
             </div>
@@ -97,7 +97,7 @@ const AboutPage = () => {
               Our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Mission & Vision</span>
             </h2>
             <p className="text-md text-gray-600 max-w-3xl mx-auto">
-              Driving the future of ecommerce with innovation, integrity, and customer-first approach.
+              Celebrating life's most beautiful moments with jewelry that shines as bright as your story.
             </p>
           </div>
 
@@ -108,7 +108,7 @@ const AboutPage = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
               <p className="text-gray-600 text-md leading-loose">
-                To democratize ecommerce by providing businesses of all sizes with powerful, affordable, and easy-to-use tools that enable them to succeed in the digital marketplace. We believe every entrepreneur deserves access to world-class ecommerce technology.
+                To help you celebrate life's most beautiful moments with jewelry that shines as bright as your story. We are committed to providing authentic, high-quality jewelry pieces that reflect elegance, trust, and authenticity in every design.
               </p>
             </div>
 
@@ -118,7 +118,7 @@ const AboutPage = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Our Vision</h3>
               <p className="text-gray-600 leading-loose text-md">
-                To become the world's most trusted and innovative ecommerce platform, empowering millions of businesses to thrive online while creating exceptional shopping experiences that delight customers globally.
+                To be Rwanda's premier destination for authentic luxury jewelry, known for our craftsmanship, integrity, and the ability to create pieces that become treasured family heirlooms passed down through generations.
               </p>
             </div>
           </div>
@@ -154,17 +154,17 @@ const AboutPage = () => {
                 OUR STORY
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-8">
-                From Startup to <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Global Leader</span>
+                From Humble Beginnings to <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Kigali's Jewelry Excellence</span>
               </h2>
               <div className="space-y-6 text-md text-gray-600">
                 <p>
-                  Founded in 2018 by a team of passionate entrepreneurs, we started with a simple vision: make ecommerce accessible to everyone. What began as a small project in a garage has now grown into a global platform serving millions of users worldwide.
+                  Founded in 2008 by Nsengiyunva Vincent, Peace Bijouteri began as a small jewelry shop in the heart of Kigali, Rwanda. What started as a passion for fine jewelry and craftsmanship has grown into one of the city's most trusted destinations for authentic gold, diamond, and luxury jewelry pieces.
                 </p>
                 <p>
-                  Through continuous innovation, customer feedback, and relentless dedication to excellence, we've built not just a platform, but a community of successful online businesses that trust us to power their growth.
+                  Through dedication to quality, authenticity, and personalized service, we've built lasting relationships with customers who trust us to help them celebrate life's most precious moments. Every piece we offer is carefully selected and crafted to meet our high standards of excellence.
                 </p>
                 <p>
-                  Today, we're proud to be at the forefront of ecommerce technology, constantly pushing boundaries and setting new standards for what online commerce can achieve.
+                  Today, we're proud to continue our legacy of providing exceptional jewelry pieces that combine traditional craftsmanship with modern elegance, ensuring that each customer finds the perfect piece to tell their unique story.
                 </p>
               </div>
             </div>

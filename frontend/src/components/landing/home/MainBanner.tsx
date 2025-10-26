@@ -37,17 +37,21 @@ function MainBanner() {
           <div className="space-y-6">
             <div className="space-y-4">
               <p className="text-primary-600 font-medium text-lg tracking-wide">
-                Premium Jewelry
+                Peace Bijouteri
               </p>
               <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
-                Discover Elegant
+                Discover Authentic
                 <br />
-                <span className="text-gray-100">Jewelry for Every Occasion</span>
+                <span className="text-gray-100">Gold & Diamond Jewelry</span>
               </h1>
             </div>
 
+            <p className="text-white/90 text-lg leading-relaxed max-w-2xl">
+              Since 2008, we've been crafting exquisite jewelry pieces in the heart of Kigali. From timeless gold rings to elegant diamond accessories, find the perfect piece to celebrate your special moments.
+            </p>
+
             <button className="inline-flex items-center px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 group">
-              Read More
+              Visit Our Shop
               <svg className="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

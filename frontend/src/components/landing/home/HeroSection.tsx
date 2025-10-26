@@ -12,11 +12,11 @@ function LuxuryHeroSection() {
 
   const heroSlides = [
     {
-      title: "EXCLUSIVE COLLECTION",
+      title: "PEACE BIJOUTERI",
       heading: "Timeless Elegance",
-      subHeading: "Handcrafted Excellence",
+      subHeading: "Authentic Gold & Diamonds",
       description:
-        "Discover our most coveted pieces, meticulously crafted for those who appreciate the finest things in life",
+        "Discover our exquisite collection of handcrafted jewelry pieces, meticulously crafted for those who appreciate the finest things in life",
       buttonText: "Explore Collection",
       image:
         image1,
@@ -26,7 +26,7 @@ function LuxuryHeroSection() {
       heading: "Diamond Mastery",
       subHeading: "Unparalleled Brilliance",
       description:
-        "Each diamond tells a story of perfection, selected for exceptional clarity and fire",
+        "Each diamond tells a story of perfection, selected for exceptional clarity and fire. Experience the brilliance of authentic diamonds",
       buttonText: "View Diamonds",
       image:
        image2,
@@ -36,7 +36,7 @@ function LuxuryHeroSection() {
       heading: "Bespoke Artistry",
       subHeading: "One-of-a-Kind Pieces",
       description:
-        "Commission a masterpiece that reflects your unique vision and extraordinary taste",
+        "Commission a masterpiece that reflects your unique vision. From engagement rings to luxury accessories, we create jewelry that tells your story",
       buttonText: "Begin Journey",
       image: image3,
     },
@@ -45,14 +45,14 @@ function LuxuryHeroSection() {
   const luxuryOffers = [
     {
       category: "SIGNATURE RINGS",
-      title: "Exceptional Diamonds",
-      subtitle: "Starting from $15,000",
+      title: "Engagement Rings",
+      subtitle: "Starting from $500",
       image: image4,
     },
     {
-      category: "HAUTE COUTURE",
-      title: "Limited Edition",
-      subtitle: "Exclusive Earrings",
+      category: "LUXURY NECKLACES",
+      title: "Gold Collection",
+      subtitle: "Authentic Gold Pieces",
       image: image5,
     },
   ];

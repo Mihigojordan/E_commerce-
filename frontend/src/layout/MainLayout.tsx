@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from '../components/landing/Navbar'
-import Footer from '../components/landing/Footer'
+import WhatsAppButton from '../components/common/WhatsAppButton'
 
 const MainLayout = () => {
       const location = useLocation()
@@ -21,6 +21,13 @@ const MainLayout = () => {
       <Outlet></Outlet>
      
       <Footer />
+      
+      {/* Floating WhatsApp Button */}
+      <WhatsAppButton
+        size="lg"
+        variant="floating"
+        className="fixed bottom-6 right-6 z-50"
+      />
     </div>
   )
 }

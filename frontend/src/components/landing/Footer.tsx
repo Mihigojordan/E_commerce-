@@ -87,10 +87,10 @@ const supportLinks = [
 ];
 
 const companyLinks = [
-  { name: 'About NovaGems', path: '/about' },
+  { name: 'About Peace Bijouteri', path: '/about' },
   { name: 'Gallery', path: '/gallery' },
-  { name: 'News & Paper', path: '/blogs' },
-  { name: 'Products', path: '/product' },
+  { name: 'News & Updates', path: '/blogs' },
+  { name: 'Jewelry Collection', path: '/product' },
      { name: 'Contact', href: '/contact',},
      { name: 'Customer Service', path: '/customer-service' },
   // { name: 'Investor Relations', path: '/investor-relations' },
@@ -100,10 +100,10 @@ const companyLinks = [
 
 
   const socialLinks = [
-    { icon: Facebook, href: '#', name: 'Facebook', color: 'hover:text-primary-600' },
-    { icon: Twitter, href: '#', name: 'Twitter', color: 'hover:text-primary-400' },
-    { icon: Instagram, href: '#', name: 'Instagram', color: 'hover:text-pink-600' },
-    { icon: Linkedin, href: '#', name: 'LinkedIn', color: 'hover:text-primary-700' }
+    { icon: Facebook, href: 'javascript:void(0)', name: 'Facebook', color: 'hover:text-primary-600' },
+    { icon: Twitter, href: 'javascript:void(0)', name: 'Twitter', color: 'hover:text-primary-400' },
+    { icon: Instagram, href: 'javascript:void(0)', name: 'Instagram', color: 'hover:text-pink-600' },
+    { icon: Linkedin, href: 'javascript:void(0)', name: 'LinkedIn', color: 'hover:text-primary-700' }
   ];
 
   return (
@@ -367,7 +367,7 @@ const companyLinks = [
               viewport={{ once: true }}
               className="flex flex-col md:flex-row items-center gap-4 text-gray-600 text-sm"
             >
-              <span>© 2025 David ECoomerce Shop. All rights reserved.</span>
+              <span>© 2025 Peace Bijouteri. All rights reserved.</span>
               <div className="flex gap-4">
                 <a href="#" className="hover:text-primary-600 transition-colors">Privacy Policy</a>
                 <a href="#" className="hover:text-primary-600 transition-colors">Terms of Service</a>

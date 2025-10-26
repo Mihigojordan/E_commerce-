@@ -80,27 +80,27 @@ export default function EcommerceContactPage() {
   const contactMethods: ContactMethod[] = [
     {
       icon: <Phone className="w-8 h-8" />,
-      title: "Support Helpline",
-      description: "Speak directly with our support specialists",
-      info: ["+250 788 123 456", "+250 788 654 321"],
-      action: "Call Support",
-      availability: "24/7 Emergency Support"
+      title: "Call Us Directly",
+      description: "Speak with our jewelry experts",
+      info: ["+250 788 826 965"],
+      action: "Call Now",
+      availability: "Monday - Saturday, 9:00 AM - 7:00 PM"
     },
     {
       icon: <Mail className="w-8 h-8" />,
       title: "Email Support",
-      description: "Send us your queries anytime",
-      info: ["support@ecommerce.rw", "help@ecommerce.rw"],
+      description: "Send us your jewelry inquiries",
+      info: ["info@peacebijouteri.rw", "sales@peacebijouteri.rw"],
       action: "Send Email",
       availability: "Response within 4 hours"
     },
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "Live Chat",
-      description: "Get instant help from our team",
-      info: ["Available on portal", "WhatsApp: +250 788 123 456"],
-      action: "Start Chat",
-      availability: "8 AM - 6 PM"
+      title: "Visit Our Shop",
+      description: "Experience our jewelry in person",
+      info: ["28 KN 84 St, Kigali, Rwanda"],
+      action: "Get Directions",
+      availability: "Monday - Saturday, 9:00 AM - 7:00 PM"
     }
   ];
 
@@ -120,9 +120,9 @@ export default function EcommerceContactPage() {
       <section className="py-10">
         <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Preferred Way</h3>
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">We'd Love to Hear From You!</h3>
             <p className="text-gray-600 max-w-x3l mx-auto text-xl">
-              Multiple ways to reach our support team - pick what works best for you
+              At Peace Bijouteri, our team is always ready to help you choose the perfect piece or answer any questions about our jewelry.
             </p>
           </div>
 
@@ -220,7 +220,7 @@ export default function EcommerceContactPage() {
                         value={formData.phone}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        placeholder="+250 788 123 456"
+                        placeholder="+250 788 826 965"
                       />
                     </div>
                     <div>
@@ -251,7 +251,7 @@ export default function EcommerceContactPage() {
                       required
                       rows={5}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
-                      placeholder="Tell us about your inquiry or concern..."
+                      placeholder="Tell us about your jewelry inquiry or special request..."
                     ></textarea>
                   </div>
 

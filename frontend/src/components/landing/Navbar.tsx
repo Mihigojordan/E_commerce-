@@ -140,9 +140,9 @@ const Navbar: React.FC = () => {
 
             {/* Social Media Links */}
             <div className="flex items-center space-x-2">
-              <Facebook size={14} className="hover:text-blue-400 cursor-pointer transition-colors" />
-              <Twitter size={14} className="hover:text-blue-400 cursor-pointer transition-colors" />
-              <Instagram size={14} className="hover:text-pink-400 cursor-pointer transition-colors" />
+              <Facebook size={14} className="hover:text-blue-400 cursor-pointer transition-colors" onClick={() => window.open('javascript:void(0)', '_blank')} />
+              <Twitter size={14} className="hover:text-blue-400 cursor-pointer transition-colors" onClick={() => window.open('javascript:void(0)', '_blank')} />
+              <Instagram size={14} className="hover:text-pink-400 cursor-pointer transition-colors" onClick={() => window.open('javascript:void(0)', '_blank')} />
             </div>
 
             {/* Login/Signup */}

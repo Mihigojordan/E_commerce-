@@ -1,10 +1,5 @@
 import React from 'react';
-import { 
-  Heart, 
-  Star, 
-  ShoppingCart,
-  MessageCircle, 
-} from 'lucide-react';
+import WhatsAppButton from '../../common/WhatsAppButton';
 import { useWishlist } from '../../../context/WishlistContext';
 import { API_URL } from '../../../api/api';
 import { type Product } from '../../../services/ProductService';
@@ -51,9 +46,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const shareToWhatsApp = (product: Product) => {
-    const message = `Check out this beautiful ${product.name}! 💎✨\n\nSee more amazing jewelry at: ${import.meta.env.VITE_WEBSITE_URL}/products/${product.id}\n\nHow can I get more information about this piece?`;
-    const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+    // This function is now handled by WhatsAppButton component
+    // Keeping for backward compatibility if needed
   };
 
   const currentPrice = product.discount && product.discount > 0 
@@ -70,17 +64,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
         )}
         <div className="absolute top-4 right-4 flex gap-2 z-10">
-          <motion.button
+          <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={(e) => {
               e.stopPropagation();
-              shareToWhatsApp(product);
             }}
-            className="p-2 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300 shadow-md opacity-0 group-hover:opacity-100"
+            className="opacity-0 group-hover:opacity-100 transition-all duration-300"
           >
-            <MessageCircle className="w-4 h-4" />
-          </motion.button>
+            <WhatsAppButton
+              productName={product.name}
+              productId={product.id}
+              productPrice={currentPrice}
+              size="sm"
+              variant="card"
+              className="shadow-md"
+            />
+          </motion.div>
           
           <button
             onClick={toggleWishlist}
@@ -138,12 +138,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Cart + WhatsApp on same line */}
           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
-            <button
-              onClick={() => shareToWhatsApp(product)}
-              className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200"
-            >
-              <MessageCircle className="h-4 w-4" />
-            </button>
+            <WhatsAppButton
+              productName={product.name}
+              productId={product.id}
+              productPrice={currentPrice}
+              size="sm"
+              variant="card"
+              className="shadow-sm"
+            />
             <button className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200">
               <ShoppingCart className="h-4 w-4" />
             </button>

@@ -30,7 +30,7 @@ import image17 from "../../assets/highlights/IMGE1804.jpg";
 import image18 from "../../assets/highlights/IMGE1680.jpg";
 import image19 from "../../assets/highlights/IMGE1785.jpg";
 import image20 from "../../assets/highlights/IMGE1592.jpg";
-import HeaderBanner from "../../components/landing/HeaderBanner";
+import WhatsAppButton from "../../components/common/WhatsAppButton";
 
 const WEBSITE_URL = "http://localhost:3001";
 
@@ -123,11 +123,8 @@ export default function Gallery() {
   };
 
   const shareToWhatsApp = (image: JewelryImage) => {
-    const message = `Check out this beautiful ${image.title}! 💎✨\n\nSee more amazing jewelry at: ${WEBSITE_URL}/gallery\n\nHow can I get more information about this piece?`;
-    const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(
-      message
-    )}`;
-    window.open(whatsappUrl, "_blank");
+    // This function is now handled by WhatsAppButton component
+    // Keeping for backward compatibility if needed
   };
 
   const copyShareLink = (image: JewelryImage) => {
@@ -227,17 +224,12 @@ export default function Gallery() {
                       />
                     </motion.button>
 
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        shareToWhatsApp(image);
-                      }}
-                      className="p-2 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                    </motion.button>
+                    <WhatsAppButton
+                      productName={image.title}
+                      size="sm"
+                      variant="card"
+                      className="shadow-md"
+                    />
                   </div>
 
                   {/* Shimmer */}
@@ -336,13 +328,12 @@ export default function Gallery() {
                       animate={{ opacity: 1, y: 0 }}
                       className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-lg p-2 min-w-[160px] z-10"
                     >
-                      <button
-                        onClick={() => shareToWhatsApp(selectedImage)}
-                        className="w-full flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
-                      >
-                        <MessageCircle className="w-4 h-4 text-green-600" />
-                        WhatsApp
-                      </button>
+                      <WhatsAppButton
+                        productName={selectedImage.title}
+                        size="sm"
+                        variant="card"
+                        className="shadow-sm"
+                      />
                       <button
                         onClick={() => shareViaWebAPI(selectedImage)}
                         className="w-full flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
@@ -361,14 +352,12 @@ export default function Gallery() {
                   )}
                 </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => shareToWhatsApp(selectedImage)}
-                  className="p-3 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </motion.button>
+                <WhatsAppButton
+                  productName={selectedImage.title}
+                  size="md"
+                  variant="card"
+                  className="shadow-lg"
+                />
               </div>
             </div>
           </motion.div>
