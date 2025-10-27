@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
-import banner2 from '../../../assets/highlights/IMGE1179.jpg'
-import banner3 from '../../../assets/highlights/IMGE1670.jpg'
+import banner2 from '../../../assets/highlights/IMGE1179.JPG'
+import banner3 from '../../../assets/highlights/IMGE1670.JPG'
 
 
 const PromoCard = ({ bgColor, badge, title, subtitle, price, originalPrice, days, hours, mins, secs, bgImage }) => {
@@ -124,7 +124,7 @@ const CountdownTimer = () => {
           hours={timer1.hours}
           mins={timer1.mins}
           secs={timer1.secs}
-          bgImage={banner3} // Add your image URL here: bgImage="/path/to/your/image.jpg"
+          bgImage={banner3} // Add your image URL here: bgImage="/path/to/your/image.JPG"
         />
         
         <PromoCard
@@ -138,7 +138,7 @@ const CountdownTimer = () => {
           hours={timer2.hours}
           mins={timer2.mins}
           secs={timer2.secs}
-          bgImage={banner2} // Add your image URL here: bgImage="/path/to/your/image.jpg"
+          bgImage={banner2} // Add your image URL here: bgImage="/path/to/your/image.JPG"
         />
       </div>
     </div>

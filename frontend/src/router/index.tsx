@@ -115,7 +115,7 @@ const RouterErrorBoundary: FC = () => {
               </p>
             </div>
 
-            {process.env.NODE_ENV === 'development' && error && (
+            
               <details className="mb-8 bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <summary className="cursor-pointer font-semibold text-gray-700 mb-2">
                   Technical Details (Dev Mode)
@@ -137,7 +137,7 @@ const RouterErrorBoundary: FC = () => {
                   )}
                 </div>
               </details>
-            )}
+            
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <button
