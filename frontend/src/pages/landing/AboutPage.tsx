@@ -43,8 +43,8 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <HeaderBanner
-        title="About Us"
-        subtitle="Home / About Us"
+        title="About Peace Bijouteri"
+        subtitle="Home / About"
         backgroundStyle="image"
       />
 
@@ -54,18 +54,20 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pb-12">
             <div>
               <div className="text-primary-600 text-sm font-semibold tracking-wide uppercase mb-5">
-                OUR COMPANY
+                ELEGANCE • TRUST • AUTHENTICITY
               </div>
               <h1 className="text-4xl lg:text-4xl font-bold text-gray-900 leading-loose mb-8">
-                We are Building The Ultimate 
-                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Ecommerce Platform</span> For Seamless Shopping
+                Timeless Jewelry, Crafted For Your Most Beautiful Moments
               </h1>
               <div className="space-y-6 text-md text-gray-600 leading-loose">
                 <p>
-                  Our platform offers a vast selection of products from top brands, with fast delivery and secure payments. We've revolutionized the way people shop online with cutting-edge technology and user-centric design.
+                  Founded in 2008 by <strong>Nsengiyunva Vincent</strong>, Peace Bijouteri began as a small jewelry shop in the heart of Kigali, Rwanda. Built on passion, precision, and elegance, it has grown into one of the city’s most trusted destinations for authentic gold, diamond, and luxury jewelry.
                 </p>
                 <p>
-                  We focus on providing an exceptional online shopping experience, from browsing to checkout, ensuring customer satisfaction every step of the way. Our AI-powered recommendation engine and seamless payment processing make shopping effortless and enjoyable.
+                  Every piece in our collection tells a story — crafted with care, designed for beauty, and made to last. From timeless gold rings to elegant diamond accessories, Peace Bijouteri offers the perfect balance of quality, originality, and sophistication.
+                </p>
+                <p>
+                  Our mission is simple — to help you celebrate life’s most beautiful moments with jewelry that shines as bright as your story.
                 </p>
               </div>
             </div>
@@ -94,10 +96,10 @@ const AboutPage = () => {
         <div className="max-w-8xl mx-auto px-6 lg:px-14">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Mission & Vision</span>
+              Our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Promise</span>
             </h2>
             <p className="text-md text-gray-600 max-w-3xl mx-auto">
-              Driving the future of ecommerce with innovation, integrity, and customer-first approach.
+              Elegant craftsmanship, honest guidance, and lasting value you can trust.
             </p>
           </div>
 
@@ -108,7 +110,7 @@ const AboutPage = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
               <p className="text-gray-600 text-md leading-loose">
-                To democratize ecommerce by providing businesses of all sizes with powerful, affordable, and easy-to-use tools that enable them to succeed in the digital marketplace. We believe every entrepreneur deserves access to world-class ecommerce technology.
+                To help you celebrate life’s most meaningful moments with authentic, beautifully crafted jewelry — designed to be worn, loved, and passed on.
               </p>
             </div>
 
@@ -118,7 +120,7 @@ const AboutPage = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">Our Vision</h3>
               <p className="text-gray-600 leading-loose text-md">
-                To become the world's most trusted and innovative ecommerce platform, empowering millions of businesses to thrive online while creating exceptional shopping experiences that delight customers globally.
+                To be Kigali’s most trusted destination for fine jewelry — where elegance meets authenticity, and every customer feels confident and valued.
               </p>
             </div>
           </div>
@@ -154,17 +156,17 @@ const AboutPage = () => {
                 OUR STORY
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-8">
-                From Startup to <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Global Leader</span>
+                Established in 2008 — Built on Craftsmanship and Trust
               </h2>
               <div className="space-y-6 text-md text-gray-600">
                 <p>
-                  Founded in 2018 by a team of passionate entrepreneurs, we started with a simple vision: make ecommerce accessible to everyone. What began as a small project in a garage has now grown into a global platform serving millions of users worldwide.
+                  In 2008, <strong>Nsengiyunva Vincent</strong> opened Peace Bijouteri with a clear purpose: to bring authentic, high‑quality jewelry to Kigali with honesty and care. What began as a small boutique has become a trusted name for gold, diamond, and luxury accessories.
                 </p>
                 <p>
-                  Through continuous innovation, customer feedback, and relentless dedication to excellence, we've built not just a platform, but a community of successful online businesses that trust us to power their growth.
+                  Our pieces are chosen and crafted with attention to detail — from elegant rings and necklaces to timeless gifts made to celebrate engagements, anniversaries, and milestones.
                 </p>
                 <p>
-                  Today, we're proud to be at the forefront of ecommerce technology, constantly pushing boundaries and setting new standards for what online commerce can achieve.
+                  Visit us at <strong>28 KN 84 St, Kigali</strong> and experience the essence of elegance and craftsmanship.
                 </p>
               </div>
             </div>
