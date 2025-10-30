@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import Banner from '../../assets/highlights/IMGE1694.jpg';
+import Banner from '../../assets/highlights/IMGE1694.JPG';
 
 // Define interfaces and types
 interface BreadcrumbItem {

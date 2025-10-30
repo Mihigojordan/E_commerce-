@@ -50,9 +50,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const shareToWhatsApp = (product: Product) => {
-    const message = `Check out this beautiful ${product.name}! 💎✨\n\nSee more amazing jewelry at: ${import.meta.env.VITE_WEBSITE_URL}/products/${product.id}\n\nHow can I get more information about this piece?`;
-    const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(message)}`;
+    const shareToWhatsApp = (product) => {
+    const message = `Check out this beautiful ${product.name}! 💎✨\n\nSee more amazing jewelry at: ${window.location.origin}/products/${product.id}\n\nHow can I get more information about this piece?`;
+    const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(
+      message
+    )}`;
     window.open(whatsappUrl, "_blank");
   };
 
