@@ -1,5 +1,4 @@
 import {
-  Bell,
   LogOut,
   Menu,
   User,
@@ -10,10 +9,11 @@ import {
 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation, useOutletContext } from "react-router-dom";
-import useAdminAuth, { type AuthContextType } from '../../context/AuthContext';
-import usePurchasingUserAuth, { type PurchasingUserAuthContextType } from '../../context/PurchasingUserAuthContext';
-import "flag-icons/css/flag-icons.min.css"; // Import flag-icons CSS
-import { type OutletContextType } from '../../router';
+import useAdminAuth, { type AuthContextType } from "../../context/AuthContext";
+import usePurchasingUserAuth, {
+  type PurchasingUserAuthContextType,
+} from "../../context/PurchasingUserAuthContext";
+import { type OutletContextType } from "../../router";
 
 interface HeaderProps {
   onToggle: () => void;
@@ -31,88 +31,80 @@ interface NavItem {
 
 const Header: React.FC<HeaderProps> = ({ onToggle }) => {
   const { role } = useOutletContext<OutletContextType>();
-  const { user: adminUser, logout: adminLogout } = useAdminAuth() as AuthContextType;
-  const { user: purchasingUser, logout: userLogout } = usePurchasingUserAuth() as PurchasingUserAuthContextType;
+  const { user: adminUser, logout: adminLogout } =
+    useAdminAuth() as AuthContextType;
+  const { user: purchasingUser, logout: userLogout } =
+    usePurchasingUserAuth() as PurchasingUserAuthContextType;
 
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const navRef = useRef<HTMLDivElement | null>(null);
-  const languageRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const user :any = role === 'admin' ? adminUser : purchasingUser;
-  const logout = role === 'admin' ? adminLogout : userLogout;
-
-  const languages = [
-    { code: "en", name: "English", flag: "us" },
-    { code: "es", name: "Español", flag: "es" },
-    { code: "fr", name: "Français", flag: "fr" },
-    { code: "zh", name: "中文", flag: "cn" },
-  ];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user: any = role === "admin" ? adminUser : purchasingUser;
+  const logout = role === "admin" ? adminLogout : userLogout;
 
   const navlinks: NavItem[] = [
-    { 
-      id: "dashboard", 
-      label: "Dashboard", 
-      icon: Bell, // Using Bell as a placeholder, adjust as needed
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: Menu,
       path: `/${role}/dashboard`,
-      allowedRoles: ["admin", "user"]
+      allowedRoles: ["admin", "user"],
     },
-    { 
-      id: "categoryManagement", 
-      label: "Category Management", 
-      icon: Bell, // Using Bell as a placeholder
+    {
+      id: "categoryManagement",
+      label: "Category Management",
+      icon: Menu,
       path: `/${role}/dashboard/category-management`,
-      allowedRoles: ["admin"]
+      allowedRoles: ["admin"],
     },
-    { 
-      id: "productManagement", 
-      label: "Product Management", 
-      icon: Bell, // Using Bell as a placeholder
+    {
+      id: "productManagement",
+      label: "Product Management",
+      icon: Menu,
       path: `/${role}/dashboard/product-management`,
-      allowedRoles: ["admin"]
+      allowedRoles: ["admin"],
     },
-    { 
-      id: "blogManagement", 
-      label: "Blog Management", 
-      icon: Bell, // Using Bell as a placeholder
+    {
+      id: "blogManagement",
+      label: "Blog Management",
+      icon: Menu,
       path: `/${role}/dashboard/blog-management`,
-      allowedRoles: ["admin"]
+      allowedRoles: ["admin"],
     },
-    { 
-      id: "testimonialManagement", 
-      label: "Testimonial Management", 
-      icon: Bell, // Using Bell as a placeholder
+    {
+      id: "testimonialManagement",
+      label: "Testimonial Management",
+      icon: Menu,
       path: `/${role}/dashboard/testimonial-management`,
-      allowedRoles: ["admin"]
+      allowedRoles: ["admin"],
     },
-    { 
-      id: "orderManagement", 
-      label: "Order Management", 
-      icon: Bell, // Using Bell as a placeholder
+    {
+      id: "orderManagement",
+      label: "Order Management",
+      icon: Menu,
       path: `/${role}/dashboard/order-management`,
-      allowedRoles: ["admin"]
+      allowedRoles: ["admin"],
     },
-    { 
-      id: "myOrder", 
-      label: "My Orders", 
-      icon: Bell, // Using Bell as a placeholder
+    {
+      id: "myOrder",
+      label: "My Orders",
+      icon: Menu,
       path: `/${role}/dashboard/my-order`,
-      allowedRoles: ["user"]
+      allowedRoles: ["user"],
     },
   ];
 
-  const filteredNavlinks = navlinks.filter((item) => {
-    if (!item.allowedRoles) return true;
-    return item.allowedRoles.includes(role);
-  });
+  const filteredNavlinks = navlinks.filter((item) =>
+    item.allowedRoles ? item.allowedRoles.includes(role) : true
+  );
 
   const toggleDropdown = (dropdownId: string) => {
     setOpenDropdown(openDropdown === dropdownId ? null : dropdownId);
@@ -121,7 +113,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
   const onLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }
@@ -138,13 +130,9 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
   };
 
   const getDisplayName = (): string => {
-    return role === 'admin' ? (user?.names || "Admin User") : (user?.name || "User");
-  };
-
-  const handleLanguageSelect = (langCode: string) => {
-    setSelectedLanguage(langCode);
-    setIsLanguageOpen(false);
-    // Add language change logic here
+    return role === "admin"
+      ? user?.names || "Admin User"
+      : user?.name || "User";
   };
 
   const handleNavClick = (path: string) => {
@@ -152,52 +140,36 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
     setIsNavOpen(false);
   };
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
         setIsNavOpen(false);
       }
-      if (languageRef.current && !languageRef.current.contains(event.target as Node)) {
-        setIsLanguageOpen(false);
-      }
       if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
         setIsProfileOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle fullscreen change
   useEffect(() => {
-    const handleFullscreenChange = () => {
+    const handleFullscreenChange = () =>
       setIsFullscreen(!!document.fullscreenElement);
-    };
-
     document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => {
+    return () =>
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
   }, []);
 
-  // Close dropdowns on Escape key
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsNavOpen(false);
-        setIsLanguageOpen(false);
         setIsProfileOpen(false);
       }
     };
-
     document.addEventListener("keydown", handleEscapeKey);
-    return () => {
-      document.removeEventListener("keydown", handleEscapeKey);
-    };
+    return () => document.removeEventListener("keydown", handleEscapeKey);
   }, []);
 
   const renderNavItem = (item: NavItem) => {
@@ -206,12 +178,10 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
 
     if (item.isDropdown) {
       const isOpen = openDropdown === item.id;
-      const filteredChildren = item.children?.filter((child) => {
-        if (!child.allowedRoles) return true;
-        return child.allowedRoles.includes(role);
-      });
-
-      if (!filteredChildren || filteredChildren.length === 0) return null;
+      const filteredChildren = item.children?.filter((child) =>
+        child.allowedRoles ? child.allowedRoles.includes(role) : true
+      );
+      if (!filteredChildren?.length) return null;
 
       const hasActiveChild = filteredChildren.some(
         (child) => child.path && location.pathname === child.path
@@ -221,13 +191,19 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
         <div key={item.id} className="space-y-1">
           <button
             onClick={() => toggleDropdown(item.id)}
-            className={`flex items-center justify-between w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${hasActiveChild ? "bg-primary-50 text-primary-600" : ""}`}
+            className={`flex items-center justify-between w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${
+              hasActiveChild ? "bg-primary-50 text-primary-600" : ""
+            }`}
           >
             <div className="flex items-center space-x-2">
               <Icon className="w-4 h-4" />
               <span>{item.label}</span>
             </div>
-            {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isOpen ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
           </button>
           {isOpen && (
             <div className="space-y-1 ml-4">
@@ -235,7 +211,11 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
                 <button
                   key={child.id}
                   onClick={() => handleNavClick(child.path!)}
-                  className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${location.pathname === child.path ? "bg-primary-50 text-primary-600" : ""}`}
+                  className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${
+                    location.pathname === child.path
+                      ? "bg-primary-50 text-primary-600"
+                      : ""
+                  }`}
                 >
                   <child.icon className="w-4 h-4 mr-2" />
                   {child.label}
@@ -251,7 +231,9 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
       <button
         key={item.id}
         onClick={() => handleNavClick(item.path!)}
-        className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${isActive ? "bg-primary-50 text-primary-600" : ""}`}
+        className={`flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 transition-colors ${
+          isActive ? "bg-primary-50 text-primary-600" : ""
+        }`}
       >
         <Icon className="w-4 h-4 mr-2" />
         {item.label}
@@ -272,7 +254,7 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
               <Menu className="w-4 h-4 text-white" />
             </div>
             <h1 className="text-lg font-semibold text-gray-900 hidden sm:block">
-              Welcome To NovaGems
+              Welcome To Peace Bijouterie Dashboard
             </h1>
           </div>
 
@@ -287,53 +269,17 @@ const Header: React.FC<HeaderProps> = ({ onToggle }) => {
                 <Menu className="w-4 h-4" />
                 <span className="text-sm hidden md:inline">Navigation</span>
                 <ChevronDown
-                  className={`w-3 h-3 transition-transform duration-200 ${isNavOpen ? "rotate-180" : ""}`}
+                  className={`w-3 h-3 transition-transform duration-200 ${
+                    isNavOpen ? "rotate-180" : ""
+                  }`}
                 />
               </button>
               {isNavOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
-                  <div className="py-1">
-                    {filteredNavlinks.map(renderNavItem)}
-                  </div>
+                  <div className="py-1">{filteredNavlinks.map(renderNavItem)}</div>
                 </div>
               )}
             </div>
-
-            {/* Language Selector */}
-            <div className="relative" ref={languageRef}>
-              <button
-                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex items-center space-x-1"
-              >
-                <span className={`fi fi-${languages.find(lang => lang.code === selectedLanguage)?.flag} mr-1 text-lg`}></span>
-                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isLanguageOpen ? "rotate-180" : ""}`} />
-              </button>
-              {isLanguageOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
-                  <div className="py-1">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => handleLanguageSelect(lang.code)}
-                        className={`flex items-center w-full px-3 py-2 text-sm hover:bg-primary-50 transition-colors ${
-                          selectedLanguage === lang.code ? "bg-primary-50 text-primary-600" : "text-gray-700"
-                        }`}
-                      >
-                        <span className={`fi fi-${lang.flag} mr-2`}></span>
-                        {lang.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Notifications */}
-            <button className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative group">
-              <Bell className="w-4 h-4 animate-pulse group-hover:animate-bounce" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full animate-ping"></span>
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-600 rounded-full text-xs text-white flex items-center justify-center"></span>
-            </button>
 
             {/* Fullscreen Toggle */}
             <button

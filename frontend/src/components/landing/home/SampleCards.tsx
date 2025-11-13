@@ -11,37 +11,37 @@ import image6 from '../../../assets/feature-6.png'
 function SampleCards() {
   const cards = [
     { 
-      title: 'Free Shipping', 
+      title: 'Authentic Materials', 
       image:image1, // replace with your real image path
       bgColor: 'bg-pink-100', 
       textColor: 'text-teal-700' 
     },
     { 
-      title: 'Online Order', 
+      title: 'Trusted Since 2008', 
       image: image2, 
       bgColor: 'bg-blue-100', 
       textColor: 'text-blue-700' 
     },
     { 
-      title: 'Save Money', 
+      title: 'Premium Craftsmanship', 
       image: image3, 
       bgColor: 'bg-green-100', 
       textColor: 'text-green-700' 
     },
     { 
-      title: 'Promotions', 
+      title: 'Elegant Gifting', 
       image: image4, 
       bgColor: 'bg-purple-100', 
       textColor: 'text-purple-700' 
     },
     { 
-      title: 'Happy Sell', 
+      title: 'Timeless Design', 
       image: image5, 
       bgColor: 'bg-pink-100', 
       textColor: 'text-pink-700' 
     },
     { 
-      title: '24/7 Support', 
+      title: 'Personalized Service', 
       image: image6, 
       bgColor: 'bg-teal-100', 
       textColor: 'text-teal-700' 

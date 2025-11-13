@@ -164,10 +164,10 @@ export default function AboutSection() {
             <Users className="w-8 h-8 text-primary-600" />
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Why Choose <span className="text-primary-600">ABY HR</span>
+            Why Choose <span className="text-primary-600">Peace Bijouteri</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            The most trusted HR management platform, empowering organizations worldwide with cutting-edge technology and unmatched reliability
+            Elegant, authentic jewelry since 2008 — trusted craftsmanship, timeless design, and attentive service.
           </p>
         </div>
 
@@ -194,8 +194,8 @@ export default function AboutSection() {
         <div className="w-10/12 mx-auto mb-20">
           
           {/* Company Story Section */}
-          <div className="text-center mb-16">
-            <div className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-3xl p-12 text-white mb-12 relative overflow-hidden">
+            <div className="text-center mb-16">
+              <div className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-3xl p-12 text-white mb-12 relative overflow-hidden">
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full translate-y-20 -translate-x-20"></div>
@@ -203,23 +203,22 @@ export default function AboutSection() {
               <div className="relative z-10">
                 <h3 className="text-3xl sm:text-4xl font-bold mb-6">Our Story</h3>
                 <p className="text-xl text-primary-100 leading-relaxed mb-8 max-w-3xl mx-auto">
-                  Founded by HR professionals who experienced firsthand the challenges of outdated systems, 
-                  ABY HR was born from a vision to revolutionize workforce management.
+                  Founded in 2008 by <strong>Nsengiyunva Vincent</strong>, Peace Bijouteri began in Kigali with a passion for fine jewelry — crafted with care, designed for elegance, and made to last.
                 </p>
                 
                 {/* Timeline dots */}
                 <div className="flex justify-center items-center space-x-8 flex-wrap gap-4">
                   <div className="flex items-center text-primary-100">
                     <div className="w-3 h-3 bg-primary-300 rounded-full mr-3"></div>
-                    <span className="text-sm font-medium">Started in Silicon Valley</span>
+                    <span className="text-sm font-medium">Established in Kigali, Rwanda</span>
                   </div>
                   <div className="flex items-center text-primary-100">
                     <div className="w-3 h-3 bg-primary-300 rounded-full mr-3"></div>
-                    <span className="text-sm font-medium">Expanded globally in 3 years</span>
+                    <span className="text-sm font-medium">Authentic gold & diamond pieces</span>
                   </div>
                   <div className="flex items-center text-primary-100">
                     <div className="w-3 h-3 bg-primary-300 rounded-full mr-3"></div>
-                    <span className="text-sm font-medium">Trusted by Fortune 500</span>
+                    <span className="text-sm font-medium">Trusted by customers since 2008</span>
                   </div>
                 </div>
               </div>

@@ -167,6 +167,7 @@ const AdminLogin: React.FC = () => {
       } else {
         setErrors({ general: response.message || "Login failed" });
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login error:", error);
       setErrors({
@@ -203,7 +204,7 @@ const AdminLogin: React.FC = () => {
         <div className="max-w-lg text-white relative z-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 shadow-2xl">
             <h1 className="text-4xl font-bold mb-6 text-white">
-              Empowering people through seamless HR management.
+  Welcome To Peace Bijouterie Dashboard
             </h1>
             <p className="text-primary-100 text-lg leading-relaxed">
               Efficiently manage your workforce, streamline operations effortlessly.

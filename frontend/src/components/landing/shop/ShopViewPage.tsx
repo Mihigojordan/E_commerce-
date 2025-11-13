@@ -28,6 +28,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import FilterBar from './FilterBar';
 import CheckoutModal from './CheckOutModal';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { formatCurrency, formatPrice } from '../../../utils/dateUtils';
 
 const ShopViewPage: React.FC = () => {
@@ -113,6 +114,7 @@ const ShopViewPage: React.FC = () => {
         const productData = await productService.getProductById(id);
         setProduct(productData);
         setLoading(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError('Failed to load product. Please try again.');
         setLoading(false);

@@ -80,35 +80,35 @@ export default function EcommerceContactPage() {
   const contactMethods: ContactMethod[] = [
     {
       icon: <Phone className="w-8 h-8" />,
-      title: "Support Helpline",
-      description: "Speak directly with our support specialists",
-      info: ["+250 788 123 456", "+250 788 654 321"],
-      action: "Call Support",
-      availability: "24/7 Emergency Support"
+      title: "Call Us",
+      description: "Speak directly with our jewelry specialist",
+      info: ["+250 788 826 965"],
+      action: "Call Peace Bijouteri",
+      availability: "Mon – Sat, 9:00 AM – 7:00 PM"
     },
     {
       icon: <Mail className="w-8 h-8" />,
-      title: "Email Support",
-      description: "Send us your queries anytime",
-      info: ["support@ecommerce.rw", "help@ecommerce.rw"],
+      title: "Email Us",
+      description: "We’ll respond promptly to your inquiry",
+      info: ["support@peacebijouterie.rw"] ,
       action: "Send Email",
-      availability: "Response within 4 hours"
+      availability: "Within business hours"
     },
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "Live Chat",
-      description: "Get instant help from our team",
-      info: ["Available on portal", "WhatsApp: +250 788 123 456"],
+      title: "WhatsApp",
+      description: "Message us for quick assistance",
+      info: ["WhatsApp: +250 788 826 965"],
       action: "Start Chat",
-      availability: "8 AM - 6 PM"
+      availability: "Mon – Sat, 9:00 AM – 7:00 PM"
     }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-100">
       <HeaderBanner
-        title="Contact Us"
-        subtitle="Home / Contact Us"
+        title="Contact Peace Bijouteri"
+        subtitle="Home / Contact"
         backgroundStyle="image"
         icon={<Users className="w-10 h-10" />}
       />
@@ -120,9 +120,9 @@ export default function EcommerceContactPage() {
       <section className="py-10">
         <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Preferred Way</h3>
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">We’d love to hear from you!</h3>
             <p className="text-gray-600 max-w-x3l mx-auto text-xl">
-              Multiple ways to reach our support team - pick what works best for you
+              Our team is ready to help you choose the perfect piece or answer any questions.
             </p>
           </div>
 
@@ -159,8 +159,8 @@ export default function EcommerceContactPage() {
         <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h3>
-              <p className="text-gray-600 mb-8">Fill out the form and we'll get back to you within 4 hours</p>
+                <h3 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h3>
+                <p className="text-gray-600 mb-8">Fill out the form and we’ll get back to you soon.</p>
 
               {formSubmitted ? (
                 <div className="text-center py-12">

@@ -13,7 +13,6 @@ import Swal from 'sweetalert2';
 import { formatPrice } from '../../../utils/dateUtils';
 import { motion } from 'framer-motion';
 
-
 interface ProductCardProps {
   product: Product;
   tag?: string;
@@ -65,13 +64,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
+      {/* Product Image */}
       <div className="relative bg-gray-50 aspect-square overflow-hidden">
         {tag && (
           <span className={`absolute top-4 left-4 ${tagColor} text-white px-3 py-1 rounded-full text-xs font-semibold z-10 shadow-lg`}>
             {tag}
           </span>
         )}
-       <div className="absolute top-4 right-4 flex gap-2 z-10">
+        <div className="absolute top-4 right-4 flex gap-2 z-10">
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -92,6 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
           </button>
         </div>
+
         <img 
           src={`${API_URL}${product.images[0]}` || 'https://via.placeholder.com/400'} 
           alt={product.name}
@@ -100,6 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
       </div>
       
+      {/* Product Info */}
       <div className="p-5">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{product.brand}</p>
@@ -124,6 +126,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         </div>
         
+        {/* Price + Buttons Row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-primary-600">{formatPrice(currentPrice)}</span>
@@ -134,10 +137,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </div>
             )}
           </div>
-          
-          <button className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100">
-            <ShoppingCart className="h-4 w-4" />
-          </button>
+
+          {/* Cart + WhatsApp on same line */}
+          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
+            <button
+              onClick={() => shareToWhatsApp(product)}
+              className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </button>
+            <button className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200">
+              <ShoppingCart className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
