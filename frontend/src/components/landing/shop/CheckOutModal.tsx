@@ -367,7 +367,7 @@ items: itemsToOrder.map((item: SingleProduct) => ({
   };
 
   const handleClose = () => {
-    resetModal();
+    resetModal(); 
     onClose();
   };
 
