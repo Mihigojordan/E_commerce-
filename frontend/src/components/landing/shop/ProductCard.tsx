@@ -50,13 +50,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-    const shareToWhatsApp = (product) => {
-    const message = `Check out this beautiful ${product.name}! 💎✨\n\nSee more amazing jewelry at: ${window.location.origin}/products/${product.id}\n\nHow can I get more information about this piece?`;
-    const whatsappUrl = `https://wa.me/250791813289?text=${encodeURIComponent(
-      message
-    )}`;
-    window.open(whatsappUrl, "_blank");
-  };
+  const shareToWhatsApp = (product: Product) => {
+  const message = `Check out this beautiful ${product.name}! %0A%0ASee more amazing jewelry at: ${window.location.origin}/products/${product.id}%0A%0AHow can I get more information about this piece?`;
+  const whatsappUrl = `https://wa.me/250788826965?text=${message}`;
+  window.open(whatsappUrl, "_blank");
+};
 
   const currentPrice = product.discount && product.discount > 0 
     ? product.price * (1 - product.discount / 100)
@@ -72,18 +70,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
         )}
         <div className="absolute top-4 right-4 flex gap-2 z-10">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              shareToWhatsApp(product);
-            }}
-            className="p-2 bg-green-500 backdrop-blur-sm rounded-full text-white hover:bg-green-600 transition-all duration-300 shadow-md opacity-0 group-hover:opacity-100"
-          >
-            <MessageCircle className="w-4 h-4" />
-          </motion.button>
-          
+
           <button
             onClick={toggleWishlist}
             className="p-2 bg-white rounded-full hover:bg-gray-50 transition-all duration-200 shadow-md opacity-0 group-hover:opacity-100"
