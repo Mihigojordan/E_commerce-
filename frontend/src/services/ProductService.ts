@@ -3,6 +3,7 @@ import { API_URL } from '../api/api'; // keep for reference if needed
 import api from '../api/api'; // axios instance
 
 export interface Product {
+  [x: string]: string;
   id: string;
   name: string;
   images: string[];
@@ -140,7 +141,10 @@ async updateProduct(
     maxPrice?: number;
     tags?: string[];
     search?: string;
-  }): Promise<{ data: Product[]; pagination: any }> {
+  }): Promise<{
+    products: any;
+    items: any; data: Product[]; pagination: any 
+}> {
     try {
       const response = await api.get('/products', { params });
       return response.data;

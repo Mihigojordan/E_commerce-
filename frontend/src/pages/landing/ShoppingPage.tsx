@@ -12,11 +12,10 @@ import FilterBar from '../../components/landing/shop/FilterBar';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ShoppingPage: React.FC = () => {
-const [searchParams, setSearchParams] = useSearchParams();
-const [products, setProducts] = useState<Product[]>([]);
-const [newProducts, setNewProducts] = useState<Product[]>([]);
-const [categories, setCategories] = useState<Category[]>([]);
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [newProducts, setNewProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [newProductsLoading, setNewProductsLoading] = useState(true);
@@ -24,6 +23,7 @@ const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [newProductsError, setNewProductsError] = useState<string | null>(null);
   const [categoryError, setCategoryError] = useState<string | null>(null);
+
   const [pagination, setPagination] = useState<{
     total: number;
     page: number;
@@ -31,30 +31,29 @@ const [categories, setCategories] = useState<Category[]>([]);
     totalPages: number;
   }>({ total: 0, page: 1, limit: 9, totalPages: 1 });
 
-
   const [selectedCategory, setSelectedCategory] = useState<number | null>(
-  searchParams.get('category') ? parseInt(searchParams.get('category')!) : null
-);
-const [minPriceInput, setMinPriceInput] = useState(searchParams.get('minPrice') || '0');
-const [maxPriceInput, setMaxPriceInput] = useState(searchParams.get('maxPrice') || '300');
-const [selectedColors, setSelectedColors] = useState<string[]>(
-  searchParams.get('colors') ? searchParams.get('colors')!.split(',') : []
-);
-const [selectedConditions, setSelectedConditions] = useState<string[]>(
-  searchParams.get('conditions') ? searchParams.get('conditions')!.split(',') : []
-);
-const [currentPage, setCurrentPage] = useState(
-  searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1
-);
-const [itemsPerPage, setItemsPerPage] = useState(
-  searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 9
-);
-const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Featured');
-const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
-const [priceRange, setPriceRange] = useState([
-  parseFloat(minPriceInput) || 0,
-  parseFloat(maxPriceInput) || 300
-]);
+    searchParams.get('category') ? parseInt(searchParams.get('category')!) : null
+  );
+  const [minPriceInput, setMinPriceInput] = useState(searchParams.get('minPrice') || '0');
+  const [maxPriceInput, setMaxPriceInput] = useState(searchParams.get('maxPrice') || '');
+  const [selectedColors, setSelectedColors] = useState<string[]>(
+    searchParams.get('colors') ? searchParams.get('colors')!.split(',') : []
+  );
+  const [selectedConditions, setSelectedConditions] = useState<string[]>(
+    searchParams.get('conditions') ? searchParams.get('conditions')!.split(',') : []
+  );
+  const [currentPage, setCurrentPage] = useState(
+    searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1
+  );
+  const [itemsPerPage, setItemsPerPage] = useState(
+    searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 9
+  );
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Featured');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [priceRange, setPriceRange] = useState([
+    parseFloat(minPriceInput) || 0,
+    parseFloat(maxPriceInput) || Infinity
+  ]);
 
   const navigate = useNavigate();
 
@@ -76,11 +75,22 @@ const [priceRange, setPriceRange] = useState([
       setCategoryLoading(true);
       try {
         const response = await categoryService.getAllCategories();
-        setCategories(response);
+
+        let categoryArray: Category[] = [];
+        if (Array.isArray(response)) {
+          categoryArray = response;
+        } else if (response?.data && Array.isArray(response.data)) {
+          categoryArray = response.data;
+        } else if (response?.categories && Array.isArray(response.categories)) {
+          categoryArray = response.categories;
+        }
+
+        setCategories(categoryArray);
         setCategoryLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
+        console.error('Failed to fetch categories:', err);
         setCategoryError('Failed to load categories. Please try again.');
+        setCategories([]);
         setCategoryLoading(false);
       }
     };
@@ -89,22 +99,32 @@ const [priceRange, setPriceRange] = useState([
   }, []);
 
   // Sync URL params with state
-useEffect(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const params: any = {};
-  
-  if (searchQuery) params.search = searchQuery;
-  if (selectedCategory) params.category = selectedCategory.toString();
-  if (minPriceInput && minPriceInput !== '0') params.minPrice = minPriceInput;
-  if (maxPriceInput && maxPriceInput !== '300') params.maxPrice = maxPriceInput;
-  if (selectedColors.length > 0) params.colors = selectedColors.join(',');
-  if (selectedConditions.length > 0) params.conditions = selectedConditions.join(',');
-  if (currentPage > 1) params.page = currentPage.toString();
-  if (itemsPerPage !== 9) params.limit = itemsPerPage.toString();
-  if (sortBy !== 'Featured') params.sort = sortBy;
+  useEffect(() => {
+    const params: any = {};
 
-  setSearchParams(params, { replace: true });
-}, [searchQuery, selectedCategory, minPriceInput, maxPriceInput, selectedColors, selectedConditions, currentPage, itemsPerPage, sortBy, setSearchParams]);
+    if (searchQuery) params.search = searchQuery;
+    if (selectedCategory) params.category = selectedCategory.toString();
+    if (minPriceInput && minPriceInput !== '0') params.minPrice = minPriceInput;
+    if (maxPriceInput) params.maxPrice = maxPriceInput;
+    if (selectedColors.length > 0) params.colors = selectedColors.join(',');
+    if (selectedConditions.length > 0) params.conditions = selectedConditions.join(',');
+    if (currentPage > 1) params.page = currentPage.toString();
+    if (itemsPerPage !== 9) params.limit = itemsPerPage.toString();
+    if (sortBy !== 'Featured') params.sort = sortBy;
+
+    setSearchParams(params, { replace: true });
+  }, [
+    searchQuery,
+    selectedCategory,
+    minPriceInput,
+    maxPriceInput,
+    selectedColors,
+    selectedConditions,
+    currentPage,
+    itemsPerPage,
+    sortBy,
+    setSearchParams
+  ]);
 
   // Fetch new products on mount
   useEffect(() => {
@@ -115,11 +135,13 @@ useEffect(() => {
           tags: ['New'],
           limit: 4,
         });
-        setNewProducts(response.data);
+        const data = Array.isArray(response) ? response : response.data || [];
+        setNewProducts(data);
         setNewProductsLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
+        console.error('Failed to fetch new products:', err);
         setNewProductsError('Failed to load new products. Please try again.');
+        setNewProducts([]);
         setNewProductsLoading(false);
       }
     };
@@ -135,7 +157,7 @@ useEffect(() => {
         page: currentPage,
         limit: itemsPerPage,
         minPrice: priceRange[0],
-        maxPrice: priceRange[1],
+        maxPrice: priceRange[1] === Infinity ? undefined : priceRange[1],
         tags: selectedColors.length > 0 ? selectedColors : undefined,
         availability: selectedConditions.includes('New') ? true : undefined,
         sort: sortBy === 'Price: Low to High' ? 'price:asc' :
@@ -146,17 +168,20 @@ useEffect(() => {
       };
 
       const response = await productService.getAllProducts(params);
-      setProducts(response.data);
+      const data = Array.isArray(response) ? response : response.data || [];
+      const pag = response.pagination || {};
+
+      setProducts(data);
       setPagination({
-        total: response.pagination?.total || response.data.length,
-        page: response.pagination?.page || currentPage,
-        limit: response.pagination?.limit || itemsPerPage,
-        totalPages: response.pagination?.totalPages || Math.ceil(response.pagination?.total / itemsPerPage) || 1,
+        total: pag.total ?? data.length,
+        page: pag.page ?? currentPage,
+        limit: pag.limit ?? itemsPerPage,
+        totalPages: pag.totalPages ?? Math.ceil((pag.total || data.length) / itemsPerPage),
       });
       setError(null);
       setLoading(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error('Failed to fetch products:', err);
       setError('Failed to load products. Please try again.');
       setLoading(false);
     }
@@ -170,17 +195,20 @@ useEffect(() => {
     setLoading(true);
     try {
       const response = await productService.searchProducts(searchQuery.trim(), currentPage, itemsPerPage);
-      setProducts(response.data);
+      const data = Array.isArray(response) ? response : response.data || [];
+      const pag = response.pagination || {};
+
+      setProducts(data);
       setPagination({
-        total: response.pagination?.total || response.data.length,
-        page: response.pagination?.page || currentPage,
-        limit: response.pagination?.limit || itemsPerPage,
-        totalPages: response.pagination?.totalPages || Math.ceil(response.pagination?.total / itemsPerPage) || 1,
+        total: pag.total ?? data.length,
+        page: pag.page ?? currentPage,
+        limit: pag.limit ?? itemsPerPage,
+        totalPages: pag.totalPages ?? Math.ceil((pag.total || data.length) / itemsPerPage),
       });
       setError(null);
       setLoading(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error('Search failed:', err);
       setError('Failed to search products. Please try again.');
       setLoading(false);
     }
@@ -201,7 +229,7 @@ useEffect(() => {
     const max = parseFloat(maxPriceInput) || Infinity;
     if (min <= max) {
       setPriceRange([min, max]);
-      setCurrentPage(1); // Reset to first page on price change
+      setCurrentPage(1);
     }
   }, [minPriceInput, maxPriceInput]);
 
@@ -218,10 +246,9 @@ useEffect(() => {
     }
   }, []);
 
-  // Generate pagination buttons dynamically
   const getPaginationButtons = useCallback(() => {
     const buttons = [];
-    const maxButtons = 5; // Show up to 5 page numbers
+    const maxButtons = 5;
     const totalPages = pagination.totalPages;
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
     let endPage = Math.min(totalPages, startPage + maxButtons - 1);
@@ -255,11 +282,10 @@ useEffect(() => {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-gray-50"
     >
-      <div className="w-full  mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Sidebar */}
           <aside className="w-full lg:w-80 xl:w-72 space-y-6">
-            {/* Categories */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -274,7 +300,7 @@ useEffect(() => {
                 </div>
               ) : categoryError ? (
                 <p className="text-red-500 text-sm">{categoryError}</p>
-              ) : categories.length === 0 ? (
+              ) : !Array.isArray(categories) || categories.length === 0 ? (
                 <p className="text-gray-600 text-sm">No categories available.</p>
               ) : (
                 <ul className="space-y-3">
@@ -364,7 +390,7 @@ useEffect(() => {
                     >
                       <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
                         <img
-                          src={`${API_URL}${product.images[0]}` || 'https://via.placeholder.com/60'}
+                          src={`${API_URL}${product.images?.[0]}` || 'https://via.placeholder.com/60'}
                           alt={product.name}
                           className="w-full h-full rounded-lg object-cover group-hover:scale-105 transition-transform"
                           loading="lazy"
@@ -404,7 +430,7 @@ useEffect(() => {
                 <p className="text-gray-700 text-base sm:text-lg">
                   We found <span className="font-bold text-primary-600 text-lg sm:text-xl">{pagination.total} items</span> for you!
                 </p>
-                {selectedCategory && (
+                {selectedCategory && categories.find(cat => cat.id === selectedCategory) && (
                   <p className="text-sm text-gray-500 mt-1">
                     in {categories.find(cat => cat.id === selectedCategory)?.name}
                   </p>
@@ -490,7 +516,7 @@ useEffect(() => {
                         setSelectedColors([]);
                         setSelectedConditions([]);
                         setMinPriceInput('0');
-                        setMaxPriceInput('300');
+                        setMaxPriceInput('');
                         setCurrentPage(1);
                       }}
                       className="mt-4 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm"
@@ -517,8 +543,8 @@ useEffect(() => {
                     >
                       <ProductCard
                         product={product}
-                        tag={product.tags[0]}
-                        tagColor={getTagColor(product.tags[0] || '')}
+                        tag={product.tags?.[0]}
+                        tagColor={getTagColor(product.tags?.[0] || '')}
                       />
                     </motion.div>
                   ))}

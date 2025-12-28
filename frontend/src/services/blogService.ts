@@ -14,6 +14,9 @@ export interface BlogReply {
 
 // Blog interface
 export interface Blog {
+  excerpt: string;
+  author: string;
+  date: any;
   id: string;
   title: string;
   description: string;

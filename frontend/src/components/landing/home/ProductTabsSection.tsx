@@ -6,7 +6,17 @@ import banner2 from '../../../assets/images/banner/banner2.jpg';
 import productService, { type Product } from '../../../services/ProductService';
 import { API_URL } from '../../../api/api';
 
-const ProductCard = ({ image, title, price, originalPrice }) => {
+const ProductCard = ({
+  image,
+  title,
+  price,
+  originalPrice,
+}: {
+  image?: string;
+  title: string;
+  price: string | number;
+  originalPrice?: string | number;
+}) => {
   return (
     <div className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
       <div className="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
@@ -22,26 +32,40 @@ const ProductCard = ({ image, title, price, originalPrice }) => {
         <h4 className="text-sm font-medium text-gray-800 mb-2 line-clamp-2">{title}</h4>
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-teal-600">${price}</span>
-          <span className="text-sm text-gray-400 line-through">${originalPrice}</span>
+          {originalPrice && (
+            <span className="text-sm text-gray-400 line-through">${originalPrice}</span>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-const PromoCard = ({ bgImage, badge, title, discount }) => {
+const PromoCard = ({
+  bgImage,
+  badge,
+  title,
+}: {
+  bgImage?: string;
+  badge: string;
+  title: string;
+}) => {
   const navigate = useNavigate();
   return (
-    <div 
+    <div
       className="relative h-full min-h-[400px] rounded-lg overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: bgImage ? `url(${bgImage})` : 'linear-gradient(135deg, #e0f2f1 0%, #fffff 100%)' }}
+      style={{
+        backgroundImage: bgImage
+          ? `url(${bgImage})`
+          : 'linear-gradient(135deg, #e0f2f1 0%, #ffffff 100%)',
+      }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40"></div>
-      
+
       <div className="relative z-10 h-full flex flex-col justify-end p-6">
-        <div className="text-gray-400 font-medium mb-2">{badge}</div>
+        <div className="text-gray-200 font-medium mb-2">{badge}</div>
         <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
-        <button 
+        <button
           onClick={() => navigate('/products')}
           className="bg-white text-teal-700 px-6 py-2 rounded-md font-semibold hover:bg-teal-700 hover:text-white transition-colors flex items-center gap-2 w-fit"
         >
@@ -54,7 +78,7 @@ const PromoCard = ({ bgImage, badge, title, discount }) => {
 };
 
 const ProductTabsSection = () => {
-  const [activeTab, setActiveTab] = useState('deals');
+  const [activeTab, setActiveTab] = useState<'deals' | 'selling' | 'releases'>('deals');
   const [products, setProducts] = useState<{
     deals: Product[];
     selling: Product[];
@@ -66,29 +90,37 @@ const ProductTabsSection = () => {
   const tabs = [
     { id: 'deals', label: 'Deals & Outlet' },
     { id: 'selling', label: 'Top Selling' },
-    { id: 'releases', label: 'Hot Releases' }
+    { id: 'releases', label: 'Hot Releases' },
   ];
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       setError(null);
+
       try {
-        // Fetch products for each tab
-        const [dealsData, sellingData, releasesData] = await Promise.all([
+        const [dealsRes, sellingRes, releasesRes] = await Promise.all([
           productService.getAllProducts({ tags: ['Sale'], limit: 3 }),
           productService.getAllProducts({ tags: ['Top'], limit: 3 }),
-          productService.getAllProducts({ tags: ['New'], limit: 3 })
+          productService.getAllProducts({ tags: ['New'], limit: 3 }),
         ]);
 
+        // ✅ Normalize response data safely
+        const safeData = (res: any) =>
+          Array.isArray(res?.data)
+            ? res.data
+            : Array.isArray(res?.data?.products)
+            ? res.data.products
+            : [];
+
         setProducts({
-          deals: dealsData.data,
-          selling: sellingData.data,
-          releases: releasesData.data
+          deals: safeData(dealsRes),
+          selling: safeData(sellingRes),
+          releases: safeData(releasesRes),
         });
       } catch (err: any) {
-        setError('Failed to load products. Please try again later.');
         console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -97,10 +129,12 @@ const ProductTabsSection = () => {
     fetchProducts();
   }, []);
 
-  const calculateDiscountedPrice = (product: Product) => {
-    return product.discount && product.discount > 0 
-      ? (product.price * (1 - product.discount / 100)).toFixed(2)
-      : product.price.toFixed(2);
+  const calculateDiscountedPrice = (product: Product): string => {
+    const price = Number(product.price) || 0;
+    if (product.discount && product.discount > 0) {
+      return (price * (1 - product.discount / 100)).toFixed(2);
+    }
+    return price.toFixed(2);
   };
 
   if (loading) {
@@ -114,10 +148,12 @@ const ProductTabsSection = () => {
   if (error) {
     return (
       <div className="bg-gray-50 py-8 px-4 flex items-center justify-center">
-        <div className="text-red-600">{error}</div>
+        <p className="text-red-600">{error}</p>
       </div>
     );
   }
+
+  const activeProducts = products[activeTab] || [];
 
   return (
     <div className="bg-gray-50 py-8 px-4">
@@ -129,7 +165,6 @@ const ProductTabsSection = () => {
               bgImage={banner2}
               badge="Shoes Zone"
               title="Save 17% on All Items"
-              discount="17%"
             />
           </div>
 
@@ -137,10 +172,10 @@ const ProductTabsSection = () => {
           <div className="lg:col-span-3">
             {/* Tabs */}
             <div className="flex border-b border-gray-300 mb-6">
-              {tabs.map(tab => (
+              {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => setActiveTab(tab.id as any)}
                   className={`px-6 py-3 font-semibold transition-colors relative ${
                     activeTab === tab.id
                       ? 'text-gray-800'
@@ -157,19 +192,29 @@ const ProductTabsSection = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {products[activeTab].length === 0 ? (
+              {activeProducts.length === 0 ? (
                 <div className="text-center py-8 col-span-full">
-                  <p className="text-lg font-medium text-gray-900 mb-2">No products available</p>
-                  <p className="text-sm text-gray-500">Check back later for new products.</p>
+                  <p className="text-lg font-medium text-gray-900 mb-2">
+                    No products available
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Check back later for new products.
+                  </p>
                 </div>
               ) : (
-                products[activeTab].map((product) => (
+                activeProducts.map((product) => (
                   <ProductCard
-                    key={product.id}
-                    image={product.images[0] ? `${API_URL}${product.images[0]}` : ''}
-                    title={product.name}
+                    key={product.id || product._id}
+                    image={
+                      product?.images?.[0]
+                        ? `${API_URL}${product.images[0]}`
+                        : undefined
+                    }
+                    title={product.name || 'Unnamed Product'}
                     price={calculateDiscountedPrice(product)}
-                    originalPrice={product.price.toFixed(2)}
+                    originalPrice={
+                      product.price ? product.price.toFixed(2) : undefined
+                    }
                   />
                 ))
               )}

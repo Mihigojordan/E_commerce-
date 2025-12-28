@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, ChevronRight } from 'lucide-react';
@@ -39,10 +40,20 @@ const NewArrivalProduct: React.FC = () => {
       }
 
       const response = await productService.getAllProducts(params);
-      setProducts(response.data);
+
+      // ✅ Handle different response structures safely
+      const productsData =
+        Array.isArray(response.data)
+          ? response.data
+          : response.data?.products ||
+            response.products ||
+            response.items ||
+            [];
+
+      setProducts(productsData);
     } catch (err: any) {
-      setError('Failed to load new arrivals. Please try again later.');
       console.error('Error fetching products:', err);
+      setError('Failed to load new arrivals. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -55,13 +66,19 @@ const NewArrivalProduct: React.FC = () => {
         {[...Array(5)].map((_, index) => (
           <svg
             key={index}
-            className={`w-4 h-4 ${index < Math.floor(normalizedRating / 20) ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-300 text-gray-300'}`}
+            className={`w-4 h-4 ${
+              index < Math.floor(normalizedRating / 20)
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'fill-gray-300 text-gray-300'
+            }`}
             viewBox="0 0 20 20"
           >
             <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
           </svg>
         ))}
-        <span className="text-xs text-gray-700 ml-1">{normalizedRating}%</span>
+        <span className="text-xs text-gray-700 ml-1">
+          {normalizedRating.toFixed(0)}%
+        </span>
       </div>
     );
   };
@@ -70,7 +87,10 @@ const NewArrivalProduct: React.FC = () => {
     if (product.discount && product.discount > 0) {
       return { text: `-${product.discount}%`, color: 'bg-pink-500' };
     }
-    if (new Date(product.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)) {
+    if (
+      new Date(product.createdAt) >
+      new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+    ) {
       return { text: 'New', color: 'bg-primary-500' };
     }
     if (product.review && product.review >= 4.5) {
@@ -97,7 +117,7 @@ const NewArrivalProduct: React.FC = () => {
 
   return (
     <div className="w-full py-12 px-4 bg-gradient-to-br min-h-[50vh] from-slate-50 via-primary-50/30 to-slate-100 relative overflow-hidden">
-      {/* Enhanced Background Pattern */}
+      {/* Background pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
           className="absolute inset-0"
@@ -107,12 +127,12 @@ const NewArrivalProduct: React.FC = () => {
         />
       </div>
 
-      {/* Animated gradient orbs */}
+      {/* Gradient Orbs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary-200/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
 
       <div className="w-11/12 mx-auto relative z-10">
-        {/* Header with Tabs and View More */}
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <h2 className="text-2xl font-bold">
@@ -136,7 +156,10 @@ const NewArrivalProduct: React.FC = () => {
           </div>
           <motion.button
             onClick={() => navigate('/products')}
-            whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(38, 166, 154, 0.3)' }}
+            whileHover={{
+              scale: 1.02,
+              boxShadow: '0 10px 20px rgba(38, 166, 154, 0.3)',
+            }}
             whileTap={{ scale: 0.98 }}
             className="group flex items-center gap-2 text-primary-600 font-medium tracking-widest text-sm uppercase hover:text-primary-700 transition-all duration-300"
           >
@@ -146,19 +169,24 @@ const NewArrivalProduct: React.FC = () => {
         </div>
 
         {/* Empty State */}
-        {products.length === 0 ? (
+        {!Array.isArray(products) || products.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-2xl font-medium text-slate-900 mb-2">No New Arrivals Available</p>
-            <p className="text-sm text-primary-700 tracking-wide">Check back later for new products.</p>
+            <p className="text-2xl font-medium text-slate-900 mb-2">
+              No New Arrivals Available
+            </p>
+            <p className="text-sm text-primary-700 tracking-wide">
+              Check back later for new products.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             <AnimatePresence>
               {products.map((product) => {
                 const badge = getBadge(product);
-                const discountedPrice = product.discount && product.discount > 0
-                  ? product.price * (1 - product.discount / 100)
-                  : product.price;
+                const discountedPrice =
+                  product.discount && product.discount > 0
+                    ? product.price * (1 - product.discount / 100)
+                    : product.price;
 
                 return (
                   <motion.div
@@ -169,18 +197,12 @@ const NewArrivalProduct: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="group relative bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
                   >
-                    {/* Premium hover gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                    {/* Shimmer effect on hover */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
-                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                    </div>
-
                     {/* Product Image */}
                     <div className="relative bg-gray-100 p-6 h-48 flex items-center justify-center ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-primary-300 transition-all duration-300">
                       {badge && (
-                        <span className={`absolute top-3 left-3 ${badge.color} text-white text-xs font-bold px-2 py-1 rounded-full border border-${badge.color.replace('bg-', '')}-300/50 shadow-sm`}>
+                        <span
+                          className={`absolute top-3 left-3 ${badge.color} text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm`}
+                        >
                           {badge.text}
                         </span>
                       )}
@@ -201,12 +223,13 @@ const NewArrivalProduct: React.FC = () => {
                           <p className="text-sm">No Image</p>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent z-10" />
                     </div>
 
                     {/* Product Details */}
                     <div className="p-4 relative z-10">
-                      <p className="text-xs text-primary-600 font-medium tracking-[2px] mb-2">{product.brand || 'Unknown Brand'}</p>
+                      <p className="text-xs text-primary-600 font-medium tracking-[2px] mb-2">
+                        {product.brand || 'Unknown Brand'}
+                      </p>
                       <h3
                         onClick={() => navigate(`/products/${product.id}`)}
                         className="text-sm font-medium text-slate-900 mb-2 hover:text-primary-800 transition-colors duration-300 cursor-pointer line-clamp-2 min-h-[2.5rem]"
@@ -226,7 +249,11 @@ const NewArrivalProduct: React.FC = () => {
                           )}
                         </div>
                         <motion.button
-                          whileHover={{ scale: 1.02, boxShadow: '0 10px 20px rgba(38, 166, 154, 0.3)' }}
+                          whileHover={{
+                            scale: 1.02,
+                            boxShadow:
+                              '0 10px 20px rgba(38, 166, 154, 0.3)',
+                          }}
                           whileTap={{ scale: 0.98 }}
                           className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 transition-all duration-300 flex items-center justify-center shadow-lg shadow-primary-500/30"
                         >
@@ -234,9 +261,6 @@ const NewArrivalProduct: React.FC = () => {
                         </motion.button>
                       </div>
                     </div>
-
-                    {/* Decorative corner accent */}
-                    <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-primary-400/0 group-hover:border-primary-400/30 rounded-tr-2xl transition-all duration-500" />
                   </motion.div>
                 );
               })}

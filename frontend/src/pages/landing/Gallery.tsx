@@ -31,6 +31,7 @@ import image18 from "../../assets/highlights/IMGE1680.jpg";
 import image19 from "../../assets/highlights/IMGE1785.jpg";
 import image20 from "../../assets/highlights/IMGE1592.jpg";
 import WhatsAppButton from "../../components/common/WhatsAppButton";
+import HeaderBanner from "../../components/landing/HeaderBanner";
 
 const WEBSITE_URL = "http://localhost:3001";
 

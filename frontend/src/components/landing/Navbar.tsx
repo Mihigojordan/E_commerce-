@@ -4,7 +4,6 @@ import {
   X, 
   User,
   Phone,
-
   ShoppingCart,
   Heart,
   MapPin,
@@ -98,7 +97,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className="flex items-center space-x-2">
               <MapPin size={12} />
-              <span>Our location</span>
+              <span>Kigali Business District, Rwanda</span>
             </div>
           </div>
 

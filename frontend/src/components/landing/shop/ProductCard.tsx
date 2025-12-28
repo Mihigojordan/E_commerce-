@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { formatPrice } from '../../../utils/dateUtils';
 import { motion } from 'framer-motion';
+import { Heart, Star, ShoppingCart } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -45,10 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const shareToWhatsApp = (product: Product) => {
-    // This function is now handled by WhatsAppButton component
-    // Keeping for backward compatibility if needed
-  };
+ 
 
   const currentPrice = product.discount && product.discount > 0 
     ? product.price * (1 - product.discount / 100)

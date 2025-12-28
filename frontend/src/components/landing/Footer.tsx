@@ -315,7 +315,7 @@ const companyLinks = [
                   <Mail size={16} className="text-primary-600" />
                   Email Support
                 </h4>
-                <p className="text-gray-600 text-sm mb-1">support@abyhr.com</p>
+                <p className="text-gray-600 text-sm mb-1">support@peacebijouteri.rw</p>
                 <p className="text-gray-500 text-xs">24/7 Online Support</p>
               </div>
 
