@@ -43,8 +43,8 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <HeaderBanner
-        title="About Us"
-        subtitle="Home / About Us"
+        title="About Peace Bijouteri"
+        subtitle="Home / About"
         backgroundStyle="image"
       />
 
@@ -94,7 +94,7 @@ const AboutPage = () => {
         <div className="max-w-8xl mx-auto px-6 lg:px-14">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Mission & Vision</span>
+              Our <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">Promise</span>
             </h2>
             <p className="text-md text-gray-600 max-w-3xl mx-auto">
               Celebrating life's most beautiful moments with jewelry that shines as bright as your story.

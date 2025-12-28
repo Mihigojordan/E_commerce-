@@ -92,7 +92,7 @@ export default function EcommerceContactPage() {
       description: "Send us your jewelry inquiries",
       info: ["info@peacebijouteri.rw", "sales@peacebijouteri.rw"],
       action: "Send Email",
-      availability: "Response within 4 hours"
+      availability: "Within business hours"
     },
     {
       icon: <MessageCircle className="w-8 h-8" />,
@@ -107,8 +107,8 @@ export default function EcommerceContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-100">
       <HeaderBanner
-        title="Contact Us"
-        subtitle="Home / Contact Us"
+        title="Contact Peace Bijouteri"
+        subtitle="Home / Contact"
         backgroundStyle="image"
         icon={<Users className="w-10 h-10" />}
       />
@@ -159,8 +159,8 @@ export default function EcommerceContactPage() {
         <div className="w-12/12 mx-auto px-4 sm:px-6 lg:px-16">
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h3>
-              <p className="text-gray-600 mb-8">Fill out the form and we'll get back to you within 4 hours</p>
+                <h3 className="text-3xl font-bold text-gray-900 mb-2">Send Us a Message</h3>
+                <p className="text-gray-600 mb-8">Fill out the form and we’ll get back to you soon.</p>
 
               {formSubmitted ? (
                 <div className="text-center py-12">

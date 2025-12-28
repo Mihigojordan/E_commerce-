@@ -13,8 +13,8 @@ const PromoCards = () => {
   const promoData = [
     {
       id: 1,
-      label: 'Smart Offer',
-      title: 'Save 20% on Woman Watches',
+      label: 'Premium Selection',
+      title: 'Elegant Women’s Rings',
       textColor: 'text-purple-500',
       labelColor: 'text-purple-600',
       buttonColor: 'text-purple-600',
@@ -22,8 +22,8 @@ const PromoCards = () => {
     },
     {
       id: 2,
-      label: 'Sale off',
-      title: 'Great Summer Collection',
+      label: 'Signature Pieces',
+      title: 'Gold & Diamond Collection',
       textColor: 'text-blue-500',
       labelColor: 'text-blue-600',
       buttonColor: 'text-blue-600',
@@ -32,7 +32,7 @@ const PromoCards = () => {
     {
       id: 3,
       label: 'New Arrivals',
-      title: "Shop Today's Deals & Offers",
+      title: 'Timeless Rings & Necklaces',
       textColor: 'text-red-500',
       labelColor: 'text-orange-600',
       buttonColor: 'text-orange-600',

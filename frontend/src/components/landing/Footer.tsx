@@ -201,9 +201,9 @@ const companyLinks = [
 </div>
 
 <p className="text-gray-600 mb-6 ml-2 leading-relaxed">
-  Discover a wide range of quality products at unbeatable prices.  
-  Shop smarter and enjoy a seamless online shopping experience with NovaGems Store.  
-  Fast delivery and secure checkout — everything you need, just a click away.
+  Peace Bijouteri is Kigali’s trusted destination for authentic gold, diamond, and luxury jewelry.  
+  Since 2008, we craft and curate elegant pieces designed to celebrate life’s most beautiful moments.  
+  Visit us for timeless rings, necklaces, and accessories you’ll treasure.
 </p>
 
 
@@ -213,7 +213,7 @@ const companyLinks = [
               
                 <div className="flex items-center gap-3">
                   <MapPin size={18} className="text-primary-600" />
-                  <span className="text-gray-700">Kigali Business District, Rwanda</span>
+                  <span className="text-gray-700">28 KN 84 St, Kigali, Rwanda</span>
                 </div>
               </div>
             </motion.div>
@@ -306,8 +306,8 @@ const companyLinks = [
                   <Phone size={16} className="text-primary-600" />
                   Customer Service
                 </h4>
-                <p className="text-gray-600 text-sm mb-1">+250 123 456 789</p>
-                <p className="text-gray-500 text-xs">Mon-Fri: 8AM - 8PM</p>
+                <p className="text-gray-600 text-sm mb-1">+250 788 826 965</p>
+                <p className="text-gray-500 text-xs">Mon – Sat: 9:00 AM – 7:00 PM</p>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
@@ -315,7 +315,7 @@ const companyLinks = [
                   <Mail size={16} className="text-primary-600" />
                   Email Support
                 </h4>
-                <p className="text-gray-600 text-sm mb-1">support@peacebijouteri.rw</p>
+                <p className="text-gray-600 text-sm mb-1">support@abyhr.com</p>
                 <p className="text-gray-500 text-xs">24/7 Online Support</p>
               </div>
 
