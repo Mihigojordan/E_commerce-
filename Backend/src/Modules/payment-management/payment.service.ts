@@ -5,23 +5,104 @@ import { PurchasingUserService } from '../purchasingUser/purchasingUser.service'
 import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/Global/email/email.service';
 
+/* ======================== PESAPAL RESPONSE TYPES ======================== */
+
+interface PesapalTokenResponse {
+  token: string;
+  expiryDate: string;
+  status: string;
+  message: string;
+}
+
+interface PesapalIPNResponse {
+  ipn_id: string;
+  status: string;
+  message: string;
+}
+
+interface PesapalSubmitOrderResponse {
+  checkout_url: string;
+  status: string;
+  message: string;
+}
+
+/* ============================== SERVICE ============================== */
+
 @Injectable()
 export class PaymentService {
-  private readonly baseUrl = 'https://api.flutterwave.com/v3';
-  private readonly secretKey = process.env.FLW_SECRET_KEY;
+  [x: string]: any;
+  private readonly baseUrl = 'https://cybqa.pesapal.com/pesapalv3';
+  private readonly consumerKey = process.env.PESAPAL_CONSUMER_KEY!;
+  private readonly consumerSecret = process.env.PESAPAL_CONSUMER_SECRET!;
+  private readonly ipnUrl = process.env.PESAPAL_IPN_URL!;
 
   constructor(
     private prisma: PrismaService,
-    private purchasingUserService: PurchasingUserService, // inject user service
+    private purchasingUserService: PurchasingUserService,
     private email: EmailService,
-  ) { }
+  ) {
+    if (!this.consumerKey || !this.consumerSecret) {
+      throw new Error('Pesapal credentials not set');
+    }
 
-  // Create payment for an order (default: all Flutterwave methods)
-  async createPayment(order: any, paymentMethod?: string) {
-    const txRef = `novagemstx-${uuidv4()}`;
-    const paymentOptions = paymentMethod ?? 'card,mobilemoneyrwanda,ussd,account,qr';
+    if (!this.ipnUrl || this.ipnUrl.includes('http://http')) {
+      throw new Error('Invalid PESAPAL_IPN_URL');
+    }
+  }
 
-    // Save payment record
+  /* ============================ TOKEN ============================ */
+
+  private async getToken(): Promise<string> {
+    try {
+      const res = await axios.post<PesapalTokenResponse>(
+        `${this.baseUrl}/api/Auth/RequestToken`,
+        {
+          consumer_key: this.consumerKey,
+          consumer_secret: this.consumerSecret,
+        },
+        { headers: { Accept: 'application/json' } },
+      );
+
+      return res.data.token;
+    } catch (err: any) {
+      console.error('Pesapal token error:', err.response?.data || err.message);
+      throw new BadRequestException('Failed to authenticate with Pesapal');
+    }
+  }
+
+  /* ============================= IPN ============================= */
+
+  private async registerIPN(token: string): Promise<string> {
+    try {
+      const res = await axios.post<PesapalIPNResponse>(
+        `${this.baseUrl}/api/URLSetup/RegisterIPN`,
+        {
+          url: this.ipnUrl,
+          ipn_notification_type: 'POST',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      return res.data.ipn_id;
+    } catch (err: any) {
+      console.error('IPN registration error:', err.response?.data || err.message);
+      throw new BadRequestException('Failed to register IPN');
+    }
+  }
+
+  /* ========================= CREATE PAYMENT ========================= */
+
+  async createPayment(order: any, p0?: string): Promise<string> {
+    const token = await this.getToken();
+    const notification_id = await this.registerIPN(token);
+
+    const txRef = `rw-${uuidv4()}`;
+
     await this.prisma.payment.create({
       data: {
         orderId: order.id,
@@ -29,235 +110,104 @@ export class PaymentService {
         amount: order.amount,
         currency: order.currency,
         status: 'PENDING',
-        paymentMethod: paymentOptions,
+        paymentMethod: 'pesapal',
       },
     });
 
-    // Call Flutterwave API
+    const [firstName, ...rest] = order.customerName.split(' ');
+    const lastName = rest.join(' ') || 'N/A';
+
     const payload = {
-      tx_ref: txRef,
+      id: txRef,
+      currency: order.currency, // RWF or USD
       amount: order.amount,
-      currency: order.currency,
-      redirect_url: `${process.env.BASE_URL}/payments/callback`,
-      payment_options: paymentOptions,
-      customer: {
-        email: order.customerEmail,
-        phonenumber: order.customerPhone,
-        name: order.customerName,
+      description: `Order #${order.id}`,
+      callback_url: `${process.env.BASE_URL}/payments/callback`,
+      notification_id,
+
+      billing_address: {
+        email_address: order.customerEmail,
+        phone_number: order.customerPhone,
+        country_code: 'RW',
+        first_name: firstName,
+        last_name: lastName,
+        line_1: 'Kigali',
+        city: 'Kigali',
       },
     };
 
     try {
-      const res = await axios.post<any>(`${this.baseUrl}/payments`, payload, {
-        headers: {
-          Authorization: `Bearer ${this.secretKey}`,
-          'Content-Type': 'application/json',
+      const res = await axios.post<PesapalSubmitOrderResponse>(
+        `${this.baseUrl}/api/Transactions/SubmitOrderRequest`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
         },
-      });
+      );
 
-
-
-      return res.data.data.link;
-    } catch (error) {
-      console.error('Flutterwave payment error:', error.response?.data || error.message);
-      throw new BadRequestException('Failed to create Flutterwave payment');
+      return res.data.checkout_url;
+    } catch (err: any) {
+      console.error('Submit order error:', err.response?.data || err.message);
+      throw new BadRequestException('Failed to create Pesapal payment');
     }
   }
 
-  async retryPayment(orderId: string) {
-  // 1️⃣ Find the most recent failed payment for the order
-  const lastPayment = await this.prisma.payment.findFirst({
-    where: {
-      orderId,
-      status: 'FAILED',
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+  /* ======================== VERIFY PAYMENT ======================== */
 
-  if (!lastPayment) {
-    throw new BadRequestException('No failed payment found to retry.');
-  }
-
-  // 2️⃣ Generate a new transaction reference
-  const txRef = `novagemstx-retry-${uuidv4()}`;
-
-  // 3️⃣ Create a new payment attempt linked to the old one
-  const newPayment = await this.prisma.payment.create({
-    data: {
-      orderId,
-      txRef,
-      amount: lastPayment.amount,
-      currency: lastPayment.currency,
-      status: 'PENDING',
-      paymentMethod: lastPayment.paymentMethod,
-      retryOfPaymentId: lastPayment.id, // 🔗 link to previous failed payment
-    },
-  });
-
-  // 4️⃣ Get order info for the customer details
-  const order = await this.prisma.order.findUnique({
-    where: { id: orderId },
-  });
-
-  if (!order) {
-    throw new BadRequestException('Order not found.');
-  }
-
-  // 5️⃣ Create a new Flutterwave payment link
-  const payload = {
-    tx_ref: txRef,
-    amount: order.amount,
-    currency: order.currency,
-    redirect_url: `${process.env.BASE_URL}/payments/callback`,
-    payment_options: newPayment.paymentMethod ?? 'card,mobilemoneyrwanda,ussd,account,qr',
-    customer: {
-      email: order.customerEmail,
-      phonenumber: order.customerPhone,
-      name: order.customerName,
-    },
-  };
-
-  try {
-    const res:any = await axios.post(`${this.baseUrl}/payments`, payload, {
-      headers: {
-        Authorization: `Bearer ${this.secretKey}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    return {
-      message: 'Payment retry created successfully.',
-      retryPaymentId: newPayment.id,
-      txRef: newPayment.txRef,
-      link: res.data.data.link, // new payment link
-    };
-  } catch (error) {
-    console.error('Flutterwave retry error:', error.response?.data || error.message);
-    throw new BadRequestException('Failed to create Flutterwave retry payment');
-  }
-}
-
-
-  async verifyPaymentAndGetRedirect(txRef: string, transactionId: string,paymentStatus:string): Promise<string> {
-    // 1️⃣ Verify with Flutterwave
-
-    if(paymentStatus == 'cancelled'){
-      return `${process.env.FRONTEND_BASE_URL}/products`;
+  async verifyPaymentAndGetRedirect(
+orderTrackingId: string, pesapal_status: string, status?: string,
+  ): Promise<string> {
+    if (pesapal_status !== 'COMPLETED') {
+      return `${process.env.FRONTEND_BASE_URL}/payment-status?status=failed`;
     }
 
-    const res = await axios.get<any>(`${this.baseUrl}/transactions/${transactionId}/verify`, {
-      headers: { Authorization: `Bearer ${this.secretKey}` },
-    });
-
-    const data = res.data.data;
-    const status = data.status === 'successful' ? 'SUCCESSFUL' : 'FAILED';
-  
-
-    const paymentMethod = data.payment_type || data.payment_type || 'unknown'; // Flutterwave field for method
-
-    // 2️⃣ Update Payment record (now includes paymentMethod)
     const payment = await this.prisma.payment.update({
-      where: { txRef },
-      data: {
-        status,
-        transactionId,
-        paymentMethod, // save which method was used
-      },
+      where: { txRef: orderTrackingId },
+      data: { status: 'SUCCESSFUL' },
     });
 
-    // 3️⃣ Get order with items
     const order = await this.prisma.order.findUnique({
       where: { id: payment.orderId },
-      include: {
-        orderItems: {
-          include: {
-            product: true
-          }
-        }
-      },
+      include: { orderItems: { include: { product: true } } },
     });
-    if (!order) throw new BadRequestException('Order not found for this payment');
 
-    // 4️⃣ Link or create PurchasingUser
+    if (!order) throw new BadRequestException('Order not found');
+
     const user: any = await this.purchasingUserService.createOrGetUser({
       name: order.customerName,
       email: order.customerEmail,
       phoneNumber: order.customerPhone,
     });
 
-    // 5️⃣ Update order
     await this.prisma.order.update({
       where: { id: order.id },
-      data: {
-        status: status === 'SUCCESSFUL' ? 'COMPLETED' : order.status,
-        purchasingUserId: user.id ?? user.user?.id,
-      },
+      data: { status: 'COMPLETED', purchasingUserId: user.id ?? user.user?.id },
     });
-    const currentUser = user || user.user
 
-    // 6️⃣ Decrease product quantity if successful
-    if (status === 'SUCCESSFUL') {
-      for (const item of order.orderItems) {
-        await this.prisma.product.update({
-          where: { id: item.productId },
-          data: { quantity: { decrement: item.quantity } },
-        });
-      }
-      const currentYear = new Date().getFullYear();
-      await this.email.sendEmail(
-        currentUser.email,
-        'Your NovaGems Payment was Successful 💎',
-        'payment-success', // HBS filename (without .hbs)
-        {
-          name: currentUser.name,
-          email: currentUser.email,
-          orderId: order.id,
-          amount: order.amount,
-          currency: order.currency,
-          paymentMethod: payment.paymentMethod,
-          date: new Date().toLocaleString(),
-          items: order.orderItems.map(item => ({
-            name: item.product.name,
-            quantity: item.quantity,
-            price: item.price.toFixed(2),
-            subtotal: item.subtotal.toFixed(2),
-          })),
-          year: currentYear,
-        },
-      );
-    }
-    else {
-      const currentYear = new Date().getFullYear();
-
-      await this.email.sendEmail(
-        currentUser.email,
-        'NovaGems Payment Failed ❌',
-        'payment-failed', // name of the .hbs file
-        {
-          name: name,
-          email: currentUser.email,
-          orderId: order.id,
-          amount: order.amount,
-          currency: order.currency,
-          paymentMethod: payment.paymentMethod,
-          date: new Date().toLocaleString(),
-          retryLink: `${process.env.FRONTEND_BASE_URL}/retry-payment?orderId=${order.id}`,
-          items: order.orderItems.map(item => ({
-            name: item.product.name,
-            quantity: item.quantity,
-            price: item.price.toFixed(2),
-            subtotal: item.subtotal.toFixed(2),
-          })),
-          year: currentYear,
-        },
-      );
-
+    for (const item of order.orderItems) {
+      await this.prisma.product.update({
+        where: { id: item.productId },
+        data: { quantity: { decrement: item.quantity } },
+      });
     }
 
-    // 7️⃣ Construct frontend redirect URL
-    return `${process.env.FRONTEND_BASE_URL}/payment-status?status=${status === 'SUCCESSFUL' ? 'success' : 'failed'}&orderId=${order.id}&amount=${order.amount}&currency=${order.currency}&method=${paymentMethod}`;
+    await this.email.sendEmail(
+      user.email,
+      'Payment Successful',
+      'payment-success',
+      {
+        name: user.name,
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        paymentMethod: 'Pesapal',
+        year: new Date().getFullYear(),
+      },
+    );
+
+    return `${process.env.FRONTEND_BASE_URL}/payment-status?status=success&orderId=${order.id}`;
   }
-
-
-
 }

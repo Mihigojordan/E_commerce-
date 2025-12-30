@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
@@ -11,7 +10,6 @@ import {
   Facebook,
   Twitter,
   Instagram,
-
   Youtube,
   ChevronLeft,
   ChevronRight,
@@ -29,7 +27,7 @@ import { useWishlist } from '../../../context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import FilterBar from './FilterBar';
-import WhatsAppButton from '../../common/WhatsAppButton';
+import CheckoutModal from './CheckOutModal';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { formatCurrency, formatPrice } from '../../../utils/dateUtils';
 
@@ -51,9 +49,9 @@ const ShopViewPage: React.FC = () => {
   const [newProducts, setNewProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-const [priceRange, setPriceRange] = useState([16, 8000]);
+  const [priceRange, setPriceRange] = useState([16, 300]);
   const [minPriceInput, setMinPriceInput] = useState('16');
-const [maxPriceInput, setMaxPriceInput] = useState('8000');
+  const [maxPriceInput, setMaxPriceInput] = useState('300');
   const [newProductsLoading, setNewProductsLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(true);
   const [categoryError, setCategoryError] = useState<string | null>(null);
@@ -257,7 +255,7 @@ const [maxPriceInput, setMaxPriceInput] = useState('8000');
     const params = new URLSearchParams();
     if (selectedCategory) params.append('categoryId', selectedCategory.toString());
     if (priceRange[0] !== 16) params.append('minPrice', priceRange[0].toString());
-    if (priceRange[1] !== 8000) params.append('maxPrice', priceRange[1].toString());
+    if (priceRange[1] !== 300) params.append('maxPrice', priceRange[1].toString());
     if (searchQuery.trim()) params.append('search', searchQuery.trim());
     
     navigate(`/products?${params.toString()}`);
@@ -754,19 +752,6 @@ const [maxPriceInput, setMaxPriceInput] = useState('8000');
                         <Zap className="h-5 w-5" />
                         Buy Now
                       </motion.button>
-                      
-                      {/* WhatsApp Button */}
-                      <div className="mt-3">
-                        <WhatsAppButton
-                          productName={product.name}
-                          productId={product.id}
-                          productPrice={currentPrice}
-                          size="md"
-                          variant="inline"
-                          showText={true}
-                          className="w-full justify-center"
-                        />
-                      </div>
                     </div>
 
                     <div className="pt-4 border-t">
