@@ -46,7 +46,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+<<<<<<< HEAD
  
+=======
+  const shareToWhatsApp = (product: Product) => {
+  const message = `Check out this beautiful ${product.name}! %0A%0ASee more amazing jewelry at: ${window.location.origin}/products/${product.id}%0A%0AHow can I get more information about this piece?`;
+  const whatsappUrl = `https://wa.me/250788826965?text=${message}`;
+  window.open(whatsappUrl, "_blank");
+};
+>>>>>>> 980eaaa03397ab332583c352fa737610e2072163
 
   const currentPrice = product.discount && product.discount > 0 
     ? product.price * (1 - product.discount / 100)
@@ -62,6 +70,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
         )}
         <div className="absolute top-4 right-4 flex gap-2 z-10">
+<<<<<<< HEAD
           <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -80,6 +89,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             />
           </motion.div>
           
+=======
+
+>>>>>>> 980eaaa03397ab332583c352fa737610e2072163
           <button
             onClick={toggleWishlist}
             className="p-2 bg-white rounded-full hover:bg-gray-50 transition-all duration-200 shadow-md opacity-0 group-hover:opacity-100"
