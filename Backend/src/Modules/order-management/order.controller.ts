@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Param, Query, ConflictException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Query,
+  ConflictException,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { PaymentService } from '../payment-management/payment.service';
 
@@ -11,12 +19,8 @@ export class OrderController {
 
   @Post('checkout')
   async checkout(@Body() body: any) {
-    // Create order
     const order = await this.orderService.createOrder(body);
-
-    // Create payment and get Flutterwave link
-      const paymentLink = await this.paymentService.createPayment(order, 'card,mobilemoneyrwanda,ussd,account,qr');
-
+    const paymentLink = await this.paymentService.createPayment(order);
     return { order, paymentLink };
   }
 
@@ -31,18 +35,18 @@ export class OrderController {
     @Query('customerEmail') customerEmail?: string,
     @Query('customerPhone') customerPhone?: string,
   ) {
-    return this.orderService.getAllOrders({ customerName, customerEmail, customerPhone });
+    return this.orderService.getAllOrders({
+      customerName,
+      customerEmail,
+      customerPhone,
+    });
   }
 
-  // ✅ Fetch all orders for a specific user
-@Get('user/:userId')
-async getOrdersByUser(@Param('userId') userId: string) {
-  if (!userId) {
-    throw new ConflictException('User ID is required');
+  @Get('user/:userId')
+  async getOrdersByUser(@Param('userId') userId: string) {
+    if (!userId) {
+      throw new ConflictException('User ID is required');
+    }
+    return this.orderService.getOrdersByUserId(userId);
   }
-  return this.orderService.getOrdersByUserId(userId);
-}
-
-
-
 }

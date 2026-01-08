@@ -2,10 +2,12 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from 'src/Prisma/prisma.service';
 import { PurchasingUserService } from '../purchasingUser/purchasingUser.service';
-import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from 'src/Global/email/email.service';
+import { v4 as uuidv4 } from 'uuid';
 
-/* ======================== TYPES ======================== */
+/* ========================
+   PESAPAL RESPONSE TYPES
+   ======================== */
 
 interface PesapalTokenResponse {
   token: string;
@@ -18,7 +20,15 @@ interface PesapalSubmitOrderResponse {
   message: string;
 }
 
-/* ======================== SERVICE ======================== */
+interface PesapalIpnPayload {
+  OrderTrackingId: string;
+  OrderMerchantReference: string;
+  Status: string;
+}
+
+/* ========================
+   PAYMENT SERVICE
+   ======================== */
 
 @Injectable()
 export class PaymentService {
@@ -28,12 +38,14 @@ export class PaymentService {
   private readonly notificationId = process.env.PESAPAL_NOTIFICATION_ID!;
 
   constructor(
-    private prisma: PrismaService,
-    private purchasingUserService: PurchasingUserService,
-    private email: EmailService,
+    private readonly prisma: PrismaService,
+    private readonly purchasingUserService: PurchasingUserService,
+    private readonly emailService: EmailService,
   ) {}
 
-  /* ======================== TOKEN ======================== */
+  /* ========================
+     AUTH TOKEN
+     ======================== */
 
   private async getToken(): Promise<string> {
     const res = await axios.post<PesapalTokenResponse>(
@@ -42,17 +54,20 @@ export class PaymentService {
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
       },
-      { headers: { Accept: 'application/json' } },
+      {
+        headers: { Accept: 'application/json' },
+      },
     );
 
     return res.data.token;
   }
 
-  /* ======================== CREATE PAYMENT ======================== */
+  /* ========================
+     CREATE PAYMENT
+     ======================== */
 
-  async createPayment(order: any, p0?: string): Promise<string> {
+  async createPayment(order: any): Promise<string> {
     const token = await this.getToken();
-
     const txRef = `rw-${uuidv4()}`;
 
     await this.prisma.payment.create({
@@ -62,7 +77,7 @@ export class PaymentService {
         amount: order.amount,
         currency: order.currency,
         status: 'PENDING',
-        paymentMethod: 'pesapal',
+        paymentMethod: 'PESAPAL',
       },
     });
 
@@ -76,15 +91,12 @@ export class PaymentService {
       description: `Order #${order.id}`,
       callback_url: `${process.env.BASE_URL}/payments/callback`,
       notification_id: this.notificationId,
-
       billing_address: {
         email_address: order.customerEmail,
         phone_number: order.customerPhone,
         country_code: 'RW',
         first_name: firstName,
         last_name: lastName,
-        line_1: 'Kigali',
-        city: 'Kigali',
       },
     };
 
@@ -99,66 +111,90 @@ export class PaymentService {
       },
     );
 
-    console.log('Pesapal response:', res.data);
-
-    return res.data.checkout_url || res.data.redirect_url!;
-  }
-
-  /* ======================== VERIFY PAYMENT ======================== */
-
-  async verifyPaymentAndGetRedirect(
-    orderTrackingId: string,
-    pesapal_status: string,
-  ): Promise<string> {
-    if (pesapal_status !== 'COMPLETED') {
-      return `${process.env.FRONTEND_BASE_URL}/payment-status?status=failed`;
+    if (!res.data.checkout_url && !res.data.redirect_url) {
+      throw new BadRequestException('Pesapal did not return a payment URL');
     }
 
-    const payment = await this.prisma.payment.update({
-      where: { txRef: orderTrackingId },
-      data: { status: 'SUCCESSFUL' },
-    });
-
-    const order = await this.prisma.order.findUnique({
-      where: { id: payment.orderId },
-      include: { orderItems: true },
-    });
-
-    if (!order) throw new BadRequestException('Order not found');
-
-    const user: any = await this.purchasingUserService.createOrGetUser({
-      name: order.customerName,
-      email: order.customerEmail,
-      phoneNumber: order.customerPhone,
-    });
-
-    await this.prisma.order.update({
-      where: { id: order.id },
-      data: { status: 'COMPLETED', purchasingUserId: user.id },
-    });
-
-    await this.email.sendEmail(
-      user.email,
-      'Payment Successful',
-      'payment-success',
-      {
-        name: user.name,
-        orderId: order.id,
-        amount: order.amount,
-        currency: order.currency,
-        paymentMethod: 'Pesapal',
-        year: new Date().getFullYear(),
-      },
-    );
-
-    return `${process.env.FRONTEND_BASE_URL}/payment-status?status=success&orderId=${order.id}`;
+    return res.data.checkout_url ?? res.data.redirect_url!;
   }
 
-  /* ======================== RETRY ======================== */
+  /* ========================
+     PESAPAL IPN (WEBHOOK)
+     ======================== */
 
-  async retryPayment(orderId: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order) throw new BadRequestException('Order not found');
+  async handlePesapalIpn(payload: PesapalIpnPayload): Promise<void> {
+    const { OrderMerchantReference, Status } = payload;
+
+    if (Status !== 'COMPLETED') return;
+
+    const payment = await this.prisma.payment.findUnique({
+      where: { txRef: OrderMerchantReference },
+    });
+
+    // Idempotency protection
+    if (!payment || payment.status === 'SUCCESSFUL') return;
+
+    await this.prisma.$transaction(async (tx) => {
+      const updatedPayment = await tx.payment.update({
+        where: { id: payment.id },
+        data: { status: 'SUCCESSFUL' },
+      });
+
+      const order = await tx.order.findUnique({
+        where: { id: updatedPayment.orderId },
+      });
+
+      if (!order) {
+        throw new BadRequestException('Order not found');
+      }
+
+      const userResult =
+        await this.purchasingUserService.createOrGetUser({
+          name: order.customerName,
+          email: order.customerEmail,
+          phoneNumber: order.customerPhone,
+        });
+
+      // ✅ Normalize union return type
+      const user =
+        'user' in userResult ? userResult.user : userResult;
+
+      await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: 'COMPLETED',
+          purchasingUserId: user.id,
+        },
+      });
+
+      await this.emailService.sendEmail(
+        user.email,
+        'Payment Successful',
+        'payment-success',
+        {
+          name: user.name,
+          orderId: order.id,
+          amount: order.amount,
+          currency: order.currency,
+          paymentMethod: 'Pesapal',
+          year: new Date().getFullYear(),
+        },
+      );
+    });
+  }
+
+  /* ========================
+     RETRY PAYMENT
+     ======================== */
+
+  async retryPayment(orderId: string): Promise<string> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      throw new BadRequestException('Order not found');
+    }
 
     return this.createPayment(order);
   }

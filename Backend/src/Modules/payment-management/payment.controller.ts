@@ -8,7 +8,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('payments')
 export class PaymentController {
@@ -16,37 +16,34 @@ export class PaymentController {
 
   /**
    * =========================
-   * PESAPAL IPN (SERVER → SERVER)
+   * PESAPAL IPN (WEBHOOK)
    * =========================
    */
   @Post('ipn')
   async pesapalIpn(@Req() req: Request, @Res() res: Response) {
     console.log('📩 PESAPAL IPN RECEIVED');
-    console.log('Headers:', req.headers);
-    console.log('Body:', req.body);
-    console.log('Query:', req.query);
+    console.log(req.body);
 
-    // Pesapal ONLY requires 200 OK
+    await this.paymentService.handlePesapalIpn(req.body);
+
+    // Pesapal only expects 200 OK
     return res.status(200).send('OK');
   }
 
   /**
    * =========================
-   * PESAPAL CALLBACK (USER REDIRECT)
+   * USER REDIRECT CALLBACK
    * =========================
    */
   @Get('callback')
   async pesapalCallback(
-    @Query('OrderTrackingId') orderTrackingId: string,
-    @Query('OrderMerchantReference') merchantReference: string,
     @Query('status') status: string,
     @Res() res: Response,
   ) {
     const redirectUrl =
-      await this.paymentService.verifyPaymentAndGetRedirect(
-        merchantReference,
-        status,
-      );
+      status === 'COMPLETED'
+        ? `${process.env.FRONTEND_BASE_URL}/payment-status?status=processing`
+        : `${process.env.FRONTEND_BASE_URL}/payment-status?status=failed`;
 
     return res.redirect(redirectUrl);
   }
