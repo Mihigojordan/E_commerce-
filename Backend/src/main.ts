@@ -23,8 +23,8 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    // origin: process.env.CORS_ORIGIN || 'https://peacebijouterie.rw',
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+    origin: process.env.CORS_ORIGIN || 'https://peacebijouterie.rw',
+    // origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
