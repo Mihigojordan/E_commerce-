@@ -28,7 +28,7 @@ interface PesapalIpnPayload {
 ======================== */
 @Injectable()
 export class PaymentService {
-  private readonly baseUrl = 'https://cybqa.pesapal.com/pesapalv3';
+  private readonly baseUrl = 'https://pay.pesapal.com/v3';
   private readonly consumerKey = process.env.PESAPAL_CONSUMER_KEY!;
   private readonly consumerSecret = process.env.PESAPAL_CONSUMER_SECRET!;
   private readonly notificationId = process.env.PESAPAL_NOTIFICATION_ID!;
