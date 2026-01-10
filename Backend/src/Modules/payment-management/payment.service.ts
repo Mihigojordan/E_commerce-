@@ -6,7 +6,7 @@ import { EmailService } from 'src/Global/email/email.service';
 import { v4 as uuidv4 } from 'uuid';
 
 /* ========================
-   PESAPAL RESPONSE TYPES
+   TYPES
    ======================== */
 
 interface PesapalTokenResponse {
@@ -16,8 +16,6 @@ interface PesapalTokenResponse {
 interface PesapalSubmitOrderResponse {
   checkout_url?: string;
   redirect_url?: string;
-  status: string;
-  message: string;
 }
 
 interface PesapalIpnPayload {
@@ -54,9 +52,7 @@ export class PaymentService {
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
       },
-      {
-        headers: { Accept: 'application/json' },
-      },
+      { headers: { Accept: 'application/json' } },
     );
 
     return res.data.token;
@@ -87,7 +83,7 @@ export class PaymentService {
     const payload = {
       id: txRef,
       currency: order.currency,
-      amount: Number(order.amount).toFixed(2),
+      amount: order.amount.toFixed(2),
       description: `Order #${order.id}`,
       callback_url: `${process.env.BASE_URL}/payments/callback`,
       notification_id: this.notificationId,
@@ -123,31 +119,48 @@ export class PaymentService {
      ======================== */
 
   async handlePesapalIpn(payload: PesapalIpnPayload): Promise<void> {
-    const { OrderMerchantReference, Status } = payload;
+    console.log('🔥 IPN PAYLOAD:', payload);
 
-    if (Status !== 'COMPLETED') return;
+    const txRef = payload.OrderMerchantReference;
+    const status = payload.Status?.toUpperCase();
+
+    if (status !== 'COMPLETED') return;
 
     const payment = await this.prisma.payment.findUnique({
-      where: { txRef: OrderMerchantReference },
+      where: { txRef },
     });
 
-    // Idempotency protection
+    // Idempotency
     if (!payment || payment.status === 'SUCCESSFUL') return;
 
     await this.prisma.$transaction(async (tx) => {
-      const updatedPayment = await tx.payment.update({
+      // 1️⃣ Update payment
+      await tx.payment.update({
         where: { id: payment.id },
         data: { status: 'SUCCESSFUL' },
       });
 
+      // 2️⃣ Get order
       const order = await tx.order.findUnique({
-        where: { id: updatedPayment.orderId },
+        where: { id: payment.orderId },
+        include: { orderItems: true },
       });
 
       if (!order) {
         throw new BadRequestException('Order not found');
       }
 
+      // 3️⃣ Reduce product stock
+      for (const item of order.orderItems) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            quantity: { decrement: item.quantity },
+          },
+        });
+      }
+
+      // 4️⃣ Create / get user
       const userResult =
         await this.purchasingUserService.createOrGetUser({
           name: order.customerName,
@@ -155,10 +168,9 @@ export class PaymentService {
           phoneNumber: order.customerPhone,
         });
 
-      // ✅ Normalize union return type
-      const user =
-        'user' in userResult ? userResult.user : userResult;
+      const user = 'user' in userResult ? userResult.user : userResult;
 
+      // 5️⃣ Update order
       await tx.order.update({
         where: { id: order.id },
         data: {
@@ -167,6 +179,7 @@ export class PaymentService {
         },
       });
 
+      // 6️⃣ Send email
       await this.emailService.sendEmail(
         user.email,
         'Payment Successful',

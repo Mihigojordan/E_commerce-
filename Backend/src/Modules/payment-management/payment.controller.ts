@@ -18,6 +18,7 @@ export class PaymentController {
    * =========================
    * PESAPAL IPN (WEBHOOK)
    * =========================
+   * ⚠️ This is the ONLY place where payment is confirmed
    */
   @Post('ipn')
   async pesapalIpn(@Req() req: Request, @Res() res: Response) {
@@ -26,7 +27,6 @@ export class PaymentController {
 
     await this.paymentService.handlePesapalIpn(req.body);
 
-    // Pesapal only expects 200 OK
     return res.status(200).send('OK');
   }
 
@@ -34,18 +34,13 @@ export class PaymentController {
    * =========================
    * USER REDIRECT CALLBACK
    * =========================
+   * ❌ DO NOT update DB here
    */
   @Get('callback')
-  async pesapalCallback(
-    @Query('status') status: string,
-    @Res() res: Response,
-  ) {
-    const redirectUrl =
-      status === 'COMPLETED'
-        ? `${process.env.FRONTEND_BASE_URL}/payment-status?status=processing`
-        : `${process.env.FRONTEND_BASE_URL}/payment-status?status=failed`;
-
-    return res.redirect(redirectUrl);
+  async pesapalCallback(@Res() res: Response) {
+    return res.redirect(
+      `${process.env.FRONTEND_BASE_URL}/payment-status?status=processing`,
+    );
   }
 
   /**
