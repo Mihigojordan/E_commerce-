@@ -1,54 +1,70 @@
-/* eslint-disable prefer-const */
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import api from '../../api/api';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
-export default function PaymentStatusPage() {
-  const [status, setStatus] = useState<'processing' | 'success' | 'failed' | 'timeout'>('processing');
+const PaymentCallbackPage: React.FC = () => {
   const location = useLocation();
-
-  const query = new URLSearchParams(location.search);
-  const txRef = query.get('OrderMerchantReference');
+  const navigate = useNavigate();
+  const [status, setStatus] = useState<'processing' | 'success' | 'failed'>('processing');
 
   useEffect(() => {
-    if (!txRef) return;
+    // Run only once on mount
+    let called = false; // 🔒 ensure only one request
+    const query = new URLSearchParams(location.search);
+    const orderTrackingId = query.get('OrderTrackingId');
+    const orderMerchantReference = query.get('OrderMerchantReference');
 
-    let interval: number; // ✅ browser interval ID is a number
-    const startTime = Date.now();
-    const TIMEOUT = 2 * 60 * 1000; // 2 minutes
+    if (!orderMerchantReference || !orderTrackingId) {
+      setStatus('failed');
+      return;
+    }
 
-    const checkStatus = async () => {
+    const triggerIPN = async () => {
+      if (called) return;
+      called = true;
+
       try {
-        const res = await api.get(`/payments/status/${txRef}`);
-        const data = res.data;
+        const res = await axios.post('https://ecommerce.abyride.com/payments/ipn', {
+          OrderTrackingId: orderTrackingId,
+          OrderMerchantReference: orderMerchantReference,
+          Status: 'COMPLETED'
+        });
 
-        if (data.status === 'SUCCESSFUL') {
-          setStatus('success');
-          clearInterval(interval);
-        } else if (data.status === 'FAILED') {
-          setStatus('failed');
-          clearInterval(interval);
-        } else if (Date.now() - startTime > TIMEOUT) {
-          setStatus('timeout');
-          clearInterval(interval);
-        }
+        console.log('IPN response:', res.data);
+        setStatus('success');
+
+        Swal.fire({
+          title: 'Payment Successful!',
+          text: 'Your payment has been processed successfully.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+        setTimeout(() => navigate('/orders'), 2000);
       } catch (err) {
-        console.error('Error fetching payment status', err);
+        console.error('Failed to trigger IPN:', err);
+        setStatus('failed');
+
+        Swal.fire({
+          title: 'Payment Failed',
+          text: 'Something went wrong. Please contact support.',
+          icon: 'error'
+        });
       }
     };
 
-    interval = window.setInterval(checkStatus, 3000);
-    checkStatus(); // run immediately on mount
-
-    return () => clearInterval(interval);
-  }, [txRef]);
+    triggerIPN();
+  }, []); // ✅ empty dependency array ensures it runs once
 
   return (
-    <div className="payment-status">
-      {status === 'processing' && <p>Payment is processing...</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      {status === 'processing' && <p>Processing your payment...</p>}
       {status === 'success' && <p>Payment Successful! 🎉</p>}
       {status === 'failed' && <p>Payment Failed ❌</p>}
-      {status === 'timeout' && <p>Payment status could not be confirmed. Please contact support.</p>}
     </div>
   );
-}
+};
+
+export default PaymentCallbackPage;
