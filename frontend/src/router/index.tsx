@@ -232,7 +232,7 @@ const routes = createBrowserRouter([
             ),
           },
           {
-            path: 'payment-status',
+            path: 'payments/callback',
             element: (
               <SuspenseWrapper>
                 <PaymentStatusPage />
