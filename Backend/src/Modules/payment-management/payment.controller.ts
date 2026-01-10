@@ -6,6 +6,7 @@ import {
   Query,
   Req,
   Res,
+  NotFoundException,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { Request, Response } from 'express';
@@ -39,7 +40,7 @@ export class PaymentController {
   @Get('callback')
   async pesapalCallback(@Res() res: Response) {
     return res.redirect(
-      `${process.env.FRONTEND_BASE_URL}/payment-status?status=processing`,
+      `${process.env.BASE_URL}/payment-status?status=processing`,
     );
   }
 
@@ -51,5 +52,16 @@ export class PaymentController {
   @Post('retry/:orderId')
   async retryPayment(@Param('orderId') orderId: string) {
     return this.paymentService.retryPayment(orderId);
+  }
+
+    @Get('status/:txRef')
+  async getPaymentStatus(@Param('txRef') txRef: string, @Res() res: Response) {
+    const paymentStatus = await this.paymentService.getPaymentStatus(txRef);
+
+    if (!paymentStatus) {
+      throw new NotFoundException('Payment not found');
+    }
+
+    return res.json({ status: paymentStatus });
   }
 }

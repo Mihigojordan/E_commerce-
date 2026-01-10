@@ -211,4 +211,12 @@ export class PaymentService {
 
     return this.createPayment(order);
   }
+
+  async getPaymentStatus(txRef: string): Promise<string | null> {
+  const payment = await this.prisma.payment.findUnique({
+    where: { txRef },
+  });
+
+  return payment?.status ?? null;
+}
 }
