@@ -7,10 +7,9 @@ import {
   Heart,
   Download,
   Share2,
-  MessageCircle,
+
   GalleryVertical,
 } from "lucide-react";
-<<<<<<< HEAD
 import image1 from "../../assets/highlights/IMGE1520.jpg";
 import image2 from "../../assets/highlights/IMGE1679.jpg";
 import image3 from "../../assets/highlights/IMGE1705.jpg";
@@ -32,28 +31,6 @@ import image18 from "../../assets/highlights/IMGE1680.jpg";
 import image19 from "../../assets/highlights/IMGE1785.jpg";
 import image20 from "../../assets/highlights/IMGE1592.jpg";
 import WhatsAppButton from "../../components/common/WhatsAppButton";
-=======
-import image1 from "../../assets/highlights/IMGE1520.JPG";
-import image2 from "../../assets/highlights/IMGE1679.JPG";
-import image3 from "../../assets/highlights/IMGE1705.JPG";
-import image4 from "../../assets/highlights/IMGE1638.JPG";
-import image5 from "../../assets/highlights/IMGE1774.JPG";
-import image6 from "../../assets/highlights/IMGE1372.JPG";
-import image7 from "../../assets/highlights/IMGE1869.JPG";
-import image8 from "../../assets/highlights/IMGE1610.JPG";
-import image9 from "../../assets/highlights/IMGE1323.JPG";
-import image10 from "../../assets/highlights/IMGE1855.JPG";
-import image11 from "../../assets/highlights/IMGE1266.JPG";
-import image12 from "../../assets/highlights/IMGE1811.JPG";
-import image13 from "../../assets/highlights/IMGE1648.JPG";
-import image14 from "../../assets/highlights/IMGE1208.JPG";
-import image15 from "../../assets/highlights/IMGE1719.JPG";
-import image16 from "../../assets/highlights/IMGE1618.JPG";
-import image17 from "../../assets/highlights/IMGE1804.JPG";
-import image18 from "../../assets/highlights/IMGE1680.JPG";
-import image19 from "../../assets/highlights/IMGE1785.JPG";
-import image20 from "../../assets/highlights/IMGE1592.JPG";
->>>>>>> 980eaaa03397ab332583c352fa737610e2072163
 import HeaderBanner from "../../components/landing/HeaderBanner";
 
 const WEBSITE_URL = "http://localhost:3001";
@@ -146,10 +123,6 @@ export default function Gallery() {
     }
   };
 
-  const shareToWhatsApp = (image: JewelryImage) => {
-    // This function is now handled by WhatsAppButton component
-    // Keeping for backward compatibility if needed
-  };
 
   const copyShareLink = (image: JewelryImage) => {
     const shareUrl = `${WEBSITE_URL}/gallery?item=${image.id}`;

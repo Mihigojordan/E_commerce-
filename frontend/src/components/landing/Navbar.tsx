@@ -93,7 +93,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <Phone size={12} />
-              <span>(+01) - 2345 - 6789</span>
+              <span>+250788826965</span>
             </div>
             <div className="flex items-center space-x-2">
               <MapPin size={12} />
@@ -249,7 +249,7 @@ const Navbar: React.FC = () => {
               <PhoneCall size={16} />
               <div>
                 <div className="text-xs text-gray-500">Hotline</div>
-                <div className="font-bold">1900 - 888</div>
+                <div className="font-bold">+250788826965</div>
               </div>
             </div>
           </div>
